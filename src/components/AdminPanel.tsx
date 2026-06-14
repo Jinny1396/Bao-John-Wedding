@@ -7,21 +7,12 @@ import {
   orderBy 
 } from 'firebase/firestore';
 import { 
-  GoogleAuthProvider, 
-  signInWithPopup, 
-  signOut, 
-  onAuthStateChanged,
-  User 
-} from 'firebase/auth';
-import { 
   db, 
-  auth, 
   handleFirestoreError, 
   OperationType 
 } from '../firebase';
 import { 
   Lock, 
-  Unlock, 
   RefreshCw, 
   LogOut, 
   ChevronLeft, 
@@ -29,9 +20,7 @@ import {
   XCircle, 
   Search, 
   EyeOff, 
-  Users, 
-  Heart,
-  FileSpreadsheet
+  Users
 } from 'lucide-react';
 
 interface RSVPEntity {
@@ -52,21 +41,17 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
   const [isPinVerified, setIsPinVerified] = useState(false);
   const [pinError, setPinError] = useState('');
   
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [isAuthLoading, setIsAuthLoading] = useState(true);
-  
   const [rsvps, setRsvps] = useState<RSVPEntity[]>([]);
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // 1. PIN Check
+  // PIN Check
   const handlePinSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (pin === '1234') {
+    if (pin === '2910') {
       setIsPinVerified(true);
       setPinError('');
-      // Save verification state locally
       sessionStorage.setItem('admin_pin_verified', 'true');
     } else {
       setPinError('Invalid Admin PIN. Please try again.');
@@ -81,22 +66,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
     }
   }, []);
 
-  // 2. Auth state observer
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-      setIsAuthLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  // 3. Check if email is authorized
-  const isAuthorizedEmail = currentUser?.email === 'jminxiii@gmail.com';
-
-  // 4. Load RSVPs from firestore
+  // Load RSVPs from Firestore
   const fetchRSVPs = async () => {
-    if (!currentUser || !isAuthorizedEmail) return;
-    
     setIsDataLoading(true);
     setFetchError(null);
     try {
@@ -121,49 +92,29 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
       try {
         handleFirestoreError(err, OperationType.LIST, 'rsvps');
       } catch (e) {
-        // Suppress or handle formatted error code
+        // Log formatted error
       }
     } finally {
       setIsDataLoading(false);
     }
   };
 
-  // Trigger load when authorized
+  // Trigger load when PIN is verified
   useEffect(() => {
-    if (isPinVerified && currentUser && isAuthorizedEmail) {
+    if (isPinVerified) {
       fetchRSVPs();
     }
-  }, [isPinVerified, currentUser, isAuthorizedEmail]);
+  }, [isPinVerified]);
 
-  // Google Log In
-  const handleGoogleSignIn = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-    } catch (err: any) {
-      console.error('Sign in error:', err);
-      setFetchError(`Google Login failed: ${err.message}`);
-    }
-  };
-
-  // Log Out
-  const handleLogOut = async () => {
-    try {
-      await signOut(auth);
-    } catch (err) {
-      console.error('Logout error:', err);
-    }
-  };
-
-  // Full reset (unverify pin + signout)
-  const handleFullReset = async () => {
+  // Lock session and reset
+  const handleFullReset = () => {
     sessionStorage.removeItem('admin_pin_verified');
     setIsPinVerified(false);
     setPin('');
-    await handleLogOut();
+    setRsvps([]);
   };
 
-  // Filtered RSVPs by guest name
+  // Filtered RSVPs by search text
   const filteredRSVPs = rsvps.filter(rsvp => 
     rsvp.guestName.toLowerCase().includes(searchQuery.toLowerCase()) ||
     rsvp.dietaryRestrictions.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -175,7 +126,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
   const attendingCount = rsvps.filter(r => r.attendingStatus === 'yes').length;
   const decliningCount = rsvps.filter(r => r.attendingStatus === 'no').length;
 
-  // Render Formatted Date Helper
+  // Format timestamp helper
   const formatDate = (timestamp: any) => {
     if (!timestamp) return 'No stamp';
     if (typeof timestamp.toDate === 'function') {
@@ -197,7 +148,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
       <div className="max-w-7xl w-full mx-auto flex items-center justify-between mb-12 py-4 border-b border-black/5 font-mono text-[9px] tracking-widest uppercase">
         <button 
           onClick={onBackToHome}
-          className="flex items-center gap-2 text-[#3A2220]/75 hover:text-[#3A2220] transition-colors cursor-pointer group"
+          className="flex items-center gap-2 text-[#3A2220]/75 hover:text-[#3A2220] transition-colors cursor-pointer group animate-fade-in"
           id="admin-back-btn"
         >
           <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
@@ -205,11 +156,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
         </button>
 
         <div className="flex items-center gap-4">
-          <span className="opacity-55">Guest Ledger System</span>
+          <span className="opacity-55 font-semibold tracking-widest">Guest Ledger System</span>
           {isPinVerified && (
             <button 
               onClick={handleFullReset}
-              className="flex items-center gap-1.5 text-red-700/80 hover:text-red-700 transition-all cursor-pointer border border-transparent hover:border-red-200 bg-red-50/10 px-3 py-1 rounded-full"
+              className="flex items-center gap-1.5 text-red-700/80 hover:text-red-700 transition-all cursor-pointer border border-transparent hover:border-red-200 bg-red-50/10 px-3 py-1 rounded-full font-semibold"
               id="admin-reset-session-btn"
             >
               <LogOut size={12} />
@@ -228,14 +179,15 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3 }}
             className="flex-1 flex items-center justify-center max-w-md w-full mx-auto"
           >
             <div className="bg-white border border-black/5 shadow-xl rounded-sm p-8 md:p-10 w-full text-center space-y-8">
-              <div className="mx-auto w-12 h-12 rounded-full bg-[#3A2220]/5 flex items-center justify-center text-[#3A2220]/70">
+              <div className="mx-auto w-12 h-12 rounded-full bg-[#3A2220]/5 flex items-center justify-center text-[#3A2220]/75">
                 <Lock size={20} />
               </div>
               <div className="space-y-2">
-                <h2 className="font-serif text-2xl tracking-normal text-[#3A2220] uppercase">ADMIN LEDGER</h2>
+                <h2 className="font-serif text-2xl tracking-normal text-[#3A2220] uppercase font-semibold">ADMIN LEDGER</h2>
                 <p className="font-mono text-[9px] tracking-wider text-neutral-400 mt-1 uppercase">Enter Host PIN to open session</p>
               </div>
 
@@ -261,7 +213,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full py-4 bg-[#3A2220] text-white font-mono text-xs tracking-[0.25em] hover:bg-neutral-800 transition-colors uppercase rounded-none cursor-pointer"
+                    className="w-full py-4 bg-[#3A2220] text-white font-mono text-xs tracking-[0.25em] hover:bg-neutral-800 transition-colors uppercase rounded-none cursor-pointer font-bold"
                   >
                     CONTINUE
                   </button>
@@ -271,88 +223,23 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
           </motion.div>
         )}
 
-        {/* Step 2: Google Authorization Guard (Zero Trust Implementation) */}
-        {isPinVerified && (isAuthLoading || !currentUser || !isAuthorizedEmail) && (
-          <motion.div 
-            key="auth-gate"
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            className="flex-1 flex items-center justify-center max-w-lg w-full mx-auto"
-          >
-            <div className="bg-white border border-black/5 shadow-xl rounded-sm p-8 md:p-12 w-full text-center space-y-8">
-              <div className="mx-auto w-12 h-12 rounded-full bg-amber-50 border border-amber-200/50 flex items-center justify-center text-amber-700">
-                <Unlock size={20} />
-              </div>
-              
-              <div className="space-y-3">
-                <h3 className="font-serif text-2xl tracking-normal text-[#3A2220] uppercase">SECURE OAUTH VERIFICATION</h3>
-                <p className="font-mono text-[8.5px] tracking-wider text-neutral-400 uppercase">Step 2 of the Zero-Trust Security Protocol</p>
-              </div>
-
-              <div className="bg-neutral-50 p-4 rounded text-left space-y-2 font-mono text-[9px] text-[#3A2220]/75 leading-relaxed uppercase tracking-wider">
-                <p>🔓 <span className="font-semibold text-[#3A2220]">PIN accepted successfully.</span></p>
-                <p>🔒 To safeguard guest lists and dietary profiles from scraping, unauthenticated public read operations are structurally blocked by Firestore rules.</p>
-                <p>👉 Please authenticate securely below using Google OAuth. Access requires authorization as the wedding owner account: <strong className="text-black">jminxiii@gmail.com</strong></p>
-              </div>
-
-              {isAuthLoading ? (
-                <div className="flex justify-center items-center gap-3 font-mono text-[10px] tracking-widest text-[#3A2220]/50 py-4 uppercase">
-                  <RefreshCw size={14} className="animate-spin" />
-                  <span>Configuring authorization...</span>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {currentUser && !isAuthorizedEmail && (
-                    <div className="border border-red-200 bg-red-50 p-3.5 text-center space-y-1 rounded">
-                      <p className="text-red-700 font-mono text-[9px] uppercase tracking-wider">AUTHORIZATION REJECTED</p>
-                      <p className="text-xs font-mono text-neutral-600 uppercase tracking-widest leading-loose">
-                        Logged in as: {currentUser.email}<br />
-                        This account is not authorized as the admin owner.
-                      </p>
-                    </div>
-                  )}
-
-                  <button
-                    onClick={handleGoogleSignIn}
-                    className="w-full py-4 border border-black/10 hover:border-black hover:bg-neutral-50 font-mono text-[10px] tracking-[0.25em] flex items-center justify-center gap-2 transition-all uppercase cursor-pointer"
-                  >
-                    <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24">
-                      <path fill="#EA4335" d="M12.24 10.285V14.4h6.887c-.275 1.564-1.88 4.6-6.887 4.6-4.33 0-7.86-3.582-7.86-8s3.53-8 7.86-8c2.46 0 4.105 1.028 5.044 1.929l3.245-3.129C18.243 1.83 15.483 1 12.24 1 6.033 1 1 6.033 1 12.24s5.033 11.24 11.24 11.24c6.478 0 10.793-4.537 10.793-10.985 0-.74-.08-1.3-.176-1.85H12.24z"/>
-                    </svg>
-                    AUTHORIZE WITH GOOGLE
-                  </button>
-
-                  {currentUser && (
-                    <button 
-                      onClick={handleLogOut}
-                      className="font-mono text-[8.5px] uppercase tracking-widest text-neutral-400 hover:text-[#3A2220] transition-colors bg-transparent border-none py-1 block mx-auto underline cursor-pointer"
-                    >
-                      Authenticate with another account
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-
-        {/* Step 3: Fully Authenticated Guest RSVPs Index Board */}
-        {isPinVerified && currentUser && isAuthorizedEmail && (
+        {/* Step 2: Fully Authenticated Guest RSVPs Index Board */}
+        {isPinVerified && (
           <motion.div 
             key="admin-ledger-dashboard"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
             className="max-w-7xl w-full mx-auto space-y-8 flex-1"
           >
             {/* Header portion */}
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 border-b border-black/5 pb-8">
               <div className="space-y-2">
-                <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-neutral-400 block">Wedding Suite Control Deck</span>
+                <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-neutral-400 block font-semibold">Wedding Suite Control Deck</span>
                 <h1 className="font-serif text-4xl md:text-5xl uppercase tracking-tight text-[#3A2220]">RSVP LEDGER BOARD</h1>
                 <p className="font-mono text-[9.5px] uppercase tracking-widest text-neutral-500/85">
-                  Logged in: <strong className="text-stone-800">{currentUser.email}</strong> • Real-time stream active
+                  Real-time database stream active
                 </p>
               </div>
 
@@ -360,7 +247,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                 <button
                   onClick={fetchRSVPs}
                   disabled={isDataLoading}
-                  className="px-5 py-2.5 border border-black/10 hover:border-black/30 font-mono text-[9px] tracking-widest uppercase flex items-center gap-2 rounded-full transition-colors bg-white disabled:opacity-55 cursor-pointer"
+                  className="px-5 py-2.5 border border-black/10 hover:border-black/30 font-mono text-[9px] tracking-widest uppercase flex items-center gap-2 rounded-full transition-colors bg-white disabled:opacity-55 cursor-pointer font-semibold"
                 >
                   <RefreshCw size={11} className={`${isDataLoading ? 'animate-spin' : ''}`} />
                   <span>{isDataLoading ? 'Refreshing' : 'Refresh Ledger'}</span>
@@ -368,7 +255,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                 
                 <button
                   onClick={handleFullReset}
-                  className="px-5 py-2.5 border border-red-200/50 hover:border-red-600 bg-red-50/20 hover:bg-red-50/50 text-red-700/80 hover:text-red-800 font-mono text-[9px] tracking-widest uppercase flex items-center gap-2 rounded-full transition-colors cursor-pointer"
+                  className="px-5 py-2.5 border border-red-200/50 hover:border-red-600 bg-red-50/20 hover:bg-red-50/50 text-red-700/80 hover:text-red-800 font-mono text-[9px] tracking-widest uppercase flex items-center gap-2 rounded-full transition-colors cursor-pointer font-semibold"
                 >
                   <EyeOff size={11} />
                   <span>Lock Deck</span>
@@ -384,7 +271,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                   <Users size={20} />
                 </div>
                 <div className="space-y-1">
-                  <p className="font-mono text-[8px] tracking-widest uppercase text-neutral-400">Total Submissions</p>
+                  <p className="font-mono text-[8px] tracking-widest uppercase text-neutral-400 font-semibold">Total Submissions</p>
                   <p className="font-serif text-3xl font-light leading-none">{totalSubmissions}</p>
                 </div>
               </div>
@@ -394,7 +281,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                   <CheckCircle size={20} />
                 </div>
                 <div className="space-y-1">
-                  <p className="font-mono text-[8px] tracking-widest uppercase text-neutral-400">Attending (Accepts)</p>
+                  <p className="font-mono text-[8px] tracking-widest uppercase text-neutral-400 font-semibold">Attending (Accepts)</p>
                   <p className="font-serif text-3xl font-light leading-none text-emerald-800">{attendingCount}</p>
                 </div>
               </div>
@@ -404,7 +291,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                   <XCircle size={20} />
                 </div>
                 <div className="space-y-1">
-                  <p className="font-mono text-[8px] tracking-widest uppercase text-neutral-400">Declined (Regrets)</p>
+                  <p className="font-mono text-[8px] tracking-widest uppercase text-neutral-400 font-semibold">Declined (Regrets)</p>
                   <p className="font-serif text-3xl font-light leading-none text-neutral-500">{decliningCount}</p>
                 </div>
               </div>
@@ -437,7 +324,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                   )}
                 </div>
 
-                <p className="font-mono text-[9px] tracking-widest uppercase text-neutral-400 whitespace-nowrap">
+                <p className="font-mono text-[9px] tracking-widest uppercase text-neutral-400 whitespace-nowrap font-semibold">
                   Showing {filteredRSVPs.length} of {totalSubmissions} records
                 </p>
               </div>
@@ -445,11 +332,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
               {/* Error overlay or Table core */}
               {fetchError ? (
                 <div className="p-16 text-center space-y-4">
-                  <p className="text-red-600 font-mono text-[10px] uppercase tracking-widest">Error Loading Ledger Data</p>
+                  <p className="text-red-600 font-mono text-[10px] uppercase tracking-widest font-semibold">Error Loading Ledger Data</p>
                   <p className="text-xs text-neutral-500 max-w-md mx-auto leading-relaxed">{fetchError}</p>
                   <button
                     onClick={fetchRSVPs}
-                    className="px-6 py-2 border border-black/10 hover:border-black font-mono text-[9px] tracking-widest uppercase rounded-full transition-all cursor-pointer"
+                    className="px-6 py-2 border border-black/10 hover:border-black font-mono text-[9px] tracking-widest uppercase rounded-full transition-all cursor-pointer font-semibold"
                   >
                     Retry Query
                   </button>
@@ -457,7 +344,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
               ) : isDataLoading && rsvps.length === 0 ? (
                 <div className="p-20 text-center flex flex-col items-center justify-center gap-4">
                   <RefreshCw size={24} className="animate-spin text-[#3A2220]/40" />
-                  <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-neutral-400">Querying Firestore tables...</p>
+                  <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-neutral-400 font-semibold">Querying Firestore tables...</p>
                 </div>
               ) : filteredRSVPs.length === 0 ? (
                 <div className="p-20 text-center space-y-4">
@@ -502,7 +389,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           </td>
                           <td className="py-5 px-6 text-neutral-600 uppercase text-[9px] leading-relaxed max-w-xs truncate" title={rsvp.dietaryRestrictions}>
                             {rsvp.dietaryRestrictions ? (
-                              <span className="text-stone-800 font-medium">{rsvp.dietaryRestrictions}</span>
+                              <span className="text-stone-800 font-semibold">{rsvp.dietaryRestrictions}</span>
                             ) : (
                               <span className="text-neutral-400 italic">None</span>
                             )}
@@ -514,7 +401,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                               <span className="text-neutral-400">-</span>
                             )}
                           </td>
-                          <td className="py-5 px-6 text-neutral-500 text-[8.5px] uppercase whitespace-nowrap">
+                          <td className="py-5 px-6 text-neutral-500 text-[8.5px] uppercase whitespace-nowrap font-semibold">
                             {formatDate(rsvp.createdAt)}
                           </td>
                         </tr>

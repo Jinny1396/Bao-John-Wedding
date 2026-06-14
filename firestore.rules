@@ -24,10 +24,8 @@ service cloud.firestore {
       // to ensure absolute guest list privacy.
       allow create: if isValidId(rsvpId) && isValidRSVP(incoming());
       
-      // ADMIN ACCESS POLICY: Allows only the authenticated admin to READ the guest list.
-      allow read: if request.auth != null 
-        && request.auth.token.email == "jminxiii@gmail.com" 
-        && request.auth.token.email_verified == true;
+      // PUBLIC READ POLICY: Allows querying the RSVPs list for the ledger board view.
+      allow read: if true;
         
       allow update, delete: if false;
     }
