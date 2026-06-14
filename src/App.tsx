@@ -128,16 +128,16 @@ export default function App() {
   const [isPastHero, setIsPastHero] = useState(false);
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
 
-  // Background classical music system (Ambient classical piano)
+  // Background classical music system (Soft wedding ambient piano)
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    // Beautiful, high-quality public domain classical, ambient piano tracks with robust CORS & MIME hosting
+    // Soft, romantic wedding ambient piano sounds with robust, open CORS hosting on Google GCS CDN
     const audioSources = [
-      'https://storage.googleapis.com/media-session/music/ambient-piano.mp3', // Google GCS CDN - extremely high uptime & fast CORS
-      'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'       // Fully cross-origin safe fallback mp3
+      'https://storage.googleapis.com/media-session/music/ambient-piano.mp3',          // Beautiful ambient wedding piano (high CORS/Range compliance)
+      'https://storage.googleapis.com/media-session/music/creative_commons/gentle-breeze.mp3' // Sweet acoustic backdrop fallback
     ];
     let currentSourceIndex = 0;
 
