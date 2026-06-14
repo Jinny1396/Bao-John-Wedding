@@ -350,14 +350,26 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
 
               {/* Error overlay or Table core */}
               {fetchError ? (
-                <div className="p-16 text-center space-y-4">
-                  <p className="text-red-600 font-mono text-[10px] uppercase tracking-widest font-semibold">Error Loading Ledger Data</p>
-                  <p className="text-xs text-neutral-500 max-w-md mx-auto leading-relaxed">{fetchError}</p>
+                <div className="p-12 text-center space-y-6 max-w-xl mx-auto">
+                  <div className="space-y-2">
+                    <p className="text-red-600 font-mono text-[10px] uppercase tracking-widest font-bold">Error Querying Firestore Collection</p>
+                    <p className="text-xs text-neutral-600 font-mono bg-red-50/50 p-4 border border-red-100/50 rounded break-all leading-relaxed whitespace-pre-wrap">
+                      {fetchError}
+                    </p>
+                  </div>
+                  <div className="space-y-2 font-mono text-[8px] uppercase tracking-wider text-neutral-400">
+                    <p>Possible causes:</p>
+                    <ul className="list-disc list-inside text-left space-y-1 max-w-sm mx-auto">
+                      <li>Offline or connection timeout to the Firebase emulator or service</li>
+                      <li>Firestore rules are being deployed or took a few seconds to apply</li>
+                      <li>Collection name mismatch (expected "rsvps")</li>
+                    </ul>
+                  </div>
                   <button
                     onClick={fetchRSVPs}
-                    className="px-6 py-2 border border-black/10 hover:border-black font-mono text-[9px] tracking-widest uppercase rounded-full transition-all cursor-pointer font-semibold"
+                    className="px-6 py-2.5 bg-[#3A2220] hover:bg-neutral-800 text-white font-mono text-[9px] tracking-widest uppercase rounded-full transition-all cursor-pointer font-bold"
                   >
-                    Retry Query
+                    Retry Fetch Query
                   </button>
                 </div>
               ) : isDataLoading && rsvps.length === 0 ? (
