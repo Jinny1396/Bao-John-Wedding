@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { RSVPForm } from './components/RSVPForm';
 import { AdminPanel } from './components/AdminPanel';
+import { VolumeX, Volume2, Music } from 'lucide-react';
 
 // Reusable elegant Oval Monogram SVG Component
 const OvalMonogram = ({ className = 'w-16 h-16' }: { className?: string }) => (
@@ -126,6 +127,95 @@ export default function App() {
   const [hoveredSidebarIndex, setHoveredSidebarIndex] = useState<number | null>(null);
   const [isPastHero, setIsPastHero] = useState(false);
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
+
+  // Background classical music system (Ambient classical piano)
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    // Beautiful, high-quality public domain classical, ambient piano tracks with robust CORS & MIME hosting
+    const audioSources = [
+      'https://storage.googleapis.com/media-session/music/ambient-piano.mp3', // Google GCS CDN - extremely high uptime & fast CORS
+      'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'       // Fully cross-origin safe fallback mp3
+    ];
+    let currentSourceIndex = 0;
+
+    const audio = new Audio(audioSources[currentSourceIndex]);
+    audio.loop = true;
+    audio.volume = 0.25; // Gentle, elegant background volume
+    audioRef.current = audio;
+
+    let played = false;
+
+    const loadNextSourceAndPlay = () => {
+      if (currentSourceIndex < audioSources.length - 1) {
+        currentSourceIndex++;
+        console.log(`Switching audio source to robust alternative: ${audioSources[currentSourceIndex]}`);
+        audio.src = audioSources[currentSourceIndex];
+        audio.load();
+        if (played) {
+          audio.play()
+            .then(() => setIsMusicPlaying(true))
+            .catch(err => console.log('Robust alternative playback deferred:', err));
+        }
+      }
+    };
+
+    // Safely capture any network or browser compatibility decode errors on source URLs
+    audio.onerror = () => {
+      console.warn(`Audio loading or decoding failed for source: ${audio.src}`);
+      loadNextSourceAndPlay();
+    };
+
+    const attemptPlay = () => {
+      if (played) return;
+      audio.play()
+        .then(() => {
+          setIsMusicPlaying(true);
+          setHasInteracted(true);
+          played = true;
+          detachListeners();
+        })
+        .catch((err) => {
+          console.log('Autoplay deferred, waiting for user scroll/click/tap interaction:', err);
+        });
+    };
+
+    // Attempt direct load autoplay immediately
+    attemptPlay();
+
+    const triggerEvents = ['click', 'touchstart', 'scroll', 'mousedown', 'keydown'];
+    
+    const detachListeners = () => {
+      triggerEvents.forEach(evt => {
+        document.removeEventListener(evt, attemptPlay);
+      });
+    };
+
+    triggerEvents.forEach(evt => {
+      document.addEventListener(evt, attemptPlay, { passive: true });
+    });
+
+    return () => {
+      detachListeners();
+      audio.pause();
+      audioRef.current = null;
+    };
+  }, []);
+
+  const handleToggleMusic = () => {
+    if (!audioRef.current) return;
+    setHasInteracted(true); // Dismisses tooltip on manual click
+    if (isMusicPlaying) {
+      audioRef.current.pause();
+      setIsMusicPlaying(false);
+    } else {
+      audioRef.current.play()
+        .then(() => setIsMusicPlaying(true))
+        .catch(err => console.error('Audio play failed:', err));
+    }
+  };
 
   useEffect(() => {
     const handleLocationChange = () => {
@@ -768,6 +858,49 @@ export default function App() {
           </button>
         </div>
       </footer>
+
+      {/* Elegant Ambient Wedding Music Control (Floating bottom-right) */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-1.5 pointer-events-auto">
+        <AnimatePresence>
+          {!hasInteracted && (
+            <motion.div
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
+              className="bg-[#3A2220] text-[#FAF9F6] text-[8px] font-mono tracking-[0.2em] uppercase py-1.5 px-3 shadow-lg border border-white/5 rounded-sm pointer-events-none mb-1 flex items-center gap-2"
+            >
+              <div className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+              </div>
+              <span>♫ TURN SOUND ON FOR AMBIENCE</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <button
+          onClick={handleToggleMusic}
+          id="music-toggle-btn"
+          className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all duration-500 shadow-md hover:scale-105 active:scale-95 cursor-pointer relative ${
+            isMusicPlaying 
+              ? 'bg-[#3A2220] border-[#3A2220] text-[#FAF9F6]' 
+              : 'bg-white border-black/10 text-[#3A2220] hover:border-[#3A2220]'
+          }`}
+          title={isMusicPlaying ? "Mute Background Music" : "Play Wedding Song"}
+        >
+          {isMusicPlaying ? (
+            <div className="flex gap-[2.2px] items-end justify-center h-4 w-4 relative bottom-[1px]">
+              <span className="w-[1.8px] h-3.5 bg-current animate-audio-bounce-1" />
+              <span className="w-[1.8px] h-4.5 bg-current animate-audio-bounce-2" />
+              <span className="w-[1.8px] h-2 bg-current animate-audio-bounce-3" />
+              <span className="w-[1.8px] h-4 bg-current animate-audio-bounce-4" />
+            </div>
+          ) : (
+            <VolumeX size={16} strokeWidth={1.8} />
+          )}
+        </button>
+      </div>
     </div>
   );
 }
