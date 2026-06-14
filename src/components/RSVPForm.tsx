@@ -1,8 +1,12 @@
 import { useState, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db, handleFirestoreError, OperationType } from '../firebase';
 
 export const RSVPForm = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     attending: '',
     firstName: '',
@@ -12,9 +16,40 @@ export const RSVPForm = () => {
     dietary: '',
   });
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setIsSubmitted(true);
+    if (!formData.attending) {
+      setSubmitError('Please let us know if you are able to join us.');
+      return;
+    }
+
+    setIsLoading(true);
+    setSubmitError(null);
+
+    const rsvpData = {
+      attending: formData.attending,
+      firstName: formData.firstName.trim(),
+      lastName: formData.lastName.trim(),
+      email: formData.email.trim(),
+      attendees: parseInt(formData.attendees, 10) || 1,
+      dietary: formData.dietary.trim(),
+      createdAt: serverTimestamp(),
+    };
+
+    try {
+      await addDoc(collection(db, 'rsvps'), rsvpData);
+      setIsSubmitted(true);
+    } catch (err) {
+      console.error('Error saving RSVP to Firestore:', err);
+      setSubmitError('Unable to send RSVP. Please try again.');
+      try {
+        handleFirestoreError(err, OperationType.CREATE, 'rsvps');
+      } catch (formattedError) {
+        // Log handled error format
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -115,12 +150,23 @@ export const RSVPForm = () => {
               />
             </div>
 
+            {submitError && (
+              <div className="text-red-500 font-sans normal-case text-xs text-center border border-red-200/50 bg-red-50/50 p-3 rounded-md">
+                {submitError}
+              </div>
+            )}
+
             <div className="pt-8 text-center">
               <button
                 type="submit"
-                className="px-12 py-4 border border-ink text-ink hover:bg-ink hover:text-white transition-all duration-500 uppercase tracking-[0.3em]"
+                disabled={isLoading}
+                className={`px-12 py-4 border border-ink text-ink transition-all duration-500 uppercase tracking-[0.3em] ${
+                  isLoading 
+                    ? 'opacity-55 cursor-not-allowed' 
+                    : 'hover:bg-ink hover:text-white cursor-pointer'
+                }`}
               >
-                Send RSVP
+                {isLoading ? 'Sending...' : 'Send RSVP'}
               </button>
             </div>
           </motion.form>

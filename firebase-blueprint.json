@@ -1,0 +1,48 @@
+{
+  "entities": {
+    "rsvp": {
+      "title": "RSVP",
+      "description": "Information collected from wedding RSVP submissions",
+      "type": "object",
+      "properties": {
+        "attending": {
+          "type": "string",
+          "enum": ["yes", "no"],
+          "description": "Attendance choice"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "First name of the attendee"
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Last name of the attendee"
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the attendee"
+        },
+        "attendees": {
+          "type": "integer",
+          "description": "Number of people attending in the party"
+        },
+        "dietary": {
+          "type": "string",
+          "description": "Dietary restrictions or notes"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server-side creation timestamp"
+        }
+      },
+      "required": ["attending", "firstName", "lastName", "email", "attendees"]
+    }
+  },
+  "firestore": {
+    "rsvps/{rsvpId}": {
+      "schema": "rsvp",
+      "description": "Collection of RSVP submissions"
+    }
+  }
+}

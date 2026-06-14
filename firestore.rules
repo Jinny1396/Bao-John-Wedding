@@ -1,0 +1,48 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 1. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    // Rule block for rsvps collection
+    match /rsvps/{rsvpId} {
+      allow create: if isValidId(rsvpId) && isValidRSVP(incoming());
+      allow read, update, delete: if false;
+    }
+
+    // Validation helper matching the schema defined in firebase-blueprint.json
+    function isValidRSVP(data) {
+      return data.keys().hasAll(['attending', 'firstName', 'lastName', 'email', 'attendees', 'dietary', 'createdAt'])
+        && data.keys().size() == 7
+        && data.attending is string
+        && (data.attending == 'yes' || data.attending == 'no')
+        && data.firstName is string
+        && data.firstName.size() > 0
+        && data.firstName.size() <= 128
+        && data.lastName is string
+        && data.lastName.size() > 0
+        && data.lastName.size() <= 128
+        && data.email is string
+        && data.email.size() > 0
+        && data.email.size() <= 256
+        && data.attendees is int
+        && data.attendees >= 1
+        && data.attendees <= 20
+        && data.dietary is string
+        && data.dietary.size() <= 1000
+        && data.createdAt == request.time;
+    }
+  }
+}
