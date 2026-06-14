@@ -71,7 +71,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
     setIsDataLoading(true);
     setFetchError(null);
     try {
-      const rsvpQuery = query(collection(db, 'rsvps'), orderBy('createdAt', 'desc'));
+      // Query without any orderBy, to be 100% index-free and bulletproof
+      const rsvpQuery = query(collection(db, 'rsvps'));
       const querySnapshot = await getDocs(rsvpQuery);
       const data: RSVPEntity[] = [];
       querySnapshot.forEach((docSnap) => {
@@ -85,15 +86,33 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
           createdAt: docData.createdAt
         });
       });
+
+      // Sort in-memory to prevent any index errors
+      data.sort((a, b) => {
+        const getVal = (val: any) => {
+          if (!val) return 0;
+          if (typeof val.seconds === 'number') return val.seconds;
+          if (typeof val.getTime === 'function') return val.getTime() / 1000;
+          if (val instanceof Date) return val.getTime() / 1000;
+          return Number(val) || 0;
+        };
+        return getVal(b.createdAt) - getVal(a.createdAt);
+      });
+
       setRsvps(data);
     } catch (err: any) {
       console.error('Error fetching RSVPs:', err);
-      setFetchError(err?.message || 'Permission denied or connection issue.');
-      try {
-        handleFirestoreError(err, OperationType.LIST, 'rsvps');
-      } catch (e) {
-        // Log formatted error
+      let errMsg = err?.message || 'Permission denied or connection issue.';
+      // Clean up stringified Firestore error if present
+      if (errMsg.startsWith('{') && errMsg.endsWith('}')) {
+        try {
+          const parsed = JSON.parse(errMsg);
+          if (parsed.error) errMsg = parsed.error;
+        } catch (e) {
+          // ignore
+        }
       }
+      setFetchError(errMsg);
     } finally {
       setIsDataLoading(false);
     }
