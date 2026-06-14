@@ -143,10 +143,6 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
-  if (currentPath === '/admin') {
-    return <AdminPanel onBackToHome={() => navigateTo('/')} />;
-  }
-
   useEffect(() => {
     const handleScroll = () => {
       const hero = document.getElementById("hero");
@@ -219,6 +215,12 @@ export default function App() {
       setLightboxIndex((lightboxIndex - 1 + galleryImages.length) % galleryImages.length);
     }
   };
+
+  const isAdminPath = currentPath === '/admin' || currentPath === '/admin/' || window.location.hash === '#/admin' || window.location.search.includes('admin=true');
+
+  if (isAdminPath) {
+    return <AdminPanel onBackToHome={() => navigateTo('/')} />;
+  }
 
   return (
     <div className="min-h-screen bg-bg text-ink selection:bg-forest/10 selection:text-ink font-sans transition-colors duration-500 overflow-x-hidden relative">
