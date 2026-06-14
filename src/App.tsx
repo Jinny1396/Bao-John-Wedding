@@ -121,6 +121,155 @@ const galleryImages = [
   }
 ];
 
+// Ambient wedding piano synthesizer for a zero-failure client-side audio experience
+class AmbientPianoSynth {
+  private ctx: AudioContext | null = null;
+  private isPlaying = false;
+  private timerId: any = null;
+  private nextNoteTime = 0;
+  private noteIndex = 0;
+  private filterNode: BiquadFilterNode | null = null;
+  private delayNode: DelayNode | null = null;
+  private delayFeedback: GainNode | null = null;
+  private delayGain: GainNode | null = null;
+  private masterGain: GainNode | null = null;
+
+  // Romantic chord progression (Canon in D / Wedding ambient theme)
+  private chords = [
+    [130.81, 196.00, 329.63, 392.00, 523.25], // C Major
+    [146.83, 196.00, 293.66, 392.00, 587.33], // G Major
+    [110.00, 164.81, 261.63, 329.63, 523.25], // A Minor
+    [164.81, 246.94, 329.63, 392.00, 493.88], // E Minor
+    [174.61, 220.00, 349.23, 440.00, 523.25], // F Major
+    [130.81, 196.00, 261.63, 329.63, 392.00], // C Major fallback
+    [174.61, 220.00, 349.23, 440.00, 523.25], // F Major
+    [146.83, 196.00, 293.66, 392.00, 493.88]  // G Major
+  ];
+
+  constructor() {}
+
+  public start() {
+    if (this.isPlaying) return;
+    
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContextClass) return;
+    
+    try {
+      this.ctx = new AudioContextClass();
+      this.isPlaying = true;
+      this.noteIndex = 0;
+      this.nextNoteTime = this.ctx.currentTime;
+
+      this.masterGain = this.ctx.createGain();
+      this.masterGain.gain.setValueAtTime(0.01, this.ctx.currentTime);
+      this.masterGain.gain.linearRampToValueAtTime(0.18, this.ctx.currentTime + 1.0);
+      this.masterGain.connect(this.ctx.destination);
+
+      this.filterNode = this.ctx.createBiquadFilter();
+      this.filterNode.type = 'lowpass';
+      this.filterNode.frequency.setValueAtTime(950, this.ctx.currentTime);
+      this.filterNode.connect(this.masterGain);
+
+      this.delayNode = this.ctx.createDelay(2.0);
+      this.delayNode.delayTime.setValueAtTime(0.65, this.ctx.currentTime);
+      
+      this.delayFeedback = this.ctx.createGain();
+      this.delayFeedback.gain.setValueAtTime(0.42, this.ctx.currentTime);
+
+      this.delayGain = this.ctx.createGain();
+      this.delayGain.gain.setValueAtTime(0.35, this.ctx.currentTime);
+
+      this.filterNode.connect(this.delayNode);
+      this.delayNode.connect(this.delayFeedback);
+      this.delayFeedback.connect(this.delayNode);
+
+      this.delayNode.connect(this.delayGain);
+      this.delayGain.connect(this.masterGain);
+
+      this.scheduler();
+    } catch (e) {
+      console.error('Failed to start Web Audio Synth:', e);
+    }
+  }
+
+  public stop() {
+    this.isPlaying = false;
+    if (this.timerId) {
+      clearTimeout(this.timerId);
+      this.timerId = null;
+    }
+    if (this.masterGain && this.ctx) {
+      try {
+        this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, this.ctx.currentTime);
+        this.masterGain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.5);
+        const ctxCloser = this.ctx;
+        setTimeout(() => {
+          ctxCloser.close().catch(() => {});
+        }, 550);
+      } catch (e) {}
+    }
+    this.ctx = null;
+  }
+
+  private scheduler() {
+    if (!this.isPlaying || !this.ctx) return;
+
+    try {
+      while (this.nextNoteTime < this.ctx.currentTime + 0.1) {
+        this.scheduleNote(this.noteIndex, this.nextNoteTime);
+        this.advanceNote();
+      }
+      this.timerId = setTimeout(() => this.scheduler(), 25);
+    } catch (e) {
+      console.warn('Synth scheduler error:', e);
+    }
+  }
+
+  private advanceNote() {
+    this.nextNoteTime += 0.42;
+    this.noteIndex++;
+  }
+
+  private scheduleNote(index: number, time: number) {
+    if (!this.ctx || !this.filterNode) return;
+
+    const chordIndex = Math.floor(index / 8) % this.chords.length;
+    const chord = this.chords[chordIndex];
+
+    const pattern = [0, 2, 4, 3, 1, 3, 2, 4];
+    const patternStep = index % pattern.length;
+    const notePos = pattern[patternStep];
+    const baseFreq = chord[notePos];
+    
+    if (!baseFreq) return;
+
+    const isBaseBeat = patternStep === 0;
+    const frequency = isBaseBeat ? baseFreq / 2 : baseFreq;
+
+    const osc = this.ctx.createOscillator();
+    const voiceGain = this.ctx.createGain();
+
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(frequency, time);
+
+    const voiceFilter = this.ctx.createBiquadFilter();
+    voiceFilter.type = 'lowpass';
+    voiceFilter.frequency.setValueAtTime(1200, time);
+    voiceFilter.frequency.exponentialRampToValueAtTime(320, time + 2.0);
+
+    voiceGain.gain.setValueAtTime(0, time);
+    voiceGain.gain.linearRampToValueAtTime(isBaseBeat ? 0.28 : 0.16, time + 0.05);
+    voiceGain.gain.exponentialRampToValueAtTime(0.001, time + 2.5);
+
+    osc.connect(voiceFilter);
+    voiceFilter.connect(voiceGain);
+    voiceGain.connect(this.filterNode);
+
+    osc.start(time);
+    osc.stop(time + 2.5);
+  }
+}
+
 export default function App() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -132,12 +281,29 @@ export default function App() {
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const synthRef = useRef<AmbientPianoSynth | null>(null);
+  const isUsingSynthRef = useRef(false);
+
+  const switchToSynthFallback = () => {
+    isUsingSynthRef.current = true;
+    if (audioRef.current) {
+      try {
+        audioRef.current.pause();
+      } catch (e) {}
+    }
+    if (!synthRef.current) {
+      synthRef.current = new AmbientPianoSynth();
+    }
+    synthRef.current.start();
+    setIsMusicPlaying(true);
+  };
 
   useEffect(() => {
-    // Soft, romantic wedding ambient piano sounds with robust, open CORS hosting on Google GCS CDN
+    // Beautiful, romantic wedding track requested by user with high-uptime fallback sources
     const audioSources = [
-      'https://storage.googleapis.com/media-session/music/ambient-piano.mp3',          // Beautiful ambient wedding piano (high CORS/Range compliance)
-      'https://storage.googleapis.com/media-session/music/creative_commons/gentle-breeze.mp3' // Sweet acoustic backdrop fallback
+      'https://freetouse.com/music/pufino/harmony', // Pufino - Harmony (requested by user)
+      'https://upload.wikimedia.org/wikipedia/commons/d/df/Fr%C3%A9d%C3%A9ric_Chopin_-_Nocturne_Op._9_No._2_in_E-flat_major_-_performance_by_Martha_Goldstein.mp3', // Lovely Chopin Nocturne Op. 9 No. 2 fallback
+      'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' // High-reliability fallback MP3
     ];
     let currentSourceIndex = 0;
 
@@ -157,8 +323,14 @@ export default function App() {
         if (played) {
           audio.play()
             .then(() => setIsMusicPlaying(true))
-            .catch(err => console.log('Robust alternative playback deferred:', err));
+            .catch(err => {
+              console.log('Robust alternative playback deferred, shifting to synth:', err);
+              switchToSynthFallback();
+            });
         }
+      } else {
+        console.warn('All streaming sources exhausted, activating ambient synth fallback.');
+        switchToSynthFallback();
       }
     };
 
@@ -170,6 +342,18 @@ export default function App() {
 
     const attemptPlay = () => {
       if (played) return;
+      if (isUsingSynthRef.current) {
+        if (!synthRef.current) {
+          synthRef.current = new AmbientPianoSynth();
+        }
+        synthRef.current.start();
+        setIsMusicPlaying(true);
+        setHasInteracted(true);
+        played = true;
+        detachListeners();
+        return;
+      }
+
       audio.play()
         .then(() => {
           setIsMusicPlaying(true);
@@ -199,21 +383,44 @@ export default function App() {
 
     return () => {
       detachListeners();
-      audio.pause();
+      if (audio) {
+        audio.pause();
+      }
+      if (synthRef.current) {
+        synthRef.current.stop();
+      }
       audioRef.current = null;
     };
   }, []);
 
   const handleToggleMusic = () => {
-    if (!audioRef.current) return;
     setHasInteracted(true); // Dismisses tooltip on manual click
     if (isMusicPlaying) {
-      audioRef.current.pause();
+      if (isUsingSynthRef.current) {
+        if (synthRef.current) {
+          synthRef.current.stop();
+        }
+      } else if (audioRef.current) {
+        audioRef.current.pause();
+      }
       setIsMusicPlaying(false);
     } else {
-      audioRef.current.play()
-        .then(() => setIsMusicPlaying(true))
-        .catch(err => console.error('Audio play failed:', err));
+      if (isUsingSynthRef.current) {
+        if (!synthRef.current) {
+          synthRef.current = new AmbientPianoSynth();
+        }
+        synthRef.current.start();
+        setIsMusicPlaying(true);
+      } else if (audioRef.current) {
+        audioRef.current.play()
+          .then(() => setIsMusicPlaying(true))
+          .catch(err => {
+            console.error('Audio play failed, switching to synthesizer fallback:', err);
+            switchToSynthFallback();
+          });
+      } else {
+        switchToSynthFallback();
+      }
     }
   };
 
