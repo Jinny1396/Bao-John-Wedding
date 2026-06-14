@@ -16,32 +16,29 @@ service cloud.firestore {
       return request.resource.data;
     }
 
-    // Rule block for rsvps collection
+    // Rule block for rsvps collection – dynamic document ID validation during create
     match /rsvps/{rsvpId} {
+      // PUBLIC ACCESS POLICY: Allows ANY unauthenticated public user to WRITE (create) documents
+      // so wedding guests can submit their RSVPs.
+      // But strictly blocks them from READING, updating, or deleting existing documents
+      // to ensure absolute guest list privacy.
       allow create: if isValidId(rsvpId) && isValidRSVP(incoming());
       allow read, update, delete: if false;
     }
 
     // Validation helper matching the schema defined in firebase-blueprint.json
     function isValidRSVP(data) {
-      return data.keys().hasAll(['attending', 'firstName', 'lastName', 'email', 'attendees', 'dietary', 'createdAt'])
-        && data.keys().size() == 7
-        && data.attending is string
-        && (data.attending == 'yes' || data.attending == 'no')
-        && data.firstName is string
-        && data.firstName.size() > 0
-        && data.firstName.size() <= 128
-        && data.lastName is string
-        && data.lastName.size() > 0
-        && data.lastName.size() <= 128
-        && data.email is string
-        && data.email.size() > 0
-        && data.email.size() <= 256
-        && data.attendees is int
-        && data.attendees >= 1
-        && data.attendees <= 20
-        && data.dietary is string
-        && data.dietary.size() <= 1000
+      return data.keys().hasAll(['guestName', 'attendingStatus', 'dietaryRestrictions', 'coupleNote', 'createdAt'])
+        && data.keys().size() == 5
+        && data.guestName is string
+        && data.guestName.size() > 0
+        && data.guestName.size() <= 256
+        && data.attendingStatus is string
+        && (data.attendingStatus == 'yes' || data.attendingStatus == 'no')
+        && data.dietaryRestrictions is string
+        && data.dietaryRestrictions.size() <= 1000
+        && data.coupleNote is string
+        && data.coupleNote.size() <= 2000
         && data.createdAt == request.time;
     }
   }

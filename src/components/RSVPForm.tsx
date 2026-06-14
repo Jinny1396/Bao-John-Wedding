@@ -8,18 +8,20 @@ export const RSVPForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    attending: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    attendees: '',
-    dietary: '',
+    guestName: '',
+    attendingStatus: '',
+    dietaryRestrictions: '',
+    coupleNote: '',
   });
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!formData.attending) {
+    if (!formData.attendingStatus) {
       setSubmitError('Please let us know if you are able to join us.');
+      return;
+    }
+    if (!formData.guestName.trim()) {
+      setSubmitError('Please provide your name.');
       return;
     }
 
@@ -27,12 +29,10 @@ export const RSVPForm = () => {
     setSubmitError(null);
 
     const rsvpData = {
-      attending: formData.attending,
-      firstName: formData.firstName.trim(),
-      lastName: formData.lastName.trim(),
-      email: formData.email.trim(),
-      attendees: parseInt(formData.attendees, 10) || 1,
-      dietary: formData.dietary.trim(),
+      guestName: formData.guestName.trim(),
+      attendingStatus: formData.attendingStatus,
+      dietaryRestrictions: formData.dietaryRestrictions.trim(),
+      coupleNote: formData.coupleNote.trim(),
       createdAt: serverTimestamp(),
     };
 
@@ -75,9 +75,9 @@ export const RSVPForm = () => {
                   <button
                     key={option.id}
                     type="button"
-                    onClick={() => setFormData({ ...formData, attending: option.id })}
+                    onClick={() => setFormData({ ...formData, attendingStatus: option.id })}
                     className={`px-6 py-2 border rounded-full transition-all ${
-                      formData.attending === option.id 
+                      formData.attendingStatus === option.id 
                         ? 'bg-ink text-white border-ink' 
                         : 'border-black/10 hover:border-black/30'
                     }`}
@@ -88,54 +88,16 @@ export const RSVPForm = () => {
               </div>
             </div>
 
-            {/* Name Fields */}
+            {/* Guest Name Field */}
             <div className="space-y-4">
-              <p className="text-muted">Name <span className="lowercase opacity-50">(required)</span></p>
-              <div className="grid grid-cols-2 gap-8">
-                <div className="space-y-2">
-                  <input
-                    required
-                    type="text"
-                    className="w-full bg-transparent border-b border-black/10 py-2 focus:border-ink outline-none transition-colors"
-                    value={formData.firstName}
-                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                  />
-                  <p className="text-[8px] opacity-40">First Name</p>
-                </div>
-                <div className="space-y-2">
-                  <input
-                    required
-                    type="text"
-                    className="w-full bg-transparent border-b border-black/10 py-2 focus:border-ink outline-none transition-colors"
-                    value={formData.lastName}
-                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                  />
-                  <p className="text-[8px] opacity-40">Last Name</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Email Field */}
-            <div className="space-y-4">
-              <p className="text-muted">Email <span className="lowercase opacity-50">(required)</span></p>
+              <p className="text-muted">Guest Name <span className="lowercase opacity-50">(required)</span></p>
               <input
                 required
-                type="email"
+                type="text"
+                placeholder="YOUR FULL NAME"
                 className="w-full bg-transparent border-b border-black/10 py-2 focus:border-ink outline-none transition-colors"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              />
-            </div>
-
-            {/* Attendees Field */}
-            <div className="space-y-4">
-              <p className="text-muted">Number of attendees <span className="lowercase opacity-50">(required)</span></p>
-              <input
-                required
-                type="number"
-                className="w-full bg-transparent border-b border-black/10 py-2 focus:border-ink outline-none transition-colors"
-                value={formData.attendees}
-                onChange={(e) => setFormData({ ...formData, attendees: e.target.value })}
+                value={formData.guestName}
+                onChange={(e) => setFormData({ ...formData, guestName: e.target.value })}
               />
             </div>
 
@@ -144,9 +106,22 @@ export const RSVPForm = () => {
               <p className="text-muted">Do you have any dietary restrictions?</p>
               <textarea
                 rows={2}
+                placeholder="NONE OR SPECIFY E.G., GLUTEN-FREE, VEGAN"
                 className="w-full bg-transparent border-b border-black/10 py-2 focus:border-ink outline-none transition-colors resize-none"
-                value={formData.dietary}
-                onChange={(e) => setFormData({ ...formData, dietary: e.target.value })}
+                value={formData.dietaryRestrictions}
+                onChange={(e) => setFormData({ ...formData, dietaryRestrictions: e.target.value })}
+              />
+            </div>
+
+            {/* Couple Note */}
+            <div className="space-y-4">
+              <p className="text-muted">Leave a note for the couple</p>
+              <textarea
+                rows={3}
+                placeholder="CONGRATULATORY MESSAGE OR NOTE"
+                className="w-full bg-transparent border-b border-black/10 py-2 focus:border-ink outline-none transition-colors resize-none"
+                value={formData.coupleNote}
+                onChange={(e) => setFormData({ ...formData, coupleNote: e.target.value })}
               />
             </div>
 
