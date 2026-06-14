@@ -41,7 +41,8 @@ export const RSVPForm = () => {
       setIsSubmitted(true);
     } catch (err) {
       console.error('Error saving RSVP to Firestore:', err);
-      setSubmitError('Unable to send RSVP. Please try again.');
+      const errMsg = err instanceof Error ? err.message : String(err);
+      setSubmitError(`Unable to send RSVP: ${errMsg}`);
       try {
         handleFirestoreError(err, OperationType.CREATE, 'rsvps');
       } catch (formattedError) {
