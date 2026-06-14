@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { RSVPForm } from './components/RSVPForm';
+import { AdminPanel } from './components/AdminPanel';
 
 // Reusable elegant Oval Monogram SVG Component
 const OvalMonogram = ({ className = 'w-16 h-16' }: { className?: string }) => (
@@ -124,6 +125,27 @@ export default function App() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [hoveredSidebarIndex, setHoveredSidebarIndex] = useState<number | null>(null);
   const [isPastHero, setIsPastHero] = useState(false);
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname);
+    };
+    window.addEventListener('popstate', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+    };
+  }, []);
+
+  const navigateTo = (path: string) => {
+    window.history.pushState({}, '', path);
+    setCurrentPath(path);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  };
+
+  if (currentPath === '/admin') {
+    return <AdminPanel onBackToHome={() => navigateTo('/')} />;
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -732,8 +754,17 @@ export default function App() {
       </section>
 
       {/* Footer */}
-      <footer className="max-w-6xl mx-auto py-24 border-t border-black/5 text-center font-mono text-[8px] tracking-[0.4em] uppercase text-muted px-6">
+      <footer className="max-w-6xl mx-auto py-24 border-t border-black/5 text-center font-mono text-[8px] tracking-[0.4em] uppercase text-muted px-6 space-y-4">
         <p>&copy; 2026 Sarah Williams & Michael Alderson. All rights reserved.</p>
+        <div className="flex justify-center pt-2">
+          <button 
+            onClick={() => navigateTo('/admin')}
+            className="opacity-20 hover:opacity-100 transition-opacity duration-300 text-[7px] tracking-[0.5em] focus:outline-none cursor-pointer"
+            id="secret-admin-btn"
+          >
+            • ADMIN SUITE •
+          </button>
+        </div>
       </footer>
     </div>
   );

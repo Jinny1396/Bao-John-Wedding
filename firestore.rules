@@ -23,7 +23,13 @@ service cloud.firestore {
       // But strictly blocks them from READING, updating, or deleting existing documents
       // to ensure absolute guest list privacy.
       allow create: if isValidId(rsvpId) && isValidRSVP(incoming());
-      allow read, update, delete: if false;
+      
+      // ADMIN ACCESS POLICY: Allows only the authenticated admin to READ the guest list.
+      allow read: if request.auth != null 
+        && request.auth.token.email == "jminxiii@gmail.com" 
+        && request.auth.token.email_verified == true;
+        
+      allow update, delete: if false;
     }
 
     // Validation helper matching the schema defined in firebase-blueprint.json
