@@ -32,6 +32,13 @@ interface RSVPEntity {
   createdAt?: any;
 }
 
+interface GuestNoteEntity {
+  id: string;
+  guestName: string;
+  noteText: string;
+  createdAt?: any;
+}
+
 interface AdminPanelProps {
   onBackToHome: () => void;
 }
@@ -42,6 +49,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
   const [pinError, setPinError] = useState('');
   
   const [rsvps, setRsvps] = useState<RSVPEntity[]>([]);
+  const [notes, setNotes] = useState<GuestNoteEntity[]>([]);
+  const [activeTab, setActiveTab] = useState<'rsvps' | 'notes'>('rsvps');
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -66,18 +75,24 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
     }
   }, []);
 
-  // Load RSVPs from Firestore
+  // Load RSVPs and Guest Notes from Firestore
   const fetchRSVPs = async () => {
     setIsDataLoading(true);
     setFetchError(null);
     try {
-      // Query without any orderBy, to be 100% index-free and bulletproof
+      // Parallel fetches for RSVP lists and Guest Notesboards
       const rsvpQuery = query(collection(db, 'rsvps'));
-      const querySnapshot = await getDocs(rsvpQuery);
-      const data: RSVPEntity[] = [];
-      querySnapshot.forEach((docSnap) => {
+      const notesQuery = query(collection(db, 'guestNotes'));
+      
+      const [rsvpSnapshot, notesSnapshot] = await Promise.all([
+        getDocs(rsvpQuery),
+        getDocs(notesQuery)
+      ]);
+
+      const rsvpData: RSVPEntity[] = [];
+      rsvpSnapshot.forEach((docSnap) => {
         const docData = docSnap.data();
-        data.push({
+        rsvpData.push({
           id: docSnap.id,
           guestName: docData.guestName || '',
           attendingStatus: docData.attendingStatus || 'no',
@@ -87,21 +102,33 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
         });
       });
 
-      // Sort in-memory to prevent any index errors
-      data.sort((a, b) => {
-        const getVal = (val: any) => {
-          if (!val) return 0;
-          if (typeof val.seconds === 'number') return val.seconds;
-          if (typeof val.getTime === 'function') return val.getTime() / 1000;
-          if (val instanceof Date) return val.getTime() / 1000;
-          return Number(val) || 0;
-        };
-        return getVal(b.createdAt) - getVal(a.createdAt);
+      const notesData: GuestNoteEntity[] = [];
+      notesSnapshot.forEach((docSnap) => {
+        const docData = docSnap.data();
+        notesData.push({
+          id: docSnap.id,
+          guestName: docData.guestName || 'Anonymous',
+          noteText: docData.noteText || '',
+          createdAt: docData.createdAt
+        });
       });
 
-      setRsvps(data);
+      const getVal = (val: any) => {
+        if (!val) return 0;
+        if (typeof val.seconds === 'number') return val.seconds;
+        if (typeof val.getTime === 'function') return val.getTime() / 1000;
+        if (val instanceof Date) return val.getTime() / 1000;
+        return Number(val) || 0;
+      };
+
+      // Sort both arrays in-memory to prevent index errors
+      rsvpData.sort((a, b) => getVal(b.createdAt) - getVal(a.createdAt));
+      notesData.sort((a, b) => getVal(b.createdAt) - getVal(a.createdAt));
+
+      setRsvps(rsvpData);
+      setNotes(notesData);
     } catch (err: any) {
-      console.error('Error fetching RSVPs:', err);
+      console.error('Error fetching admin data:', err);
       let errMsg = err?.message || 'Permission denied or connection issue.';
       // Clean up stringified Firestore error if present
       if (errMsg.startsWith('{') && errMsg.endsWith('}')) {
@@ -131,6 +158,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
     setIsPinVerified(false);
     setPin('');
     setRsvps([]);
+    setNotes([]);
   };
 
   // Filtered RSVPs by search text
@@ -138,6 +166,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
     rsvp.guestName.toLowerCase().includes(searchQuery.toLowerCase()) ||
     rsvp.dietaryRestrictions.toLowerCase().includes(searchQuery.toLowerCase()) ||
     rsvp.coupleNote.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Filtered Notes by search text
+  const filteredNotes = notes.filter(note =>
+    note.guestName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    note.noteText.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // Compute metrics
@@ -167,7 +201,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
       <div className="max-w-7xl w-full mx-auto flex items-center justify-between mb-12 py-4 border-b border-black/5 font-mono text-[9px] tracking-widest uppercase">
         <button 
           onClick={onBackToHome}
-          className="flex items-center gap-2 text-[#3A2220]/75 hover:text-[#3A2220] transition-colors cursor-pointer group animate-fade-in"
+          className="flex items-center gap-2 px-4 py-2 border border-black/5 bg-white/30 backdrop-blur-md text-[#3A2220]/75 hover:text-[#3A2220] hover:bg-white/60 transition-all cursor-pointer group rounded-full shadow-sm animate-fade-in"
           id="admin-back-btn"
         >
           <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
@@ -179,7 +213,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
           {isPinVerified && (
             <button 
               onClick={handleFullReset}
-              className="flex items-center gap-1.5 text-red-700/80 hover:text-red-700 transition-all cursor-pointer border border-transparent hover:border-red-200 bg-red-50/10 px-3 py-1 rounded-full font-semibold"
+              className="flex items-center gap-1.5 text-red-700/80 hover:text-red-700 transition-all cursor-pointer border border-red-200/40 bg-red-50/25 backdrop-blur-sm px-3 py-1.5 rounded-full font-semibold hover:bg-red-50/50 shadow-sm"
               id="admin-reset-session-btn"
             >
               <LogOut size={12} />
@@ -232,7 +266,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full py-4 bg-[#3A2220] text-white font-mono text-xs tracking-[0.25em] hover:bg-neutral-800 transition-colors uppercase rounded-none cursor-pointer font-bold"
+                    className="w-full py-4 bg-[#3A2220]/80 hover:bg-[#3A2220] text-white font-mono text-xs tracking-[0.25em] transition-all uppercase rounded-none border border-[#3A2220]/20 backdrop-blur-md shadow-md cursor-pointer font-bold"
                   >
                     CONTINUE
                   </button>
@@ -266,7 +300,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                 <button
                   onClick={fetchRSVPs}
                   disabled={isDataLoading}
-                  className="px-5 py-2.5 border border-black/10 hover:border-black/30 font-mono text-[9px] tracking-widest uppercase flex items-center gap-2 rounded-full transition-colors bg-white disabled:opacity-55 cursor-pointer font-semibold"
+                  className="px-5 py-2.5 border border-black/10 hover:border-black/30 font-mono text-[9px] tracking-widest uppercase flex items-center gap-2 rounded-full transition-colors bg-white/40 backdrop-blur-md disabled:opacity-55 cursor-pointer font-semibold hover:bg-white/70 shadow-sm"
                 >
                   <RefreshCw size={11} className={`${isDataLoading ? 'animate-spin' : ''}`} />
                   <span>{isDataLoading ? 'Refreshing' : 'Refresh Ledger'}</span>
@@ -274,7 +308,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                 
                 <button
                   onClick={handleFullReset}
-                  className="px-5 py-2.5 border border-red-200/50 hover:border-red-600 bg-red-50/20 hover:bg-red-50/50 text-red-700/80 hover:text-red-800 font-mono text-[9px] tracking-widest uppercase flex items-center gap-2 rounded-full transition-colors cursor-pointer font-semibold"
+                  className="px-5 py-2.5 border border-red-200/30 hover:border-red-600 bg-red-50/30 backdrop-blur-md text-red-700/80 hover:text-red-800 font-mono text-[9px] tracking-widest uppercase flex items-center gap-2 rounded-full transition-colors cursor-pointer font-semibold hover:bg-red-50/60 shadow-sm"
                 >
                   <EyeOff size={11} />
                   <span>Lock Deck</span>
@@ -317,6 +351,30 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
 
             </div>
 
+            {/* Tab Selection Navigation */}
+            <div className="flex gap-4 border-b border-black/5">
+              <button
+                onClick={() => { setActiveTab('rsvps'); setSearchQuery(''); }}
+                className={`pb-3 px-2 font-mono text-[10px] tracking-[0.25em] uppercase transition-all relative cursor-pointer font-bold ${
+                  activeTab === 'rsvps'
+                    ? 'text-[#3A2220] border-b-2 border-[#3A2220]'
+                    : 'text-neutral-400 hover:text-[#3A2220]'
+                }`}
+              >
+                RSVP Responses ({rsvps.length})
+              </button>
+              <button
+                onClick={() => { setActiveTab('notes'); setSearchQuery(''); }}
+                className={`pb-3 px-2 font-mono text-[10px] tracking-[0.25em] uppercase transition-all relative cursor-pointer font-bold ${
+                  activeTab === 'notes'
+                    ? 'text-[#3A2220] border-b-2 border-[#3A2220]'
+                    : 'text-neutral-400 hover:text-[#3A2220]'
+                }`}
+              >
+                Guestbook Notes ({notes.length})
+              </button>
+            </div>
+
             {/* Main table control and ledger frame */}
             <div className="bg-white border border-black/5 shadow-sm rounded-sm overflow-hidden">
               
@@ -328,7 +386,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                   </span>
                   <input
                     type="text"
-                    placeholder="Filter guests by name, note, or diet..."
+                    placeholder={activeTab === 'rsvps' ? "Filter guests by name, note, or diet..." : "Filter guestbook notes by guest name or wishes..."}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full bg-white border border-black/10 hover:border-black/20 focus:border-[#3A2220] py-2 pl-10 pr-4 font-mono text-[9px] tracking-widest uppercase outline-none transition-colors"
@@ -336,7 +394,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                   {searchQuery && (
                     <button 
                       onClick={() => setSearchQuery('')}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[8px] text-muted hover:text-black uppercase cursor-pointer"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 font-mono text-[8px] text-muted hover:text-black uppercase cursor-pointer bg-white/45 backdrop-blur-sm border border-black/5 px-2 py-0.5 rounded-full transition-colors"
                     >
                       Clear
                     </button>
@@ -344,7 +402,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                 </div>
 
                 <p className="font-mono text-[9px] tracking-widest uppercase text-neutral-400 whitespace-nowrap font-semibold">
-                  Showing {filteredRSVPs.length} of {totalSubmissions} records
+                  {activeTab === 'rsvps'
+                    ? `Showing ${filteredRSVPs.length} of ${totalSubmissions} records`
+                    : `Showing ${filteredNotes.length} of ${notes.length} records`
+                  }
                 </p>
               </div>
 
@@ -362,12 +423,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                     <ul className="list-disc list-inside text-left space-y-1 max-w-sm mx-auto">
                       <li>Offline or connection timeout to the Firebase emulator or service</li>
                       <li>Firestore rules are being deployed or took a few seconds to apply</li>
-                      <li>Collection name mismatch (expected "rsvps")</li>
+                      <li>Collection name mismatch (expected "rsvps" or "guestNotes")</li>
                     </ul>
                   </div>
                   <button
                     onClick={fetchRSVPs}
-                    className="px-6 py-2.5 bg-[#3A2220] hover:bg-neutral-800 text-white font-mono text-[9px] tracking-widest uppercase rounded-full transition-all cursor-pointer font-bold"
+                    className="px-6 py-2.5 bg-[#3A2220]/80 hover:bg-[#3A2220] text-white border border-[#3A2220]/20 backdrop-blur-md font-mono text-[9px] tracking-widest uppercase rounded-full transition-all cursor-pointer font-bold shadow-md"
                   >
                     Retry Fetch Query
                   </button>
@@ -377,14 +438,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                   <RefreshCw size={24} className="animate-spin text-[#3A2220]/40" />
                   <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-neutral-400 font-semibold">Querying Firestore tables...</p>
                 </div>
-              ) : filteredRSVPs.length === 0 ? (
+              ) : (activeTab === 'rsvps' ? filteredRSVPs.length === 0 : filteredNotes.length === 0) ? (
                 <div className="p-20 text-center space-y-4">
-                  <p className="font-serif text-xl italic text-neutral-400">No matching guest response found</p>
+                  <p className="font-serif text-xl italic text-neutral-400">No matching records found</p>
                   <p className="font-mono text-[9px] uppercase tracking-widest text-neutral-400 leading-relaxed">
                     Try adjusting your search filters or make sure query matches record data exactly.
                   </p>
                 </div>
-              ) : (
+              ) : activeTab === 'rsvps' ? (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse">
                     <thead>
@@ -434,6 +495,36 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           </td>
                           <td className="py-5 px-6 text-neutral-500 text-[8.5px] uppercase whitespace-nowrap font-semibold">
                             {formatDate(rsvp.createdAt)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-neutral-50 border-b border-black/5 font-mono text-[8.5px] tracking-widest text-neutral-500 uppercase">
+                        <th className="py-4 px-6 font-semibold">Guest Name</th>
+                        <th className="py-4 px-6 font-semibold">Wishes / Letter Text</th>
+                        <th className="py-4 px-6 font-semibold">Submitted At</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-black/5 md:text-xs">
+                      {filteredNotes.map((note) => (
+                        <tr 
+                          key={note.id} 
+                          className="hover:bg-neutral-50/75 transition-colors font-mono tracking-wide"
+                        >
+                          <td className="py-5 px-6 font-serif text-base italic leading-none font-medium text-[#3A2220]">
+                            {note.guestName}
+                          </td>
+                          <td className="py-5 px-6 text-stone-800 font-sans text-xs normal-case leading-relaxed max-w-2xl whitespace-pre-wrap">
+                            "{note.noteText}"
+                          </td>
+                          <td className="py-5 px-6 text-neutral-500 text-[8.5px] uppercase whitespace-nowrap font-semibold">
+                            {formatDate(note.createdAt)}
                           </td>
                         </tr>
                       ))}

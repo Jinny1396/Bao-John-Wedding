@@ -3,7 +3,11 @@ import { motion, AnimatePresence } from 'motion/react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../firebase';
 
-export const RSVPForm = () => {
+interface RSVPFormProps {
+  lang?: 'VIE' | 'ENG';
+}
+
+export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -14,14 +18,57 @@ export const RSVPForm = () => {
     coupleNote: '',
   });
 
+  const translations = {
+    ENG: {
+      alertStatus: 'Please let us know if you are able to join us.',
+      alertName: 'Please provide your name.',
+      errorPrefix: 'Unable to send RSVP:',
+      promptStatus: 'Are you able to join us?',
+      yesLabel: 'Accept with pleasure',
+      noLabel: 'Decline with regret',
+      nameLabel: 'Guest Name',
+      requiredLabel: 'required',
+      namePlaceholder: 'YOUR FULL NAME',
+      dietLabel: 'Do you have any dietary restrictions?',
+      dietPlaceholder: 'NONE OR SPECIFY E.G., GLUTEN-FREE, VEGAN',
+      noteLabel: 'Leave a note for the couple',
+      notePlaceholder: 'CONGRATULATORY MESSAGE OR NOTE',
+      btnSending: 'Sending...',
+      btnSend: 'Send RSVP',
+      thankYou: 'Thank You',
+      successMsg: 'Your response has been received. We look forward to celebrating with you soon.',
+    },
+    VIE: {
+      alertStatus: 'Vui lòng cho chúng mình biết bạn có thể tham dự không nhé.',
+      alertName: 'Vui lòng điền họ tên của bạn.',
+      errorPrefix: 'Không thể gửi phản hồi:',
+      promptStatus: 'Bạn sẽ đến chung vui cùng chúng mình chứ?',
+      yesLabel: 'Đồng ý tham dự',
+      noLabel: 'Tiếc không thể đến',
+      nameLabel: 'Họ và Tên',
+      requiredLabel: 'bắt buộc',
+      namePlaceholder: 'HỌ VÀ TÊN CỦA BẠN',
+      dietLabel: 'Bạn có yêu cầu đặc biệt nào về đồ ăn không?',
+      dietPlaceholder: 'KHÔNG CÓ HOẶC GHI RÕ VD: ĂN CHAY, DỊ ỨNG HẢI SẢN...',
+      noteLabel: 'Nhời nhắn gửi tới cô dâu chú rể',
+      notePlaceholder: 'LỜI CHÚC MỪNG HOẶC TIN NHẮN THÂN THƯƠNG',
+      btnSending: 'Đang gửi...',
+      btnSend: 'Gửi Phản Hồi',
+      thankYou: 'Xin Cảm Ơn',
+      successMsg: 'Phản hồi của bạn đã được ghi lại. Rất mong được đón tiếp bạn tại ngày trọng đại.',
+    }
+  };
+
+  const t = translations[lang];
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!formData.attendingStatus) {
-      setSubmitError('Please let us know if you are able to join us.');
+      setSubmitError(t.alertStatus);
       return;
     }
     if (!formData.guestName.trim()) {
-      setSubmitError('Please provide your name.');
+      setSubmitError(t.alertName);
       return;
     }
 
@@ -42,7 +89,7 @@ export const RSVPForm = () => {
     } catch (err) {
       console.error('Error saving RSVP to Firestore:', err);
       const errMsg = err instanceof Error ? err.message : String(err);
-      setSubmitError(`Unable to send RSVP: ${errMsg}`);
+      setSubmitError(`${t.errorPrefix} ${errMsg}`);
       try {
         handleFirestoreError(err, OperationType.CREATE, 'rsvps');
       } catch (formattedError) {
@@ -67,20 +114,20 @@ export const RSVPForm = () => {
           >
             {/* Attendance Toggle */}
             <div className="space-y-4">
-              <p className="text-muted">Are you able to join us?</p>
-              <div className="flex gap-4">
+              <p className="text-muted">{t.promptStatus}</p>
+              <div className="flex flex-wrap gap-4">
                 {[
-                  { id: 'yes', label: 'Accept with pleasure' },
-                  { id: 'no', label: 'Decline with regret' }
+                  { id: 'yes', label: t.yesLabel },
+                  { id: 'no', label: t.noLabel }
                 ].map((option) => (
                   <button
                     key={option.id}
                     type="button"
                     onClick={() => setFormData({ ...formData, attendingStatus: option.id })}
-                    className={`px-6 py-2 border rounded-full transition-all ${
+                    className={`px-6 py-2 border rounded-full transition-all backdrop-blur-md shadow-sm ${
                       formData.attendingStatus === option.id 
-                        ? 'bg-ink text-white border-ink' 
-                        : 'border-black/10 hover:border-black/30'
+                        ? 'bg-[#3A2220]/90 text-white border-ink/40 hover:bg-ink' 
+                        : 'border-black/15 bg-white/30 text-ink/75 hover:bg-white/60 hover:border-black/30'
                     }`}
                   >
                     {option.label}
@@ -91,11 +138,11 @@ export const RSVPForm = () => {
 
             {/* Guest Name Field */}
             <div className="space-y-4">
-              <p className="text-muted">Guest Name <span className="lowercase opacity-50">(required)</span></p>
+              <p className="text-muted">{t.nameLabel} <span className="lowercase opacity-50">({t.requiredLabel})</span></p>
               <input
                 required
                 type="text"
-                placeholder="YOUR FULL NAME"
+                placeholder={t.namePlaceholder}
                 className="w-full bg-transparent border-b border-black/10 py-2 focus:border-ink outline-none transition-colors"
                 value={formData.guestName}
                 onChange={(e) => setFormData({ ...formData, guestName: e.target.value })}
@@ -104,10 +151,10 @@ export const RSVPForm = () => {
 
             {/* Dietary Restrictions */}
             <div className="space-y-4">
-              <p className="text-muted">Do you have any dietary restrictions?</p>
+              <p className="text-muted">{t.dietLabel}</p>
               <textarea
                 rows={2}
-                placeholder="NONE OR SPECIFY E.G., GLUTEN-FREE, VEGAN"
+                placeholder={t.dietPlaceholder}
                 className="w-full bg-transparent border-b border-black/10 py-2 focus:border-ink outline-none transition-colors resize-none"
                 value={formData.dietaryRestrictions}
                 onChange={(e) => setFormData({ ...formData, dietaryRestrictions: e.target.value })}
@@ -116,10 +163,10 @@ export const RSVPForm = () => {
 
             {/* Couple Note */}
             <div className="space-y-4">
-              <p className="text-muted">Leave a note for the couple</p>
+              <p className="text-muted">{t.noteLabel}</p>
               <textarea
                 rows={3}
-                placeholder="CONGRATULATORY MESSAGE OR NOTE"
+                placeholder={t.notePlaceholder}
                 className="w-full bg-transparent border-b border-black/10 py-2 focus:border-ink outline-none transition-colors resize-none"
                 value={formData.coupleNote}
                 onChange={(e) => setFormData({ ...formData, coupleNote: e.target.value })}
@@ -136,13 +183,13 @@ export const RSVPForm = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`px-12 py-4 border border-ink text-ink transition-all duration-500 uppercase tracking-[0.3em] ${
+                className={`px-12 py-4 border uppercase tracking-[0.3em] font-medium transition-all duration-500 text-ink backdrop-blur-md ${
                   isLoading 
-                    ? 'opacity-55 cursor-not-allowed' 
-                    : 'hover:bg-ink hover:text-white cursor-pointer'
+                    ? 'opacity-55 bg-black/5 border-black/10 cursor-not-allowed' 
+                    : 'bg-white/40 border-black/15 hover:bg-[#3A2220] hover:text-white hover:border-[#3A2220] cursor-pointer shadow-md'
                 }`}
               >
-                {isLoading ? 'Sending...' : 'Send RSVP'}
+                {isLoading ? t.btnSending : t.btnSend}
               </button>
             </div>
           </motion.form>
@@ -153,9 +200,9 @@ export const RSVPForm = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center space-y-8 py-12"
           >
-            <h2 className="font-script text-6xl normal-case tracking-normal">Thank You</h2>
+            <h2 className="font-script text-6xl normal-case tracking-normal">{t.thankYou}</h2>
             <p className="max-w-xs mx-auto leading-relaxed text-muted">
-              Your response has been received. We look forward to celebrating with you soon.
+              {t.successMsg}
             </p>
           </motion.div>
         )}

@@ -29,12 +29,37 @@
         }
       },
       "required": ["guestName", "attendingStatus", "dietaryRestrictions", "coupleNote", "createdAt"]
+    },
+    "guestNote": {
+      "title": "GuestNote",
+      "description": "Handwritten notes or messages written by wedding guests",
+      "type": "object",
+      "properties": {
+        "guestName": {
+          "type": "string",
+          "description": "The name of the guest leaving the note"
+        },
+        "noteText": {
+          "type": "string",
+          "description": "A personal message or letter written to the couple"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server-side creation timestamp"
+        }
+      },
+      "required": ["guestName", "noteText", "createdAt"]
     }
   },
   "firestore": {
     "rsvps/{rsvpId}": {
       "schema": "rsvp",
       "description": "Collection of RSVP submissions"
+    },
+    "guestNotes/{noteId}": {
+      "schema": "guestNote",
+      "description": "Collection of wedding guest notes"
     }
   }
 }

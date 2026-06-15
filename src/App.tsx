@@ -1,8 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { RSVPForm } from './components/RSVPForm';
+import { GuestNotes } from './components/GuestNotes';
 import { AdminPanel } from './components/AdminPanel';
 import { VolumeX, Volume2, Music } from 'lucide-react';
+import { collection, addDoc, onSnapshot, query, orderBy, limit, serverTimestamp, Timestamp } from 'firebase/firestore';
+import { db, handleFirestoreError, OperationType } from './firebase';
+
+interface CollageGuestNote {
+  id: string;
+  guestName: string;
+  noteText: string;
+  createdAt: Timestamp | null;
+}
 
 // Reusable elegant Oval Monogram SVG Component
 const OvalMonogram = ({ className = 'w-16 h-16' }: { className?: string }) => (
@@ -271,11 +281,189 @@ class AmbientPianoSynth {
 }
 
 export default function App() {
+  const [lang, setLang] = useState<'VIE' | 'ENG'>('VIE');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [hoveredSidebarIndex, setHoveredSidebarIndex] = useState<number | null>(null);
   const [isPastHero, setIsPastHero] = useState(false);
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
+
+  // States for interactive collage guest notes
+  const [collageNoteText, setCollageNoteText] = useState('');
+  const [collageGuestName, setCollageGuestName] = useState('');
+  const [isCollageSubmitting, setIsCollageSubmitting] = useState(false);
+  const [isCollageSubmitted, setIsCollageSubmitted] = useState(false);
+  const [collageSubmitError, setCollageSubmitError] = useState<string | null>(null);
+  const [collageNotes, setCollageNotes] = useState<CollageGuestNote[]>([]);
+
+  // Real-time synchronization of guest notes
+  useEffect(() => {
+    const notesQuery = query(
+      collection(db, 'guestNotes'),
+      orderBy('createdAt', 'desc'),
+      limit(24)
+    );
+
+    const unsubscribe = onSnapshot(
+      notesQuery,
+      (snapshot) => {
+        const fetchedNotes: CollageGuestNote[] = [];
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          fetchedNotes.push({
+            id: doc.id,
+            guestName: data.guestName || 'Anonymous',
+            noteText: data.noteText || '',
+            createdAt: data.createdAt || null,
+          });
+        });
+        setCollageNotes(fetchedNotes);
+      },
+      (error) => {
+        console.error('Error listening to guest notes:', error);
+      }
+    );
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleCollageSubmitNote = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!collageNoteText.trim()) {
+      setCollageSubmitError(lang === 'VIE' ? 'Vui lòng viết lời chúc mừng nhé.' : 'Please write your message.');
+      return;
+    }
+    if (!collageGuestName.trim()) {
+      setCollageSubmitError(lang === 'VIE' ? 'Vui lòng ký tên của bạn.' : 'Please sign your name.');
+      return;
+    }
+
+    setIsCollageSubmitting(true);
+    setCollageSubmitError(null);
+
+    const notePayload = {
+      guestName: collageGuestName.trim(),
+      noteText: collageNoteText.trim(),
+      createdAt: serverTimestamp(),
+    };
+
+    try {
+      await addDoc(collection(db, 'guestNotes'), notePayload);
+      setIsCollageSubmitted(true);
+      setCollageNoteText('');
+      setCollageGuestName('');
+      setTimeout(() => setIsCollageSubmitted(false), 5000);
+    } catch (err) {
+      console.error('Error adding guest note:', err);
+      setCollageSubmitError(lang === 'VIE' ? 'Gửi lời chúc không thành công. Hãy thử lại.' : 'Failed to pin note. Please try again.');
+      try {
+        handleFirestoreError(err, OperationType.CREATE, 'guestNotes');
+      } catch (e) {
+        // Handled format
+      }
+    } finally {
+      setIsCollageSubmitting(false);
+    }
+  };
+
+  const appTranslations = {
+    ENG: {
+      home: "HOME",
+      date: "THE DATE",
+      events: "EVENTS",
+      rsvp: "RSVP",
+      heroBtn: "RSVP NOW",
+      heroDate: "22 JUNE 2026, FRIDAY",
+      gettingMarried: "are getting married",
+      invitationText: "Invite you to share in a quiet weekend of woodfire, forest walks, and the commitment of vows.",
+      tokyoJapan: "TOKYO, JAPAN",
+      october2027: "OCT, 2027",
+      closeEsc: "CLOSE (ESC)",
+      frameInfo: "FRAME INFO",
+      locationLabel: "LOCATION:",
+      dateTimeLabel: "DATE TIME:",
+      cameraLabel: "CAMERA:",
+      photoQuote: "A quiet instant captured on analogue medium, celebrating the silent beauty of modern devotion.",
+      prevBtn: "PREV",
+      nextBtn: "NEXT",
+      itinerary: "Itinerary",
+      attire: "Attire",
+      attireDesc: "Cocktail Attire. Black tie optional.",
+      sage: "Sage",
+      sand: "Sand",
+      clay: "Clay",
+      detailsTitle: "The Details",
+      registry: "REGISTRY",
+      registryParagraph: "We are so grateful to have you as a part of our lives, and your presence at our wedding is the greatest gift of all. If you would like to celebrate this joyous occasion with a gift, we have created a wedding registry to make it easier for you.",
+      registryBtn: "View Our Wedding Registry",
+      respondBy: "Kindly respond by March 23, 2026.",
+      writeNoteTitle: "WRITE US A NOTE",
+      writeNoteSubtitle: "Leave a memory, wish, or guidance on our wedding board.",
+      musicPopup: "♫ TURN SOUND ON FOR AMBIENCE",
+      musicToggleTitleMute: "Mute Background Music",
+      musicToggleTitlePlay: "Play Wedding Song",
+      
+      itineraryItems: [
+        ['3:00 PM', 'Welcome Drinks'],
+        ['4:00 PM', 'Seated Ceremony'],
+        ['5:00 PM', 'Cocktail Hour'],
+        ['5:30 PM', 'Reception Banquet'],
+        ['6:00 PM', 'Dinner Service & Toasts'],
+        ['7:00 PM', 'Dancing and Celebration'],
+        ['8:30 PM', 'Cake Cutting'],
+        ['10:00 PM', 'Final Farewell'],
+      ]
+    },
+    VIE: {
+      home: "TRANG CHỦ",
+      date: "NGÀY CƯỚI",
+      events: "SỰ KIỆN",
+      rsvp: "XÁC NHẬN",
+      heroBtn: "PHẢN HỒI NGAY",
+      heroDate: "THỨ SÁU, 22 THÁNG 6, 2026",
+      gettingMarried: "sẽ về chung một nhà",
+      invitationText: "Trân trọng kính mời bạn ghé thăm một ngày ấm áp đầy tiếng cười, hoa cỏ và lời thề ước chung đôi.",
+      tokyoJapan: "TOKYO, NHẬT BẢN",
+      october2027: "TH.10, 2027",
+      closeEsc: "ĐÓNG (ESC)",
+      frameInfo: "THÔNG TIN ẢNH",
+      locationLabel: "ĐỊA ĐIỂM:",
+      dateTimeLabel: "THỜI GIAN:",
+      cameraLabel: "MÁY ẢNH:",
+      photoQuote: "Khoảnh khắc an yên ghi dấu qua thước phim màu, mừng ngày hạnh phúc đơm hoa.",
+      prevBtn: "TRƯỚC",
+      nextBtn: "SAU",
+      itinerary: "Lịch trình",
+      attire: "Trang phục",
+      attireDesc: "Trang phục bán trang trọng (Cocktail). Nam có thể thắt nơ.",
+      sage: "Màu Xanh",
+      sand: "Màu Cát",
+      clay: "Màu Đất sét",
+      detailsTitle: "Chi tiết ngày vui",
+      registry: "HỘP QUÀ",
+      registryParagraph: "Sự hiện diện của bạn là niềm hạnh phúc lớn nhất của chúng mình. Nếu bạn muốn gửi chúc mừng, chúng mình đã chuẩn bị danh sách quà cưới nhỏ xinh dưới đây để bạn dễ dàng lựa chọn.",
+      registryBtn: "Xem Hộp Quà Chúc Mừng",
+      respondBy: "Vui lòng cho tụi mình biết phản hồi trước ngày 23 tháng 3, 2026.",
+      writeNoteTitle: "GỬI LỜI CHÚC MỪNG",
+      writeNoteSubtitle: "Ghi lại kỷ niệm hoặc lời nhắn nhủ dành cho ngày hạnh phúc của chúng mình.",
+      musicPopup: "♫ BẬT ÂM THANH ĐỂ CẢM NHẬN KHÔNG GIAN",
+      musicToggleTitleMute: "Tắt nhạc nền",
+      musicToggleTitlePlay: "Bật nhạc đám cưới",
+      
+      itineraryItems: [
+        ['15:00', 'Đón khách & Tiệc trà đầu giờ'],
+        ['16:00', 'Hành lễ chánh điện đầy trang nghiêm'],
+        ['17:00', 'Tiệc Cocktail thân mật'],
+        ['17:30', 'Khai tiệc mừng đám cưới'],
+        ['18:00', 'Dùng tiệc chính & Chúc rượu'],
+        ['19:00', 'Giao lưu khiêu vũ đầy tiếng cười'],
+        ['20:30', 'Cắt bánh kem hạnh phúc'],
+        ['22:00', 'Chào tiễn khách ra về'],
+      ]
+    }
+  };
+
+  const t = appTranslations[lang];
 
   // Background classical music system (Soft wedding ambient piano)
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
@@ -284,145 +472,7 @@ export default function App() {
   const synthRef = useRef<AmbientPianoSynth | null>(null);
   const isUsingSynthRef = useRef(false);
 
-  const switchToSynthFallback = () => {
-    isUsingSynthRef.current = true;
-    if (audioRef.current) {
-      try {
-        audioRef.current.pause();
-      } catch (e) {}
-    }
-    if (!synthRef.current) {
-      synthRef.current = new AmbientPianoSynth();
-    }
-    synthRef.current.start();
-    setIsMusicPlaying(true);
-  };
-
-  useEffect(() => {
-    // Beautiful, romantic wedding track requested by user with high-uptime fallback sources
-    const audioSources = [
-      'https://freetouse.com/music/pufino/harmony', // Pufino - Harmony (requested by user)
-      'https://upload.wikimedia.org/wikipedia/commons/d/df/Fr%C3%A9d%C3%A9ric_Chopin_-_Nocturne_Op._9_No._2_in_E-flat_major_-_performance_by_Martha_Goldstein.mp3', // Lovely Chopin Nocturne Op. 9 No. 2 fallback
-      'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' // High-reliability fallback MP3
-    ];
-    let currentSourceIndex = 0;
-
-    const audio = new Audio(audioSources[currentSourceIndex]);
-    audio.loop = true;
-    audio.volume = 0.25; // Gentle, elegant background volume
-    audioRef.current = audio;
-
-    let played = false;
-
-    const loadNextSourceAndPlay = () => {
-      if (currentSourceIndex < audioSources.length - 1) {
-        currentSourceIndex++;
-        console.log(`Switching audio source to robust alternative: ${audioSources[currentSourceIndex]}`);
-        audio.src = audioSources[currentSourceIndex];
-        audio.load();
-        if (played) {
-          audio.play()
-            .then(() => setIsMusicPlaying(true))
-            .catch(err => {
-              console.log('Robust alternative playback deferred, shifting to synth:', err);
-              switchToSynthFallback();
-            });
-        }
-      } else {
-        console.warn('All streaming sources exhausted, activating ambient synth fallback.');
-        switchToSynthFallback();
-      }
-    };
-
-    // Safely capture any network or browser compatibility decode errors on source URLs
-    audio.onerror = () => {
-      console.warn(`Audio loading or decoding failed for source: ${audio.src}`);
-      loadNextSourceAndPlay();
-    };
-
-    const attemptPlay = () => {
-      if (played) return;
-      if (isUsingSynthRef.current) {
-        if (!synthRef.current) {
-          synthRef.current = new AmbientPianoSynth();
-        }
-        synthRef.current.start();
-        setIsMusicPlaying(true);
-        setHasInteracted(true);
-        played = true;
-        detachListeners();
-        return;
-      }
-
-      audio.play()
-        .then(() => {
-          setIsMusicPlaying(true);
-          setHasInteracted(true);
-          played = true;
-          detachListeners();
-        })
-        .catch((err) => {
-          console.log('Autoplay deferred, waiting for user scroll/click/tap interaction:', err);
-        });
-    };
-
-    // Attempt direct load autoplay immediately
-    attemptPlay();
-
-    const triggerEvents = ['click', 'touchstart', 'scroll', 'mousedown', 'keydown'];
-    
-    const detachListeners = () => {
-      triggerEvents.forEach(evt => {
-        document.removeEventListener(evt, attemptPlay);
-      });
-    };
-
-    triggerEvents.forEach(evt => {
-      document.addEventListener(evt, attemptPlay, { passive: true });
-    });
-
-    return () => {
-      detachListeners();
-      if (audio) {
-        audio.pause();
-      }
-      if (synthRef.current) {
-        synthRef.current.stop();
-      }
-      audioRef.current = null;
-    };
-  }, []);
-
-  const handleToggleMusic = () => {
-    setHasInteracted(true); // Dismisses tooltip on manual click
-    if (isMusicPlaying) {
-      if (isUsingSynthRef.current) {
-        if (synthRef.current) {
-          synthRef.current.stop();
-        }
-      } else if (audioRef.current) {
-        audioRef.current.pause();
-      }
-      setIsMusicPlaying(false);
-    } else {
-      if (isUsingSynthRef.current) {
-        if (!synthRef.current) {
-          synthRef.current = new AmbientPianoSynth();
-        }
-        synthRef.current.start();
-        setIsMusicPlaying(true);
-      } else if (audioRef.current) {
-        audioRef.current.play()
-          .then(() => setIsMusicPlaying(true))
-          .catch(err => {
-            console.error('Audio play failed, switching to synthesizer fallback:', err);
-            switchToSynthFallback();
-          });
-      } else {
-        switchToSynthFallback();
-      }
-    }
-  };
+  // Ambient noise/sound features removed per user request
 
   useEffect(() => {
     const handleLocationChange = () => {
@@ -458,10 +508,10 @@ export default function App() {
   }, []);
 
   const sidebarItems = [
-    { num: "01", label: "HOME", target: "hero" },
-    { num: "02", label: "THE DATE", target: "gallery" },
-    { num: "03", label: "EVENTS", target: "events" },
-    { num: "04", label: "RSVP", target: "rsvp" },
+    { num: "01", label: t.home, target: "hero" },
+    { num: "02", label: t.date, target: "gallery" },
+    { num: "03", label: t.events, target: "events" },
+    { num: "04", label: t.rsvp, target: "rsvp" },
   ];
 
   const galleryRef = useRef<HTMLDivElement>(null);
@@ -521,6 +571,33 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-bg text-ink selection:bg-forest/10 selection:text-ink font-sans transition-colors duration-500 overflow-x-hidden relative">
+      
+      {/* Top Floating Header with Language Selector Toggle */}
+      <header className="fixed top-6 right-6 z-50 flex items-center gap-4">
+        <div className="bg-white/40 hover:bg-white/70 backdrop-blur-md border border-black/10 hover:border-black/25 rounded-full px-4 py-2 flex items-center gap-2 shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition-all duration-300">
+          <button
+            onClick={() => setLang('ENG')}
+            className={`font-mono text-[9px] tracking-[0.2em] transition-all cursor-pointer font-bold ${
+              lang === 'ENG' 
+                ? 'text-[#3A2220] scale-105' 
+                : 'text-neutral-400 hover:text-[#3A2220]'
+            }`}
+          >
+            ENG
+          </button>
+          <span className="text-[9px] text-neutral-300 select-none">|</span>
+          <button
+            onClick={() => setLang('VIE')}
+            className={`font-mono text-[9px] tracking-[0.2em] transition-all cursor-pointer font-bold ${
+              lang === 'VIE' 
+                ? 'text-[#3A2220] scale-105' 
+                : 'text-neutral-400 hover:text-[#3A2220]'
+            }`}
+          >
+            VIE
+          </button>
+        </div>
+      </header>
       
       {/* High-End Floating Navigation Sidebar */}
       <div className="fixed left-6 top-1/2 -translate-y-1/2 z-50 bg-transparent shadow-none border-none pointer-events-auto hidden md:block select-none">
@@ -614,15 +691,15 @@ export default function App() {
 
             <div className="space-y-6">
               <p className="font-mono text-[10px] tracking-[0.35em] text-white/75 uppercase">
-                22 JUNE 2026, FRIDAY
+                {t.heroDate}
               </p>
               
               <div className="flex justify-center pt-2">
                 <button 
                   onClick={() => handleScrollTo('rsvp')}
-                  className="font-mono text-[9px] tracking-[0.3em] uppercase border border-white/60 text-white bg-transparent py-2.5 px-8 rounded-full hover:bg-white hover:text-ink transition-all duration-300 transform active:scale-95 ease-out cursor-pointer"
+                  className="font-mono text-[9px] tracking-[0.3em] uppercase border border-white/25 text-white bg-white/10 backdrop-blur-md py-2.5 px-8 rounded-full hover:bg-white/20 hover:border-white/45 transition-all duration-300 transform active:scale-95 ease-out cursor-pointer shadow-[0_4px_30px_rgba(0,0,0,0.1)]"
                 >
-                  RSVP NOW
+                  {t.heroBtn}
                 </button>
               </div>
             </div>
@@ -653,12 +730,12 @@ export default function App() {
                     </div>
                   </div>
 
-                  <p className="font-serif italic text-sm text-[#3A2220]/80 mt-1">are getting married</p>
+                  <p className="font-serif italic text-sm text-[#3A2220]/80 mt-1">{t.gettingMarried}</p>
                   
                   <div className="h-px w-24 bg-[#3A2220]/15" />
                   
                   <p className="font-serif text-[11px] leading-relaxed text-[#3A2220]/75 max-w-xs italic text-center px-4">
-                    Invite you to share in a quiet weekend of woodfire, forest walks, and the commitment of vows.
+                    {t.invitationText}
                   </p>
                   
                   <div className="h-px w-24 bg-[#3A2220]/15" />
@@ -666,15 +743,15 @@ export default function App() {
                   <div className="grid grid-cols-3 w-full font-mono text-[8px] tracking-widest text-[#3A2220]/65 uppercase px-4">
                     <div>
                       <span className="block font-serif text-sm font-light text-[#3A2220]">10</span>
-                      <span className="block text-[7px] mt-0.5">OCT, 2027</span>
+                      <span className="block text-[7px] mt-0.5">{t.october2027}</span>
                     </div>
                     <div className="border-l border-r border-[#3A2220]/10 px-1 py-0.5">
                       <span className="block">TOKYO,</span>
-                      <span className="block font-light">JAPAN</span>
+                      <span className="block font-light">{lang === 'VIE' ? 'NHẬT BẢN' : 'JAPAN'}</span>
                     </div>
                     <div>
                       <span className="block font-serif text-sm font-light text-[#3A2220]">10</span>
-                      <span className="block text-[7px] mt-0.5">OCT, 2027</span>
+                      <span className="block text-[7px] mt-0.5">{t.october2027}</span>
                     </div>
                   </div>
                 </div>
@@ -737,13 +814,13 @@ export default function App() {
                 </div>
                 
                 <h3 className="font-serif italic text-base lg:text-lg text-[#3A2220]/80 mt-4">
-                  are getting married
+                  {t.gettingMarried}
                 </h3>
                 
                 <div className="w-full h-px bg-[#3A2220]/15 my-5" />
                 
                 <p className="font-serif text-[11.5px] lg:text-[12.5px] leading-relaxed text-[#3A2220]/75 max-w-lg italic font-light px-4">
-                  Invite you to share in a quiet weekend of woodfire, forest walks, and the commitment of vows.
+                  {t.invitationText}
                 </p>
                 
                 <div className="w-full h-px bg-[#3A2220]/15 my-5" />
@@ -751,15 +828,15 @@ export default function App() {
                 <div className="grid grid-cols-3 w-full max-w-md mx-auto items-center text-center font-mono text-[9px] tracking-[0.25em] text-[#3A2220]/70 uppercase">
                   <div>
                     <span className="block font-serif text-2xl font-light text-[#3A2220] leading-none">10</span>
-                    <span className="block text-[8px] mt-1.5 text-muted">OCT, 2027</span>
+                    <span className="block text-[8px] mt-1.5 text-muted">{t.october2027}</span>
                   </div>
                   <div className="border-l border-r border-[#3A2220]/12 py-1 px-4">
                     <span className="block text-[9.5px] leading-tight font-medium">TOKYO,</span>
-                    <span className="block text-[9.5px] leading-tight font-light">JAPAN</span>
+                    <span className="block text-[9.5px] leading-tight font-light">{lang === 'VIE' ? 'NHẬT BẢN' : 'JAPAN'}</span>
                   </div>
                   <div>
                     <span className="block font-serif text-2xl font-light text-[#3A2220] leading-none">10</span>
-                    <span className="block text-[8px] mt-1.5 text-muted">OCT, 2027</span>
+                    <span className="block text-[8px] mt-1.5 text-muted">{t.october2027}</span>
                   </div>
                 </div>
               </div>
@@ -854,22 +931,22 @@ export default function App() {
             {/* Close Button element */}
             <button 
               onClick={closeLightbox}
-              className="absolute top-6 right-6 font-mono text-[9px] tracking-widest uppercase text-white/50 hover:text-white border border-white/20 hover:border-white px-4 py-1.5 rounded-full transition-all z-50 cursor-pointer"
+              className="absolute top-6 right-6 font-mono text-[9px] tracking-widest uppercase text-white/90 hover:bg-white/20 border border-white/25 bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full transition-all z-50 cursor-pointer shadow-sm"
             >
-              CLOSE (ESC)
+              {t.closeEsc}
             </button>
 
             {/* Left/Right navigation info */}
             <div className="hidden md:flex absolute inset-x-8 top-1/2 -translate-y-1/2 justify-between pointer-events-none">
               <button 
                 onClick={prevLightbox} 
-                className="pointer-events-auto w-12 h-12 flex items-center justify-center border border-white/10 hover:border-white/40 rounded-full bg-black/20 text-white/70 hover:text-white transition-all cursor-pointer"
+                className="pointer-events-auto w-12 h-12 flex items-center justify-center border border-white/25 hover:border-white/45 bg-black/30 hover:bg-black/45 backdrop-blur-md rounded-full text-white/90 transition-all cursor-pointer shadow-md"
               >
                 ←
               </button>
               <button 
                 onClick={nextLightbox} 
-                className="pointer-events-auto w-12 h-12 flex items-center justify-center border border-white/10 hover:border-white/40 rounded-full bg-black/20 text-white/70 hover:text-white transition-all cursor-pointer"
+                className="pointer-events-auto w-12 h-12 flex items-center justify-center border border-white/25 hover:border-white/45 bg-black/30 hover:bg-black/45 backdrop-blur-md rounded-full text-white/90 transition-all cursor-pointer shadow-md"
               >
                 →
               </button>
@@ -900,7 +977,7 @@ export default function App() {
                 <div className="md:col-span-4 flex flex-col justify-between py-2 space-y-8 font-mono">
                   <div className="space-y-6">
                     <div className="space-y-1">
-                      <span className="text-[7.5px] uppercase tracking-[0.4em] text-muted">FRAME INFO</span>
+                      <span className="text-[7.5px] uppercase tracking-[0.4em] text-muted">{t.frameInfo}</span>
                       <h3 className="font-serif text-3xl font-normal leading-tight tracking-tight uppercase text-ink pt-1">
                         {galleryImages[lightboxIndex].title}
                       </h3>
@@ -908,15 +985,15 @@ export default function App() {
 
                     <div className="space-y-4 text-[9px] uppercase tracking-widest text-ink leading-loose border-t border-b border-black/5 py-4">
                       <p className="flex justify-between">
-                        <span className="text-muted">LOCATION:</span>
+                        <span className="text-muted">{t.locationLabel}</span>
                         <span className="text-right">{galleryImages[lightboxIndex].location}</span>
                       </p>
                       <p className="flex justify-between">
-                        <span className="text-muted">DATE TIME:</span>
+                        <span className="text-muted">{t.dateTimeLabel}</span>
                         <span className="text-right">{galleryImages[lightboxIndex].date}</span>
                       </p>
                       <p className="flex justify-between">
-                        <span className="text-muted">CAMERA:</span>
+                        <span className="text-muted">{t.cameraLabel}</span>
                         <span className="text-right">{galleryImages[lightboxIndex].camera}</span>
                       </p>
                     </div>
@@ -924,21 +1001,21 @@ export default function App() {
 
                   <div className="space-y-4">
                     <p className="text-[8px] leading-relaxed text-muted uppercase">
-                      "A quiet instant captured on analogue medium, celebrating the silent beauty of modern devotion."
+                      "{t.photoQuote}"
                     </p>
-                    <div className="flex justify-between pt-2">
+                    <div className="flex justify-between items-center pt-2">
                       <button 
                         onClick={prevLightbox} 
-                        className="text-[9px] uppercase text-ink hover:opacity-60 transition-opacity"
+                        className="text-[9px] font-mono tracking-widest uppercase text-ink hover:bg-[#3A2220]/10 bg-white/40 backdrop-blur-sm border border-black/10 rounded-full px-3 py-1 transition-all"
                       >
-                        PREV
+                        {t.prevBtn}
                       </button>
                       <p className="text-[9px] text-[#A2BCA0]">0{lightboxIndex + 1} / 0{galleryImages.length}</p>
                       <button 
                         onClick={nextLightbox} 
-                        className="text-[9px] uppercase text-ink hover:opacity-60 transition-opacity"
+                        className="text-[9px] font-mono tracking-widest uppercase text-ink hover:bg-[#3A2220]/10 bg-white/40 backdrop-blur-sm border border-black/10 rounded-full px-3 py-1 transition-all"
                       >
-                        NEXT
+                        {t.nextBtn}
                       </button>
                     </div>
                   </div>
@@ -955,18 +1032,9 @@ export default function App() {
           <div className="md:col-span-7 space-y-32">
             {/* Itinerary */}
             <div className="grid grid-cols-3 gap-4 font-mono text-[9px] tracking-[0.2em] uppercase">
-              <p className="text-muted">Itinerary</p>
+              <p className="text-muted">{t.itinerary}</p>
               <div className="col-span-2 space-y-3">
-                {[
-                  ['3:00 PM', 'Welcome Drinks'],
-                  ['4:00 PM', 'Seated Ceremony'],
-                  ['5:00 PM', 'Cocktail Hour'],
-                  ['5:30 PM', 'Reception Banquet'],
-                  ['6:00 PM', 'Dinner Service & Toasts'],
-                  ['7:00 PM', 'Dancing and Celebration'],
-                  ['8:30 PM', 'Cake Cutting'],
-                  ['10:00 PM', 'Final Farewell'],
-                ].map(([time, event]) => (
+                {t.itineraryItems.map(([time, event]) => (
                   <div key={time} className="flex justify-between border-b border-black/5 pb-1">
                     <span>{time}</span>
                     <span className="text-muted opacity-30">........</span>
@@ -978,16 +1046,30 @@ export default function App() {
 
             {/* Attire */}
             <div className="grid grid-cols-3 gap-4 font-mono text-[9px] tracking-[0.2em] uppercase">
-              <p className="text-muted">Attire</p>
+              <p className="text-muted">{t.attire}</p>
               <div className="col-span-2 space-y-2 leading-relaxed">
-                <p>Cocktail Attire.<br />Black tie optional.</p>
+                <p>{t.attireDesc}</p>
+                <div className="flex gap-4 pt-3 items-center">
+                  <div className="flex flex-col items-center gap-1.5">
+                    <span className="w-8 h-8 rounded-full border border-[#1A1A1A]/10 shadow-[inner_0_2px_4px_rgba(0,0,0,0.06)] bg-[#7D8E73] transition-transform hover:scale-110 duration-300" title={t.sage} />
+                    <span className="text-[7px] text-muted leading-none tracking-normal regular">{t.sage}</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1.5">
+                    <span className="w-8 h-8 rounded-full border border-[#1A1A1A]/10 shadow-[inner_0_2px_4px_rgba(0,0,0,0.06)] bg-[#E3D5C3] transition-transform hover:scale-110 duration-300" title={t.sand} />
+                    <span className="text-[7px] text-muted leading-none tracking-normal regular">{t.sand}</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1.5">
+                    <span className="w-8 h-8 rounded-full border border-[#1A1A1A]/10 shadow-[inner_0_2px_4px_rgba(0,0,0,0.06)] bg-[#B67E65] transition-transform hover:scale-110 duration-300" title={t.clay} />
+                    <span className="text-[7px] text-muted leading-none tracking-normal regular">{t.clay}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Details Photo */}
           <div className="md:col-span-5 relative pt-16">
-            <h2 className="font-serif text-5xl font-light absolute top-4 left-0 z-20 -rotate-3 text-ink">The Details</h2>
+            <h2 className="font-serif text-5xl font-light absolute top-4 left-0 z-20 -rotate-3 text-ink">{t.detailsTitle}</h2>
             <div className="relative bg-white p-3 shadow-sm border border-black/5">
               {/* Tape */}
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 tape -rotate-2 z-10 opacity-80" />
@@ -1023,16 +1105,16 @@ export default function App() {
 
         <div className="md:col-span-7 space-y-10">
           <div className="flex items-center gap-3">
-            <h2 className="font-serif text-4xl uppercase tracking-tight">REGISTRY</h2>
+            <h2 className="font-serif text-4xl uppercase tracking-tight">{t.registry}</h2>
             <span className="text-2xl text-forest inline-block translate-y-1">♡</span>
           </div>
           <div className="space-y-8 max-w-md">
             <p className="font-mono text-[10px] leading-relaxed text-muted tracking-wide">
-              We are so grateful to have you as a part of our lives, and your presence at our wedding is the greatest gift of all. If you would like to celebrate this joyous occasion with a gift, we have created a wedding registry to make it easier for you.
+              {t.registryParagraph}
             </p>
             <div className="pt-4">
-              <button className="font-mono text-[9px] tracking-[0.3em] uppercase border-b border-ink pb-1 hover:opacity-50 transition-opacity cursor-pointer">
-                View Our Wedding Registry
+              <button className="font-mono text-[9px] tracking-[0.3em] uppercase border border-[#3A2220]/15 bg-white/40 backdrop-blur-md px-6 py-3 rounded-full hover:bg-white/75 text-ink transition-all shadow-sm active:scale-95 ease-out cursor-pointer">
+                {t.registryBtn}
               </button>
             </div>
           </div>
@@ -1044,13 +1126,233 @@ export default function App() {
         <div className="text-center mb-20 relative">
           <h2 className="font-serif text-[64px] md:text-[96px] leading-none uppercase tracking-tight">RSVP</h2>
           <p className="font-mono text-[10px] tracking-[0.4em] uppercase text-muted mt-6">
-            Kindly respond by March 23, 2026.
+            {t.respondBy}
           </p>
         </div>
         <div className="bg-white p-8 md:p-16 border border-black/5 shadow-md">
-          <RSVPForm />
+          <RSVPForm lang={lang} />
         </div>
       </section>
+
+      {/* Coastal Blue Elegant Visual Collage Section */}
+      <section id="coastal-blue-collage" className="w-full relative py-16 md:py-24 overflow-hidden bg-stone-100 min-h-[500px] sm:min-h-[600px] md:min-h-[850px] flex flex-col items-center justify-center">
+        {/* Background beach cliff photo with high-contrast grayscale feel */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="https://images.unsplash.com/photo-1542224566-6e85f2e6772f?auto=format&fit=crop&w=2000&q=80" 
+            alt="Coastal rocks" 
+            className="w-full h-full object-cover grayscale contrast-125 brightness-95"
+            referrerPolicy="no-referrer"
+          />
+          {/* Subtle vignette/shading overlay to match the image's artistic depth */}
+          <div className="absolute inset-0 bg-black/5 mix-blend-multiply" />
+        </div>
+
+        {/* Scaled stage for the paper collage to assure responsive alignment */}
+        <div className="relative z-10 w-full max-w-4xl h-[420px] sm:h-[550px] md:h-[700px] flex items-center justify-center">
+          <div className="scale-[0.8] xs:scale-[0.9] sm:scale-[0.95] md:scale-100 hover:scale-[1.01] transition-transform duration-700 ease-out relative w-full h-full flex items-center justify-center">
+            
+            {/* 1. Large Lined Notebook Paper Turned Interactive Notebook */}
+            <form 
+              onSubmit={handleCollageSubmitNote} 
+              className="relative bg-[#FAF8F5] shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-stone-200/40 w-[280px] sm:w-[360px] md:w-[460px] h-[340px] sm:h-[450px] md:h-[570px] rounded-[1px] p-5 sm:p-8 md:p-12 flex flex-col justify-between"
+            >
+              {/* Notebook rule lines */}
+              <div 
+                className="absolute inset-0 opacity-[0.25] pointer-events-none rounded-[1px]"
+                style={{
+                  backgroundImage: 'linear-gradient(#A2BCA0 1.2px, transparent 1.2px)',
+                  backgroundSize: '100% 25px',
+                  backgroundPosition: '0 12px',
+                }}
+              />
+              
+              {/* Header inside paper */}
+              <div className="relative z-10 text-center mt-1 sm:mt-4 pb-2 border-b border-stone-200">
+                <h3 className="font-serif text-[18px] sm:text-[24px] md:text-[28px] text-[#3A2220] tracking-tight italic select-none">
+                  {lang === 'VIE' ? "Gửi Lời Chúc Mừng" : "Write Us a Note..."}
+                </h3>
+                <p className="font-mono text-[6px] sm:text-[8px] md:text-[10px] tracking-[0.25em] text-[#3A2220]/50 uppercase leading-normal">
+                  {lang === 'VIE' ? "SỔ LƯU BÚT KỶ NIỆM" : "WEDDING GUEST BOOK"}
+                </p>
+              </div>
+
+              {/* Message text area */}
+              <div className="relative z-10 flex-1 my-3 sm:my-4 md:my-6 min-h-[120px] overflow-hidden">
+                <textarea
+                  value={collageNoteText}
+                  onChange={(e) => {
+                    setCollageNoteText(e.target.value);
+                    if (collageSubmitError) setCollageSubmitError(null);
+                  }}
+                  placeholder={lang === 'VIE' ? "Hãy viết một câu chúc, lời nhắn nhủ hay kỷ niệm ngọt ngào tại đây nhé..." : "Leave a warm wish, loving note, or advice for our journey..."}
+                  required
+                  maxLength={400}
+                  className="w-full h-full bg-transparent border-none outline-none font-script text-[14px] sm:text-[18px] md:text-[21px] leading-[25px] text-[#3A2220]/90 placeholder-[#3A2220]/30 resize-none focus:ring-0 selection:bg-stone-200 py-1"
+                  style={{ lineHeight: '25px' }}
+                />
+              </div>
+
+              {/* Signature Input and Submit at the bottom */}
+              <div className="relative z-10 space-y-3 sm:space-y-4 pt-2 border-t border-stone-300/40">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-[7px] sm:text-[9px] tracking-widest text-[#3A2220]/60 uppercase whitespace-nowrap select-none">{lang === 'VIE' ? "THÂN THƯƠNG," : "WITH LOVE,"}</span>
+                  <input
+                    type="text"
+                    value={collageGuestName}
+                    onChange={(e) => {
+                      setCollageGuestName(e.target.value);
+                      if (collageSubmitError) setCollageSubmitError(null);
+                    }}
+                    placeholder={lang === 'VIE' ? "Tên của bạn..." : "Your Name(s)"}
+                    required
+                    maxLength={50}
+                    className="bg-transparent border-b border-[#3A2220]/20 hover:border-[#3A2220]/40 focus:border-[#3A2220] focus:ring-0 outline-none font-script text-[14px] sm:text-[18px] text-[#3A2220] py-0.5 px-1 flex-1 min-w-0 transition-colors"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between gap-4">
+                  {/* Error display inline inside paper */}
+                  <span className="text-[9px] text-red-500 font-sans line-clamp-1">
+                    {collageSubmitError}
+                  </span>
+
+                  <button
+                    type="submit"
+                    disabled={isCollageSubmitting}
+                    className={`py-1.5 sm:py-2 px-4 sm:px-6 font-mono text-[6px] sm:text-[8px] md:text-[9px] tracking-[0.2em] uppercase rounded-full transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm select-none border whitespace-nowrap ${
+                      isCollageSubmitted
+                        ? 'bg-emerald-800 text-stone-100 border-emerald-800'
+                        : 'bg-stone-900 border-stone-900 text-stone-100 hover:bg-stone-800'
+                    } disabled:opacity-50`}
+                  >
+                    {isCollageSubmitting ? (
+                      <span>{lang === 'VIE' ? "ĐANG GỬI..." : "SAVING..."}</span>
+                    ) : isCollageSubmitted ? (
+                      <span>✓ {lang === 'VIE' ? "ĐÃ GỬI!" : "PINNED!"}</span>
+                    ) : (
+                      <span>{lang === 'VIE' ? "GỬI CHÚC MỪNG" : "PIN TO BOARD"}</span>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            {/* 2. Kraft/Tan Textured Card (Tilted Left, overlapping) - Welcoming greeting from the couple */}
+            <div className="absolute bottom-[10%] left-[8%] xs:left-[12%] sm:left-[16%] md:left-[14%] -rotate-[6deg] hover:-rotate-[4deg] bg-[#C1B7A4] shadow-[0_12px_30px_rgba(0,0,0,0.18)] border border-stone-300/40 w-[180px] sm:w-[220px] md:w-[280px] h-[90px] sm:h-[110px] md:h-[140px] p-4 sm:p-5 md:p-7 flex flex-col justify-between overflow-hidden transition-all duration-300 cursor-grab active:cursor-grabbing">
+              {/* Kraft Paper fiber noise simulation */}
+              <div className="absolute inset-0 bg-white/5 opacity-40 pointer-events-none mix-blend-overlay" />
+              
+              <p className="font-script text-[11px] sm:text-[13px] md:text-[16px] text-[#3A2220]/90 leading-tight font-medium text-left pr-4 leading-relaxed tracking-wide select-none">
+                {lang === 'VIE' ? (
+                  <>
+                    Cảm ơn tất cả mọi người <br />
+                    đã đồng hành & chia sẻ <br />
+                    những khoảnh khắc tuyệt vời <br />
+                    trong ngày hạnh phúc của tụi mình.
+                  </>
+                ) : (
+                  <>
+                    Thank you so much <br />
+                    for celebrating with us! <br />
+                    Your love, support and presence <br />
+                    mean the entire world to us.
+                  </>
+                )}
+              </p>
+              
+              {/* Vertical brand line on the right edge */}
+              <div className="absolute right-[1px] md:right-[4px] top-1/2 -translate-y-1/2 rotate-90 origin-center text-[4px] sm:text-[5px] md:text-[6px] tracking-[0.3em] text-[#3a2220]/60 font-mono whitespace-nowrap">
+                SARAH & MICHAEL • TOKYO 2026
+              </div>
+            </div>
+
+            {/* 3. Charcoal Card (Tilted Right, overlapping) */}
+            <div className="absolute top-[18%] right-[8%] xs:right-[12%] sm:right-[16%] md:right-[14%] rotate-[3deg] hover:rotate-[1deg] bg-[#2E2E2D] shadow-[0_15px_40px_rgba(0,0,0,0.25)] w-[140px] sm:w-[180px] md:w-[230px] h-[140px] sm:h-[180px] md:h-[230px] p-5 sm:p-6 md:p-8 flex flex-col items-center justify-center text-center transition-all duration-300 cursor-grab active:cursor-grabbing z-20">
+              {/* White mock punch hole at top center */}
+              <div className="absolute top-3 sm:top-4 md:top-6 left-1/2 -translate-x-1/2 w-2.5 sm:w-3 md:w-4 h-2.5 sm:h-3 md:h-4 rounded-full bg-stone-100 shadow-[inset_1px_1px_2px_rgba(0,0,0,0.35)]" />
+              
+              <div className="relative z-10 space-y-1 sm:space-y-1.5 md:space-y-2 pointer-events-none">
+                {/* Custom cursive calligraphy text */}
+                <h3 className="font-script text-lg sm:text-2xl md:text-3xl text-[#FAF8F5] leading-none select-none italic py-1">
+                  S & M
+                </h3>
+                <div className="space-y-0.5">
+                  <p className="font-mono text-[5px] sm:text-[6px] md:text-[8px] tracking-[0.35em] text-white/40 uppercase leading-none">
+                    {lang === 'VIE' ? "XIN CẢM ƠN" : "THANK YOU"}
+                  </p>
+                  <p className="font-mono text-[4px] sm:text-[5px] md:text-[6px] tracking-[0.35em] text-white/40 uppercase leading-none">
+                    {lang === 'VIE' ? "ƯỚC NGUYỆN TRỌN ĐỜI" : "FOREVER COLLAGE"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        {/* Guestbook Live Board - Sticky Cards Grid */}
+        <AnimatePresence>
+          {collageNotes.length > 0 && (
+            <div className="w-full max-w-6xl mx-auto px-6 py-12 text-center space-y-8 relative z-10">
+              <div className="space-y-2">
+                <h4 className="font-serif text-xl sm:text-2xl uppercase tracking-wider text-[#3A2220]/80">
+                  {lang === 'VIE' ? "Lời Chúc Từ Người Thân & Bạn Bè" : "Wishes from Friends & Family"}
+                </h4>
+                <p className="font-mono text-[8px] sm:text-[10px] tracking-widest text-[#3A2220]/50 uppercase">
+                  {lang === 'VIE' ? "SỔ LƯU BÚT ĐIỆN TỬ THỜI GIAN THỰC" : "REALTIME GUEST LOG DESIGN"}
+                </p>
+              </div>
+
+              <motion.div 
+                layout
+                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pt-4"
+              >
+                <AnimatePresence mode="popLayout">
+                  {collageNotes.map((note, index) => {
+                    const rotations = ['-rotate-1', 'rotate-1', '-rotate-2', 'rotate-2', '-rotate-1.5', 'rotate-1.5'];
+                    const rotation = rotations[index % rotations.length];
+                    const tints = [
+                      'bg-[#FCFBF7] border-stone-200 shadow-sm',
+                      'bg-[#FAF9F5] border-stone-200 shadow-sm',
+                      'bg-[#FDFCF9] border-stone-200 shadow-sm',
+                    ];
+                    const tint = tints[index % tints.length];
+
+                    return (
+                      <motion.div
+                        key={note.id}
+                        initial={{ opacity: 0, scale: 0.9, y: 15 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.85, y: -15 }}
+                        transition={{ duration: 0.4 }}
+                        whileHover={{ scale: 1.03, zIndex: 10 }}
+                        className={`relative p-6 ${tint} ${rotation} border rounded-[1px] select-none transition-shadow duration-300 shadow-[0_4px_12px_rgba(0,0,0,0.03)] min-h-[140px] flex flex-col justify-between`}
+                      >
+                        {/* Polaroid Tape Accent */}
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-3.5 bg-white/50 backdrop-blur-[1px] border border-stone-200/40 shadow-[0_1px_2px_rgba(0,0,0,0.01)] rotate-[-1deg]" />
+                        
+                        <div className="space-y-4 text-left">
+                          <p className="font-script text-[18px] text-[#3A2220] leading-relaxed break-words whitespace-pre-wrap selection:bg-[#3A2220]/10">
+                            "{note.noteText}"
+                          </p>
+                          <div className="flex items-center justify-between pt-2 border-t border-[#3A2220]/5">
+                            <span className="font-script text-[15px] text-[#3A2220] font-medium leading-none">
+                              — {note.guestName}
+                            </span>
+                            <span className="text-red-400 text-[10px]">♥</span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+      </section>
+
 
       {/* Footer */}
       <footer className="max-w-6xl mx-auto py-24 border-t border-black/5 text-center font-mono text-[8px] tracking-[0.4em] uppercase text-muted px-6 space-y-4">
@@ -1058,56 +1360,13 @@ export default function App() {
         <div className="flex justify-center pt-2">
           <button 
             onClick={() => navigateTo('/admin')}
-            className="opacity-20 hover:opacity-100 transition-opacity duration-300 text-[7px] tracking-[0.5em] focus:outline-none cursor-pointer"
+            className="opacity-20 hover:opacity-100 transition-all duration-300 text-[7px] tracking-[0.5em] focus:outline-none cursor-pointer bg-black/5 hover:bg-black/10 backdrop-blur-sm border border-black/5 hover:border-black/10 px-3 py-1.5 rounded-full"
             id="secret-admin-btn"
           >
             • ADMIN SUITE •
           </button>
         </div>
       </footer>
-
-      {/* Elegant Ambient Wedding Music Control (Floating bottom-right) */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-1.5 pointer-events-auto">
-        <AnimatePresence>
-          {!hasInteracted && (
-            <motion.div
-              initial={{ opacity: 0, y: 10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              transition={{ duration: 0.4, ease: 'easeOut' }}
-              className="bg-[#3A2220] text-[#FAF9F6] text-[8px] font-mono tracking-[0.2em] uppercase py-1.5 px-3 shadow-lg border border-white/5 rounded-sm pointer-events-none mb-1 flex items-center gap-2"
-            >
-              <div className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-              </div>
-              <span>♫ TURN SOUND ON FOR AMBIENCE</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <button
-          onClick={handleToggleMusic}
-          id="music-toggle-btn"
-          className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all duration-500 shadow-md hover:scale-105 active:scale-95 cursor-pointer relative ${
-            isMusicPlaying 
-              ? 'bg-[#3A2220] border-[#3A2220] text-[#FAF9F6]' 
-              : 'bg-white border-black/10 text-[#3A2220] hover:border-[#3A2220]'
-          }`}
-          title={isMusicPlaying ? "Mute Background Music" : "Play Wedding Song"}
-        >
-          {isMusicPlaying ? (
-            <div className="flex gap-[2.2px] items-end justify-center h-4 w-4 relative bottom-[1px]">
-              <span className="w-[1.8px] h-3.5 bg-current animate-audio-bounce-1" />
-              <span className="w-[1.8px] h-4.5 bg-current animate-audio-bounce-2" />
-              <span className="w-[1.8px] h-2 bg-current animate-audio-bounce-3" />
-              <span className="w-[1.8px] h-4 bg-current animate-audio-bounce-4" />
-            </div>
-          ) : (
-            <VolumeX size={16} strokeWidth={1.8} />
-          )}
-        </button>
-      </div>
     </div>
   );
 }
