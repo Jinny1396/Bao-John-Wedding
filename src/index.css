@@ -1,11 +1,12 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Space+Mono:wght@400;700&family=Nothing+You+Could+Do&family=Pinyon+Script&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&family=Nothing+You+Could+Do&family=Pinyon+Script&family=Luxurious+Script&family=Inter:wght@300;400;500;600&display=swap');
 
 @theme {
   --font-serif: "Cormorant Garamond", serif;
   --font-mono: "Space Mono", monospace;
   --font-script: "Nothing You Could Do", cursive;
   --font-script-elegant: "Pinyon Script", cursive;
+  --font-luxurious: "Luxurious Script", cursive;
   --font-sans: "Inter", sans-serif;
   --color-bg: #F4F3EF;
   --color-forest: #1A3015;
@@ -34,6 +35,10 @@ body {
 
 .font-script-elegant {
   font-family: var(--font-script-elegant);
+}
+
+.font-luxurious {
+  font-family: var(--font-luxurious);
 }
 
 .tape {

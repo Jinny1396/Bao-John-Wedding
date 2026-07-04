@@ -5,7 +5,7 @@ import { AdminPanel } from './components/AdminPanel';
 import { StorySection } from './components/StorySection';
 import CountdownSection from './components/CountdownSection';
 import { GatheringSection } from './components/GatheringSection';
-import { VolumeX, Volume2, Music } from 'lucide-react';
+import { VolumeX, Volume2, Music, Menu, X } from 'lucide-react';
 import { onSnapshot, doc, collection, addDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from './firebase';
 
@@ -276,17 +276,19 @@ class AmbientPianoSynth {
 }
 
 export default function App() {
-  const [lang, setLang] = useState<'VIE' | 'ENG'>('VIE');
+  const [lang, setLang] = useState<'VIE' | 'ENG'>('ENG');
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [hoveredSidebarIndex, setHoveredSidebarIndex] = useState<number | null>(null);
   const [isPastHero, setIsPastHero] = useState(false);
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Section drag constraints and local notes state for collage
   const constraintsRef = useRef<HTMLDivElement>(null);
   const [localNoteText, setLocalNoteText] = useState('');
   const [localGuestName, setLocalGuestName] = useState('');
   const [isLocalModalOpen, setIsLocalModalOpen] = useState(false);
+  const [activeModalTab, setActiveModalTab] = useState<'rsvp' | 'note'>('rsvp');
   const [localNotes, setLocalNotes] = useState<Array<{name: string, text: string, id: number}>>(() => {
     try {
       const saved = localStorage.getItem('wedding_local_notes');
@@ -313,6 +315,7 @@ export default function App() {
     collageSageStampUrl?: string;
     brideName?: string;
     groomName?: string;
+    heroTitle?: string;
     heroDateEng?: string;
     heroDateVie?: string;
     invitationTextEng?: string;
@@ -404,6 +407,7 @@ export default function App() {
           collageSageStampUrl: data.collageSageStampUrl || '',
           brideName: data.brideName || '',
           groomName: data.groomName || '',
+          heroTitle: data.heroTitle || '',
           heroDateEng: data.heroDateEng || '',
           heroDateVie: data.heroDateVie || '',
           invitationTextEng: data.invitationTextEng || '',
@@ -607,14 +611,147 @@ export default function App() {
 
   const t = appTranslations[lang];
 
-  // Background classical music system (Soft wedding ambient piano)
+  // Background classical music system via highly robust native HTML5 Audio + Web Audio Synth fallback
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [showMusicTooltip, setShowMusicTooltip] = useState(true);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const synthRef = useRef<AmbientPianoSynth | null>(null);
-  const isUsingSynthRef = useRef(false);
+  const isUsingSynthRef = useRef<boolean>(false);
 
-  // Ambient noise/sound features removed per user request
+  useEffect(() => {
+    // Auto-dismiss music tooltip after 8s
+    const timer = setTimeout(() => {
+      setShowMusicTooltip(false);
+    }, 8000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Initialize native HTML5 audio with classical piano recording & Web Audio synth fallback
+  useEffect(() => {
+    // Setup beautiful Satie Gymnopedie No 1 from Wikimedia Commons (100% stable, royalty-free classical piano recording)
+    const audio = new Audio("https://upload.wikimedia.org/wikipedia/commons/e/e2/Erik_Satie_-_Gymnop%C3%A9die_No._1_-_Kevin_MacLeod.mp3");
+    audio.loop = true;
+    audio.volume = 0.45;
+    audioRef.current = audio;
+
+    // Instantiate fallback synth (zero network dependency)
+    synthRef.current = new AmbientPianoSynth();
+
+    // Aggressively attempt immediate autoplay on load
+    const attemptAutoplay = async () => {
+      try {
+        await audio.play();
+        setIsMusicPlaying(true);
+        setHasInteracted(true);
+      } catch (err) {
+        console.warn("Initial autoplay blocked by browser policy. Will play on first interaction.", err);
+      }
+    };
+    
+    // Attempt autoplay immediately
+    attemptAutoplay();
+
+    return () => {
+      if (audioRef.current) {
+        try {
+          audioRef.current.pause();
+        } catch {}
+        audioRef.current = null;
+      }
+      if (synthRef.current) {
+        try {
+          synthRef.current.stop();
+        } catch {}
+        synthRef.current = null;
+      }
+    };
+  }, []);
+
+  // Dynamic play audio logic supporting first touch/click gestures & fallbacks
+  const playAudio = async () => {
+    if (isUsingSynthRef.current) {
+      if (synthRef.current) {
+        synthRef.current.start();
+        setIsMusicPlaying(true);
+      }
+      return;
+    }
+
+    if (audioRef.current) {
+      try {
+        await audioRef.current.play();
+        setIsMusicPlaying(true);
+      } catch (err) {
+        console.warn("HTML5 background audio play failed or blocked, falling back to real-time Web Audio Synthesizer:", err);
+        // Instant fallback to the pre-written C/G/Am/Em classical synth
+        isUsingSynthRef.current = true;
+        if (synthRef.current) {
+          synthRef.current.start();
+          setIsMusicPlaying(true);
+        }
+      }
+    } else {
+      // Fallback if audio element not initialized
+      if (synthRef.current) {
+        synthRef.current.start();
+        setIsMusicPlaying(true);
+      }
+    }
+  };
+
+  const pauseAudio = () => {
+    setIsMusicPlaying(false);
+    if (audioRef.current) {
+      try {
+        audioRef.current.pause();
+      } catch {}
+    }
+    if (synthRef.current) {
+      try {
+        synthRef.current.stop();
+      } catch {}
+    }
+  };
+
+  // Sync state hook for external state updates
+  useEffect(() => {
+    if (isMusicPlaying) {
+      playAudio();
+    } else {
+      pauseAudio();
+    }
+  }, [isMusicPlaying]);
+
+  // Autoplay trigger on first physical user gesture (Safari, Chrome, iOS strict requirement)
+  useEffect(() => {
+    const handleFirstInteraction = () => {
+      if (!hasInteracted) {
+        setHasInteracted(true);
+        setIsMusicPlaying(true);
+      }
+    };
+
+    const interactionEvents = ['click', 'touchstart', 'scroll', 'mousemove', 'keydown', 'mousedown', 'pointerdown'];
+    
+    interactionEvents.forEach(event => {
+      window.addEventListener(event, handleFirstInteraction, { once: true, passive: true });
+    });
+
+    return () => {
+      interactionEvents.forEach(event => {
+        window.removeEventListener(event, handleFirstInteraction);
+      });
+    };
+  }, [hasInteracted]);
+
+  const toggleMusic = () => {
+    setShowMusicTooltip(false);
+    if (!hasInteracted) {
+      setHasInteracted(true);
+    }
+    setIsMusicPlaying(prev => !prev);
+  };
 
   useEffect(() => {
     const handleLocationChange = () => {
@@ -698,8 +835,50 @@ export default function App() {
   return (
     <div className="min-h-screen bg-bg text-ink selection:bg-forest/10 selection:text-ink font-sans transition-colors duration-500 overflow-x-hidden relative">
       
-      {/* Top Floating Header with Language Selector Toggle */}
-      <header className="fixed top-6 right-6 z-50 flex items-center gap-4">
+      {/* Top Floating Header with Language Selector and Sound Button */}
+      <header className="fixed top-6 right-6 z-50 flex items-center gap-3">
+        {/* Sound Button & Ambient Popup */}
+        <div className="relative flex items-center">
+          <button
+            onClick={toggleMusic}
+            title={isMusicPlaying ? t.musicToggleTitleMute : t.musicToggleTitlePlay}
+            className="bg-white/40 hover:bg-white/70 backdrop-blur-md border border-black/10 hover:border-black/25 rounded-full p-2.5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition-all duration-300 flex items-center justify-center cursor-pointer relative"
+          >
+            {isMusicPlaying ? (
+              <div className="flex items-end gap-[2px] h-4 w-4 px-0.5 justify-center pb-[2px]">
+                <span className="w-0.5 h-3 bg-[#3A2220] rounded-sm animate-audio-bounce-1" />
+                <span className="w-0.5 h-3 bg-[#3A2220] rounded-sm animate-audio-bounce-2" />
+                <span className="w-0.5 h-3 bg-[#3A2220] rounded-sm animate-audio-bounce-3" />
+                <span className="w-0.5 h-3 bg-[#3A2220] rounded-sm animate-audio-bounce-4" />
+              </div>
+            ) : (
+              <VolumeX className="w-4 h-4 text-[#3A2220]" strokeWidth={1.5} />
+            )}
+          </button>
+
+          {/* Elegant Tooltip / Popup Speech Bubble */}
+          <AnimatePresence>
+            {showMusicTooltip && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
+                className="absolute right-0 top-12 whitespace-nowrap bg-white/90 backdrop-blur-md border border-black/10 text-[#3A2220] text-[10px] tracking-[0.08em] font-mono px-3 py-1.5 rounded-lg shadow-[0_4px_16px_rgba(0,0,0,0.06)] flex items-center gap-2 select-none"
+              >
+                <span>{t.musicPopup}</span>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); setShowMusicTooltip(false); }} 
+                  className="hover:opacity-70 text-neutral-400 hover:text-black cursor-pointer font-bold text-[9px] ml-1"
+                >
+                  ✕
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Language selector toggle */}
         <div className="bg-white/40 hover:bg-white/70 backdrop-blur-md border border-black/10 hover:border-black/25 rounded-full px-4 py-2 flex items-center gap-2 shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition-all duration-300">
           <button
             onClick={() => setLang('ENG')}
@@ -725,6 +904,63 @@ export default function App() {
         </div>
       </header>
       
+      {/* Mobile Menu Toggle Button */}
+      <button
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        className="fixed top-6 left-6 z-50 md:hidden bg-white/40 hover:bg-white/70 active:bg-white/80 backdrop-blur-md border border-black/10 active:border-black/25 rounded-full p-2.5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition-all duration-300 flex items-center justify-center cursor-pointer"
+        aria-label="Toggle Menu"
+      >
+        {isMobileMenuOpen ? (
+          <X className="w-4 h-4 text-[#3A2220]" strokeWidth={1.5} />
+        ) : (
+          <Menu className="w-4 h-4 text-[#3A2220]" strokeWidth={1.5} />
+        )}
+      </button>
+
+      {/* Mobile Fullscreen Menu Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: -100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -100 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed inset-0 z-40 bg-[#FAF9F5] flex flex-col justify-center items-center md:hidden"
+          >
+            {/* Delicate paper grain overlay for textured aesthetic */}
+            <div className="absolute inset-0 bg-white/[0.012] opacity-25 pointer-events-none mix-blend-overlay" />
+            
+            <nav className="flex flex-col gap-8 items-center text-center">
+              {sidebarItems.map((item, index) => (
+                <motion.button
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.08 }}
+                  onClick={() => {
+                    handleScrollTo(item.target);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="group flex flex-col items-center gap-1 focus:outline-none cursor-pointer bg-transparent border-none"
+                >
+                  <span className="font-mono text-[10px] tracking-widest text-[#AA9082] uppercase opacity-80">
+                    {item.num}
+                  </span>
+                  <span className="font-serif text-2xl tracking-wide text-[#3A2220] hover:text-[#AA9082] transition-colors duration-300 uppercase">
+                    {item.label}
+                  </span>
+                </motion.button>
+              ))}
+            </nav>
+            
+            {/* Elegant Monogram at the bottom of mobile menu */}
+            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 opacity-30 scale-75">
+              <OvalMonogram className="w-20 h-20" />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* High-End Floating Navigation Sidebar */}
       <div className="fixed left-6 top-1/2 -translate-y-1/2 z-50 bg-transparent shadow-none border-none pointer-events-auto hidden md:block select-none">
         <div className="group/sidebar flex flex-col gap-6 items-start">
@@ -785,49 +1021,53 @@ export default function App() {
 
 
       {/* Style Reference Hero Section with full-background image and darken overlay */}
-      <section id="hero" className="relative w-full min-h-[75vh] md:min-h-[85vh] flex items-center justify-center overflow-hidden bg-stone-950 px-6 py-24 md:py-36">
+      <section id="hero" className="relative w-full h-screen flex items-end justify-center overflow-hidden bg-stone-950 px-6 pb-[30px] pt-24">
         {/* Full-background image with darken overlay */}
         <div className="absolute inset-0 z-0">
           <img 
             src={siteContent.imageUrl || "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=2000&q=80"} 
             alt="Warm mystical forest wedding" 
-            className="w-full h-full object-cover grayscale contrast-[105%] brightness-[0.80]" 
+            className="w-full h-full object-cover contrast-[105%] brightness-[0.80]" 
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 bg-black/55" /> {/* Darken overlay */}
+          <div className="absolute inset-0 bg-black/25" /> {/* Darken overlay */}
         </div>
 
         {/* Center Typography & Emblem */}
-        <div className="relative z-10 max-w-4xl mx-auto text-center space-y-8">
+        <div className="relative z-10 max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2 }}
-            className="space-y-8"
+            className="flex flex-col items-center text-center"
           >
             <div className="flex justify-center">
               <OvalMonogram className="w-16 h-16 text-bg/90" />
             </div>
             
-            <div className="space-y-4">
-              <h2 className="font-serif text-5xl md:text-7xl lg:text-8xl tracking-tight leading-[0.9] text-white uppercase">
-                SARAH &<br />ALDERSON
+            <div className="mt-8">
+              <h2 
+                className="font-luxurious tracking-tight"
+                style={{
+                  borderColor: '#FFE4E9',
+                  fontFamily: '"Luxurious Script", cursive',
+                  fontSize: '170px',
+                  lineHeight: '120px',
+                  whiteSpace: 'pre-line',
+                  color: '#FFE4E9'
+                }}
+              >
+                {siteContent.heroTitle || "Sarah &\nAlderson"}
               </h2>
             </div>
 
-            <div className="space-y-6">
-              <p className="font-mono text-[10px] tracking-[0.35em] text-white/75 uppercase">
-                {t.heroDate}
-              </p>
-              
-              <div className="flex justify-center pt-2">
-                <button 
-                  onClick={() => handleScrollTo('rsvp')}
-                  className="font-mono text-[9px] tracking-[0.3em] uppercase border border-white/25 text-white bg-white/10 backdrop-blur-md py-2.5 px-8 rounded-full hover:bg-white/20 hover:border-white/45 transition-all duration-300 transform active:scale-95 ease-out cursor-pointer shadow-[0_4px_30px_rgba(0,0,0,0.1)]"
-                >
-                  {t.heroBtn}
-                </button>
-              </div>
+            <div className="mt-[10px] flex justify-center">
+              <button 
+                onClick={() => handleScrollTo('rsvp')}
+                className="font-mono text-[9px] tracking-[0.3em] uppercase border border-white/25 text-white bg-white/10 backdrop-blur-md py-[8px] px-[20px] rounded-full hover:bg-white/20 hover:border-white/45 transition-all duration-300 transform active:scale-95 ease-out cursor-pointer shadow-[0_4px_30px_rgba(0,0,0,0.1)]"
+              >
+                {t.heroBtn}
+              </button>
             </div>
           </motion.div>
         </div>
@@ -1020,22 +1260,9 @@ export default function App() {
 
       <GatheringSection lang={lang} siteContent={siteContent} />
 
-      {/* RSVP Form Section */}
-      <section id="rsvp" className="max-w-4xl mx-auto py-24 md:py-36 px-6">
-        <div className="text-center mb-20 relative">
-          <h2 className="font-serif text-[64px] md:text-[96px] leading-none uppercase tracking-tight">RSVP</h2>
-          <p className="font-mono text-[10px] tracking-[0.4em] uppercase text-muted mt-6">
-            {t.respondBy}
-          </p>
-        </div>
-        <div className="bg-white p-8 md:p-16 border border-black/5 shadow-md">
-          <RSVPForm lang={lang} />
-        </div>
-      </section>
-
-      {/* Coastal Blue Elegant Visual Collage Section */}
+      {/* Coastal Blue Elegant Visual Collage Section (with RSVP) */}
       <section 
-        id="coastal-blue-collage" 
+        id="rsvp" 
         className="w-full relative py-12 sm:py-20 md:py-24 overflow-hidden bg-stone-950 min-h-[550px] sm:min-h-[650px] md:min-h-[800px] flex flex-col items-center justify-center select-none"
       >
         {/* Background romantic wedding photo with high-contrast grayscale/dark overlay */}
@@ -1095,13 +1322,27 @@ export default function App() {
                 </p>
               </div>
 
-              {/* Handcrafted button */}
-              <button
-                onClick={() => setIsLocalModalOpen(true)}
-                className="mt-6 sm:mt-10 px-5 sm:px-7 py-2 sm:py-2.5 rounded-full border border-[#3a2220]/40 text-[#3a2220]/90 font-serif italic text-[11px] sm:text-[13px] bg-transparent hover:bg-[#3a2220]/5 active:scale-95 transition-all select-none cursor-pointer duration-300 shadow-sm"
-              >
-                Click to write us a note
-              </button>
+              {/* Handcrafted buttons for RSVP and Guestbook */}
+              <div className="mt-5 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
+                <button
+                  onClick={() => {
+                    setActiveModalTab('rsvp');
+                    setIsLocalModalOpen(true);
+                  }}
+                  className="px-6 sm:px-8 py-2 sm:py-2.5 rounded-full bg-[#3a2220] hover:bg-[#3a2220]/90 text-[#FAF9F5] font-serif italic text-[11px] sm:text-[13px] active:scale-95 transition-all select-none cursor-pointer duration-300 shadow-md border border-[#3a2220]"
+                >
+                  {lang === 'VIE' ? "Xác nhận tham dự (RSVP)" : "Please RSVP Here"}
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveModalTab('note');
+                    setIsLocalModalOpen(true);
+                  }}
+                  className="px-6 sm:px-8 py-2 sm:py-2.5 rounded-full border border-[#3a2220]/40 text-[#3a2220]/90 font-serif italic text-[11px] sm:text-[13px] bg-transparent hover:bg-[#3a2220]/5 active:scale-95 transition-all select-none cursor-pointer duration-300 shadow-sm"
+                >
+                  {lang === 'VIE' ? "Gửi lời chúc lưu bút" : "Write us a note"}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -1159,10 +1400,10 @@ export default function App() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.94, y: 35 }}
                 transition={{ type: 'spring', damping: 28, stiffness: 200 }}
-                className="relative bg-[#FAF9F5] border border-stone-250/70 shadow-[0_32px_80px_-12px_rgba(0,0,0,0.4)] w-full max-w-2xl mx-auto rounded-none p-6 sm:p-10 md:p-12 z-10 flex flex-col justify-between overflow-hidden"
+                className="relative bg-[#FAF9F5] border border-stone-250/70 shadow-[0_32px_80px_-12px_rgba(0,0,0,0.4)] w-full max-w-2xl mx-auto rounded-none p-5 sm:p-8 md:p-10 z-10 flex flex-col justify-between overflow-hidden max-h-[90vh]"
               >
                 {/* Vintage Postmark Stamp Top-Right Graphic Decoration */}
-                <div className="absolute top-6 right-8 opacity-[0.15] pointer-events-none select-none">
+                <div className="absolute top-6 right-8 opacity-[0.12] pointer-events-none select-none">
                   <svg width="105" height="52" viewBox="0 0 105 52" fill="none" stroke="currentColor" className="text-stone-800">
                     <path d="M 0 12 C 15 5, 20 18, 35 12 C 50 5, 55 18, 70 12 C 85 5, 90 18, 105 12" strokeWidth="1" />
                     <path d="M 0 24 C 15 17, 20 30, 35 24 C 50 17, 55 30, 70 24 C 85 17, 90 30, 105 24" strokeWidth="1" />
@@ -1181,119 +1422,168 @@ export default function App() {
                   </svg>
                 </button>
 
-                <div className="text-center w-full mb-6 relative z-10 select-none">
+                <div className="text-center w-full mb-4 relative z-10 select-none">
                   {/* Small upper caps branding line */}
-                  <span className="font-mono text-[8px] sm:text-[9.5px] tracking-[0.3em] font-medium text-stone-400 uppercase block mb-3">
-                    {lang === 'VIE' ? "LƯU BÚT ĐÁM CƯỚI • KỶ NIỆM NGỌT NGÀO" : "GUESTBOOK MEMORIES • THE INK COLLECTION"}
+                  <span className="font-mono text-[7.5px] sm:text-[9px] tracking-[0.3em] font-medium text-stone-400 uppercase block mb-2">
+                    {activeModalTab === 'rsvp' 
+                      ? (lang === 'VIE' ? "XÁC NHẬN SỰ HIỆN DIỆN • CELEBRATION RSVP" : "CONFIRM PRESENCE • CELEBRATION RSVP") 
+                      : (lang === 'VIE' ? "LƯU BÚT ĐÁM CƯỚI • KỶ NIỆM NGỌT NGÀO" : "GUESTBOOK MEMORIES • THE INK COLLECTION")}
                   </span>
                   
                   {/* Editorial elegant mix heading exactly like template image */}
                   <h3 className="font-serif text-[#3a2220] leading-tight max-w-[90%] mx-auto">
-                    <span className="block font-serif italic text-[24px] sm:text-[28px] text-stone-500 font-light leading-none mb-1">
-                      {lang === 'VIE' ? "Gửi trao nguyện ước," : "Leaving us a message,"}
-                    </span>
-                    <span className="block font-serif tracking-[0.08em] font-normal text-[22px] sm:text-[26px] uppercase leading-none mt-1">
-                      {lang === 'VIE' ? "ĐỂ KỶ NIỆM CÒN MÃI VỚI THỜI GIAN." : "TO CHERISH YOUR LOVE FOREVER."}
-                    </span>
+                    {activeModalTab === 'rsvp' ? (
+                      <>
+                        <span className="block font-serif italic text-[22px] sm:text-[26px] text-stone-500 font-light leading-none mb-1">
+                          {lang === 'VIE' ? "Chung vui cùng tụi mình," : "Celebrate with us,"}
+                        </span>
+                        <span className="block font-serif tracking-[0.08em] font-normal text-[20px] sm:text-[24px] uppercase leading-none mt-1">
+                          {lang === 'VIE' ? "XÁC NHẬN SỰ HIỆN DIỆN CỦA BẠN." : "KINDLY RESPOND TO OUR INVITATION."}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="block font-serif italic text-[22px] sm:text-[26px] text-stone-500 font-light leading-none mb-1">
+                          {lang === 'VIE' ? "Gửi trao nguyện ước," : "Leaving us a message,"}
+                        </span>
+                        <span className="block font-serif tracking-[0.08em] font-normal text-[20px] sm:text-[24px] uppercase leading-none mt-1">
+                          {lang === 'VIE' ? "ĐỂ KỶ NIỆM CÒN MÃI VỚI THỜI GIAN." : "TO CHERISH YOUR LOVE FOREVER."}
+                        </span>
+                      </>
+                    )}
                   </h3>
 
                   {/* Centered thin elegant vertical line */}
-                  <div className="w-[1px] h-12 bg-stone-300 mx-auto my-4" />
-                </div>
+                  <div className="w-[1px] h-8 bg-stone-300 mx-auto my-3" />
 
-                <form 
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const guestNameVal = localGuestName.trim();
-                    const noteTextVal = localNoteText.trim();
-                    if (!noteTextVal || !guestNameVal) return;
-                    
-                    // Save note in live Firestore database with a secure server timestamp
-                    addDoc(collection(db, 'guest_notes'), {
-                      name: guestNameVal,
-                      text: noteTextVal,
-                      createdAt: serverTimestamp()
-                    }).catch((error) => {
-                      try {
-                        handleFirestoreError(error, OperationType.WRITE, 'guest_notes');
-                      } catch (err) {
-                        console.error("Failed to add note to database: ", err);
-                      }
-                    });
-
-                    // Maintain local notes / device history as fallback
-                    const newNote = {
-                      id: Date.now(),
-                      name: guestNameVal,
-                      text: noteTextVal
-                    };
-                    const updated = [newNote, ...localNotes];
-                    setLocalNotes(updated);
-                    localStorage.setItem('wedding_local_notes', JSON.stringify(updated));
-                    
-                    setIsLocalSubmitted(true);
-                    setLocalNoteText('');
-                    setLocalGuestName('');
-                    setTimeout(() => {
-                      setIsLocalSubmitted(false);
-                      setIsLocalModalOpen(false);
-                    }, 1800);
-                  }} 
-                  className="space-y-4 relative h-full flex flex-col flex-1"
-                >
-                  {/* Lined stationery textarea with cursive fountain-pen style */}
-                  <div className="relative flex-1 z-15 min-h-[175px] rounded-sm pt-2">
-                    <textarea
-                      value={localNoteText}
-                      onChange={(e) => setLocalNoteText(e.target.value)}
-                      placeholder={lang === 'VIE' ? "Hãy viết một câu chúc mừng, lời dặn dò hay gửi gắm những yêu thương ngọt ngào tới tụi mình tại đây nhé..." : "Leave a warm wish, loving note, or advice for our journey..."}
-                      required
-                      maxLength={300}
-                      rows={5}
-                      className="w-full bg-transparent p-3 sm:px-4 font-script text-rose-900 text-[18px] sm:text-[21px] leading-[32px] placeholder-stone-400/80 outline-none resize-none border-none focus:ring-0 active:ring-0"
-                      style={{
-                        backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 31px, rgba(168, 162, 158, 0.15) 31px, rgba(168, 162, 158, 0.15) 32px)',
-                        backgroundSize: '100% 32px',
-                        lineHeight: '32px',
-                        paddingTop: '6px'
-                      }}
-                    />
-                  </div>
-
-                  {/* Signature line & Action submit */}
-                  <div className="pt-2 pb-5 z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-b border-stone-200/50">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-[8px] sm:text-[9px] tracking-widest text-[#3a2220]/60 uppercase whitespace-nowrap select-none">
-                        {lang === 'VIE' ? "KÝ TÊN / WITH LOVE," : "SIGNATURE / WITH LOVE:"}
-                      </span>
-                      <input
-                        type="text"
-                        value={localGuestName}
-                        onChange={(e) => setLocalGuestName(e.target.value)}
-                        placeholder="John Smith..."
-                        required
-                        maxLength={40}
-                        className="bg-transparent border-b border-stone-300 hover:border-stone-400 focus:border-[#3a2220] outline-none font-script text-[18px] text-[#3a2220]/90 py-1 px-1.5 w-44 sm:w-56 transition-colors focus:ring-0 focus:outline-none"
-                      />
-                    </div>
-
+                  {/* Elegant Tabs Selection */}
+                  <div className="flex justify-center border-b border-stone-200/50 mb-2 gap-8 pb-1">
                     <button
-                      type="submit"
-                      disabled={!localNoteText.trim() || !localGuestName.trim() || isLocalSubmitted}
-                      className={`py-2 px-6 sm:px-8 font-mono text-[8.5px] tracking-[0.25em] uppercase rounded-full transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm select-none border whitespace-nowrap ${
-                        isLocalSubmitted
-                          ? 'bg-emerald-800 border-emerald-800 text-[#FAF9F5]'
-                          : 'bg-stone-900 border-stone-900 text-[#FAF9F5] hover:bg-stone-800 active:scale-95'
-                      } disabled:opacity-40`}
+                      type="button"
+                      onClick={() => setActiveModalTab('rsvp')}
+                      className={`font-mono text-[8.5px] sm:text-[10px] tracking-[0.25em] uppercase pb-2 transition-all relative cursor-pointer ${
+                        activeModalTab === 'rsvp' 
+                          ? 'text-[#3a2220] font-semibold border-b border-[#3a2220]' 
+                          : 'text-stone-400 hover:text-[#3a2220]/75'
+                      }`}
                     >
-                      {isLocalSubmitted ? (
-                        <span>✓ {lang === 'VIE' ? "ĐÃ GỬI!" : "SENT!"}</span>
-                      ) : (
-                        <span>{lang === 'VIE' ? "GỬI CHÚC MỪNG" : "SEND NOTE"}</span>
-                      )}
+                      {lang === 'VIE' ? "Xác nhận tham dự" : "RSVP NOW"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveModalTab('note')}
+                      className={`font-mono text-[8.5px] sm:text-[10px] tracking-[0.25em] uppercase pb-2 transition-all relative cursor-pointer ${
+                        activeModalTab === 'note' 
+                          ? 'text-[#3a2220] font-semibold border-b border-[#3a2220]' 
+                          : 'text-stone-400 hover:text-[#3a2220]/75'
+                      }`}
+                    >
+                      {lang === 'VIE' ? "Gửi lời chúc" : "GUESTNOTE"}
                     </button>
                   </div>
-                </form>
+                </div>
+
+                <div className="overflow-y-auto max-h-[50vh] pr-1 flex-1">
+                  {activeModalTab === 'rsvp' ? (
+                    <div className="py-2">
+                      <RSVPForm lang={lang} />
+                    </div>
+                  ) : (
+                    <form 
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        const guestNameVal = localGuestName.trim();
+                        const noteTextVal = localNoteText.trim();
+                        if (!noteTextVal || !guestNameVal) return;
+                        
+                        // Save note in live Firestore database with a secure server timestamp
+                        addDoc(collection(db, 'guest_notes'), {
+                          name: guestNameVal,
+                          text: noteTextVal,
+                          createdAt: serverTimestamp()
+                        }).catch((error) => {
+                          try {
+                            handleFirestoreError(error, OperationType.WRITE, 'guest_notes');
+                          } catch (err) {
+                            console.error("Failed to add note to database: ", err);
+                          }
+                        });
+
+                        // Maintain local notes / device history as fallback
+                        const newNote = {
+                          id: Date.now(),
+                          name: guestNameVal,
+                          text: noteTextVal
+                        };
+                        const updated = [newNote, ...localNotes];
+                        setLocalNotes(updated);
+                        localStorage.setItem('wedding_local_notes', JSON.stringify(updated));
+                        
+                        setIsLocalSubmitted(true);
+                        setLocalNoteText('');
+                        setLocalGuestName('');
+                        setTimeout(() => {
+                          setIsLocalSubmitted(false);
+                          setIsLocalModalOpen(false);
+                        }, 1800);
+                      }} 
+                      className="space-y-4 relative h-full flex flex-col flex-1"
+                    >
+                      {/* Lined stationery textarea with cursive fountain-pen style */}
+                      <div className="relative flex-1 z-15 min-h-[175px] rounded-sm pt-2">
+                        <textarea
+                          value={localNoteText}
+                          onChange={(e) => setLocalNoteText(e.target.value)}
+                          placeholder={lang === 'VIE' ? "Hãy viết một câu chúc mừng, lời dặn dò hay gửi gắm những yêu thương ngọt ngào tới tụi mình tại đây nhé..." : "Leave a warm wish, loving note, or advice for our journey..."}
+                          required
+                          maxLength={300}
+                          rows={5}
+                          className="w-full bg-transparent p-3 sm:px-4 font-script text-rose-900 text-[18px] sm:text-[21px] leading-[32px] placeholder-stone-400/80 outline-none resize-none border-none focus:ring-0 active:ring-0"
+                          style={{
+                            backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 31px, rgba(168, 162, 158, 0.15) 31px, rgba(168, 162, 158, 0.15) 32px)',
+                            backgroundSize: '100% 32px',
+                            lineHeight: '32px',
+                            paddingTop: '6px'
+                          }}
+                        />
+                      </div>
+
+                      {/* Signature line & Action submit */}
+                      <div className="pt-2 pb-5 z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-b border-stone-200/50">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-[8px] sm:text-[9px] tracking-widest text-[#3a2220]/60 uppercase whitespace-nowrap select-none">
+                            {lang === 'VIE' ? "KÝ TÊN / WITH LOVE," : "SIGNATURE / WITH LOVE:"}
+                          </span>
+                          <input
+                            type="text"
+                            value={localGuestName}
+                            onChange={(e) => setLocalGuestName(e.target.value)}
+                            placeholder="John Smith..."
+                            required
+                            maxLength={40}
+                            className="bg-transparent border-b border-stone-300 hover:border-stone-400 focus:border-[#3a2220] outline-none font-script text-[18px] text-[#3a2220]/90 py-1 px-1.5 w-44 sm:w-56 transition-colors focus:ring-0 focus:outline-none"
+                          />
+                        </div>
+
+                        <button
+                          type="submit"
+                          disabled={!localNoteText.trim() || !localGuestName.trim() || isLocalSubmitted}
+                          className={`py-2 px-6 sm:px-8 font-mono text-[8.5px] tracking-[0.25em] uppercase rounded-full transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm select-none border whitespace-nowrap ${
+                            isLocalSubmitted
+                              ? 'bg-emerald-800 border-emerald-800 text-[#FAF9F5]'
+                              : 'bg-stone-900 border-stone-900 text-[#FAF9F5] hover:bg-stone-800 active:scale-95'
+                          } disabled:opacity-40`}
+                        >
+                          {isLocalSubmitted ? (
+                            <span>✓ {lang === 'VIE' ? "ĐÃ GỬI!" : "SENT!"}</span>
+                          ) : (
+                            <span>{lang === 'VIE' ? "GỬI CHÚC MỪNG" : "SEND NOTE"}</span>
+                          )}
+                        </button>
+                      </div>
+                    </form>
+                  )}
+                </div>
               </motion.div>
             </div>
           )}
@@ -1333,6 +1623,7 @@ export default function App() {
           </button>
         </div>
       </footer>
+
     </div>
   );
 }

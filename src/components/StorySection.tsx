@@ -98,7 +98,8 @@ export const StorySection = ({
     <section 
       id="story" 
       ref={storySectionRef} 
-      className="story-section w-full bg-white relative overflow-hidden transition-colors duration-500 py-12 md:py-0 md:h-[1500px]"
+      className="story-section w-full relative overflow-hidden transition-colors duration-500 py-12 md:py-0 md:h-[1500px]"
+      style={{ backgroundColor: '#F6E1E2' }}
     >
       <div className="story-content w-full max-w-7xl mx-auto relative px-4 sm:px-6 md:px-12">
         
@@ -107,77 +108,172 @@ export const StorySection = ({
           ref={stickyTextRef} 
           className="text-wrapper text-center select-none w-full max-w-lg md:max-w-xl mx-auto" 
           id="stickyText"
-          style={{ zIndex: 4 }} // Sits below Image 3 (z-index 5) but above general layout
+          style={{ zIndex: 1 }} // Sits in the background
         >
-          <div className="flex flex-col items-center justify-center text-center mx-auto" style={{ width: 'min(500px, 100%)' }}>
-            {/* Two Column Names Layout exactly mirroring the screenshot */}
-            <div className="flex items-center justify-center gap-5 sm:gap-8 lg:gap-11 w-full text-[#3A2220]">
-              {/* Left Column */}
-              <div className="text-right">
-                <p className="font-serif italic font-light text-xl sm:text-2xl lg:text-3xl leading-tight">
-                  {brideName || "Bảo Eve"}
-                </p>
-                <p className="font-serif italic font-light text-xs sm:text-base lg:text-xl leading-none opacity-85">
-                  & {groomName || "Johnathan"}
-                </p>
-              </div>
-              
-              {/* Center & */}
-              <span className="font-serif text-sm sm:text-base lg:text-lg text-[#3A2220]/50 italic font-light">&</span>
-              
-              {/* Right Column */}
-              <div className="text-left">
-                <p className="font-serif italic font-light text-xl sm:text-2xl lg:text-3xl leading-tight">
-                  {brideName || "Bảo Eve"}
-                </p>
-                <p className="font-serif italic font-light text-xs sm:text-base lg:text-xl leading-none opacity-85">
-                  & {groomName || "Johnathan"}
-                </p>
-              </div>
-            </div>
-            
-            <h2 className="story-heading font-script text-xl sm:text-2xl lg:text-3xl text-[#3A2220] py-2 md:py-3 mt-2 md:mt-3 lowercase select-none">
-              {lang === 'VIE' ? "sẽ về chung một nhà" : "are getting married"}
-            </h2>
-            
-            <div className="w-full h-px bg-[#3A2220]/15 my-3 sm:my-4 lg:my-5" />
-            
-            <p className="font-serif text-[11px] sm:text-[12px] lg:text-[13px] leading-relaxed text-[#3A2220]/80 max-w-[280px] sm:max-w-sm lg:max-w-md italic font-light px-2 sm:px-4 selection:bg-stone-200">
-              {invitationText || (lang === 'VIE' ? (
-                "Trân trọng kính mời bạn ghé thăm một ngày ấm áp đầy tiếng cười, hoa cỏ và lời thề ước chung đôi."
-              ) : (
-                "Invite you to share in a quiet weekend of woodfire, forest walks, and the commitment of vows."
-              ))}
-            </p>
-            
-            <div className="w-full h-px bg-[#3A2220]/15 my-3 sm:my-4 lg:my-5" />
-            
-            <div className="grid grid-cols-3 w-full max-w-[260px] sm:max-w-xs md:max-w-sm mx-auto items-center text-center font-mono text-[7px] sm:text-[8px] lg:text-[9.5px] tracking-[0.15em] sm:tracking-[0.2em] text-[#3A2220]/80 uppercase mt-1 sm:mt-2">
-              <div className="text-center">
-                <span className="block font-serif text-sm sm:text-base lg:text-lg font-light text-[#3A2220] leading-none mb-0.5">
-                  {weddingDateShort ? (weddingDateShort.match(/\d+/) ? weddingDateShort.match(/\d+/)![0] : '10') : '10'}
-                </span>
-                <span className="block text-[6.5px] sm:text-[7.5px] tracking-wider sm:tracking-widest text-[#3A2220]/75 font-light">
-                  {weddingDateShort || (lang === 'VIE' ? "TH.10, 2027" : "OCT, 2027")}
-                </span>
-              </div>
-              <div className="text-center font-light">
-                <span className="block text-[7.5px] sm:text-[8.5px] font-medium leading-normal">
-                  {venueName ? (venueName.includes(',') ? venueName.split(',')[0].trim() : venueName) : "TOKYO"},
-                </span>
-                <span className="block text-[7.5px] sm:text-[8.5px] font-light leading-normal">
-                  {venueName ? (venueName.includes(',') ? venueName.split(',')[1].trim() : (lang === 'VIE' ? 'NHẬT BẢN' : 'JAPAN')) : (lang === 'VIE' ? 'NHẬT BẢN' : 'JAPAN')}
-                </span>
-              </div>
-              <div className="text-center">
-                <span className="block font-serif text-sm sm:text-base lg:text-lg font-light text-[#3A2220] leading-none mb-0.5">
-                  {weddingDateShort ? (weddingDateShort.match(/\d+/) ? weddingDateShort.match(/\d+/)![0] : '10') : '10'}
-                </span>
-                <span className="block text-[6.5px] sm:text-[7.5px] tracking-wider sm:tracking-widest text-[#3A2220]/75 font-light">
-                  {weddingDateShort || (lang === 'VIE' ? "TH.10, 2027" : "OCT, 2027")}
-                </span>
-              </div>
-            </div>
+          <div 
+            className="flex flex-col items-center justify-center text-center mx-auto rounded-none" 
+            style={{ 
+              width: '100%', 
+              maxWidth: '560px',
+              color: '#3A2220',
+              padding: '10px',
+              boxSizing: 'border-box'
+            }}
+          >
+            {/* Helper to dynamically format names for left and right columns */}
+            {(() => {
+              const formatName = (name: string, defaultName: string) => {
+                const activeName = (name || defaultName).trim();
+                if (activeName.includes('\n')) {
+                  const parts = activeName.split('\n');
+                  return { line1: parts[0], line2: parts[1] || '' };
+                }
+                const parts = activeName.split(/\s+/);
+                if (parts.length <= 1) {
+                  return { line1: activeName, line2: '' };
+                }
+                if (parts.length === 2) {
+                  return { line1: parts[0], line2: parts[1] };
+                }
+                if (parts.length === 3) {
+                  return { line1: parts.slice(0, 2).join(' '), line2: parts[2] };
+                }
+                const mid = Math.ceil(parts.length / 2);
+                return {
+                  line1: parts.slice(0, mid).join(' '),
+                  line2: parts.slice(mid).join(' ')
+                };
+              };
+
+              const brideFormatted = formatName(brideName || '', "Bảo Eve\nHuỳnh Lê");
+              const groomFormatted = formatName(groomName || '', "John\nJohnathan");
+
+              // Dynamic values based on inputs
+              let dayPart = "23rd";
+              let monthYearPart = "MAR, 2027";
+              if (lang === 'VIE') {
+                dayPart = "23";
+                monthYearPart = "TH.03, 2027";
+              }
+              if (weddingDateShort) {
+                const matchDay = weddingDateShort.match(/^\d+(?:st|nd|rd|th)?/i);
+                if (matchDay) {
+                  dayPart = matchDay[0];
+                  monthYearPart = weddingDateShort.replace(dayPart, '').trim().replace(/^,/, '').trim();
+                } else {
+                  const parts = weddingDateShort.split(/\s+/);
+                  if (parts.length > 1) {
+                    dayPart = parts[0];
+                    monthYearPart = parts.slice(1).join(' ');
+                  } else {
+                    dayPart = weddingDateShort;
+                    monthYearPart = "";
+                  }
+                }
+              }
+
+              let locTop = "Danang";
+              let locBottom = "VIETNAM";
+              if (venueName) {
+                const parts = venueName.split(',');
+                if (parts.length >= 2) {
+                  locTop = parts[0].trim();
+                  locBottom = parts.slice(1).join(',').trim();
+                } else {
+                  locTop = venueName;
+                  locBottom = "";
+                }
+              } else if (lang === 'VIE') {
+                locTop = "Đà Nẵng";
+                locBottom = "VIỆT NAM";
+              }
+
+              let timeTop = "Five";
+              let timeBottom = "O'CLOCK";
+              if (lang === 'VIE') {
+                timeTop = "Năm Giờ";
+                timeBottom = "CHIỀU";
+              }
+
+              return (
+                <>
+                  {/* Two Column Names Layout exactly mirroring the screenshot */}
+                  <div className="flex items-center justify-center w-full select-none text-[#3A2220]" style={{ gap: '10px' }}>
+                    {/* Left Column (Bride) */}
+                    <div className="flex flex-col items-center justify-center text-center">
+                      <span className="font-luxurious tracking-tight" style={{ fontSize: '70px', lineHeight: '52px', width: '248px', display: 'inline-block' }}>
+                        {(brideName || "Bảo Eve Huỳnh Lê").replace(/\n/g, ' ')}
+                      </span>
+                    </div>
+                    
+                    {/* Center Ampersand */}
+                    <span className="font-luxurious text-[#3A2220] px-1 select-none flex items-center justify-center h-full" style={{ fontSize: '60px', lineHeight: '60px' }}>
+                      &
+                    </span>
+                    
+                    {/* Right Column (Groom) */}
+                    <div className="flex flex-col items-center justify-center text-center">
+                      <span className="font-luxurious tracking-tight" style={{ fontSize: '70px', lineHeight: '52px', width: '248px', display: 'inline-block' }}>
+                        {(groomName || "John Johnathan").replace(/\n/g, ' ')}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Sub-label */}
+                  <div className="font-luxurious text-[#3A2220] lowercase leading-tight select-none" style={{ fontSize: '40px', marginTop: '10px' }}>
+                    {lang === 'VIE' ? "sẽ về chung một nhà" : "are getting married"}
+                  </div>
+
+                  {/* First separator line */}
+                  <div className="h-px bg-[#3A2220]/20 mx-auto" style={{ width: '554px', marginTop: '10px', marginBottom: '10px' }} />
+
+                  {/* Central paragraph with monospace uppercase letter spacing */}
+                  <p className="font-mono tracking-[0.16em] uppercase text-[#3A2220]/90 max-w-[280px] sm:max-w-sm md:max-w-md mx-auto text-center px-1 select-none" style={{ fontSize: '10px', lineHeight: '16px' }}>
+                    {invitationText || (lang === 'VIE' ? (
+                      "TRÂN TRỌNG KÍNH MỜI BẠN GHÉ THĂM MỘT NGÀY ẤM ÁP ĐẦY TIẾNG CƯỜI, HOA CỎ VÀ LỜI THỀ ƯỚC CHUNG ĐÔI."
+                    ) : (
+                      "INVITE YOU TO SHARE IN A QUIET WEEKEND OF WOODFIRE, FOREST WALKS, AND THE COMMITMENT OF VOWS."
+                    ))}
+                  </p>
+
+                  {/* Second separator line */}
+                  <div className="h-px bg-[#3A2220]/20 mx-auto" style={{ width: '554px', marginTop: '10px', marginBottom: '10px' }} />
+
+                  {/* Three columns footer exactly like screenshot */}
+                  <div className="grid grid-cols-3 w-full items-start text-center text-[#3A2220] select-none">
+                    {/* Column 1: Date */}
+                    <div className="flex flex-col items-center justify-center p-0 m-0" style={{ height: '48px' }}>
+                      <span style={{ fontFamily: 'Crimson Pro, serif', fontSize: '18px', height: '20px', display: 'inline-block', textAlign: 'center' }} className="italic font-light text-[#3A2220] mb-0 text-center">
+                        {dayPart}
+                      </span>
+                      <span style={{ fontFamily: 'Crimson Pro, serif', fontSize: '18px', height: '20px', display: 'inline-block', textAlign: 'center' }} className="tracking-[0.12em] text-[#3A2220]/90 uppercase font-medium text-center">
+                        {monthYearPart}
+                      </span>
+                    </div>
+
+                    {/* Column 2: Location */}
+                    <div className="flex flex-col items-center justify-center border-x border-[#3A2220]/15 p-0 m-0" style={{ height: '48px' }}>
+                      <span style={{ fontFamily: 'Luxurious Script, cursive', fontSize: '32px', height: '32px', display: 'inline-block', textAlign: 'center' }} className="text-[#3A2220] mb-0 text-center">
+                        {locTop}
+                      </span>
+                      <span style={{ fontFamily: 'Crimson Pro, serif', fontSize: '18px', height: '20px', display: 'inline-block', textAlign: 'center' }} className="tracking-[0.12em] text-[#3A2220]/90 uppercase font-medium text-center">
+                        {locBottom}
+                      </span>
+                    </div>
+
+                    {/* Column 3: Time */}
+                    <div className="flex flex-col items-center justify-center p-0 m-0" style={{ height: '48px' }}>
+                      <span style={{ fontFamily: 'Crimson Pro, serif', fontSize: '18px', height: '20px', display: 'inline-block', textAlign: 'center' }} className="italic font-light text-[#3A2220] mb-0 text-center">
+                        {timeTop}
+                      </span>
+                      <span style={{ fontFamily: 'Crimson Pro, serif', fontSize: '18px', height: '20px', display: 'inline-block', textAlign: 'center' }} className="tracking-[0.12em] text-[#3A2220]/90 uppercase font-medium text-center">
+                        {timeBottom}
+                      </span>
+                    </div>
+                  </div>
+                </>
+              );
+            })()}
           </div>
         </div>
         

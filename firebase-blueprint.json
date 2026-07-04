@@ -112,6 +112,10 @@
           "type": "string",
           "description": "Groom's dynamic first name"
         },
+        "heroTitle": {
+          "type": "string",
+          "description": "Hero section couple names header (e.g. SARAH & ALDERSON)"
+        },
         "heroDateEng": {
           "type": "string",
           "description": "Main hero header celebration date (English)"

@@ -146,6 +146,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
   // CMS Website Text States
   const [brideName, setBrideName] = useState('');
   const [groomName, setGroomName] = useState('');
+  const [heroTitle, setHeroTitle] = useState('');
   const [heroDateEng, setHeroDateEng] = useState('');
   const [heroDateVie, setHeroDateVie] = useState('');
   const [invitationTextEng, setInvitationTextEng] = useState('');
@@ -346,6 +347,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
           if (!hasInitializedTexts) {
             setBrideName(data.brideName || '');
             setGroomName(data.groomName || '');
+            setHeroTitle(data.heroTitle || '');
             setHeroDateEng(data.heroDateEng || '');
             setHeroDateVie(data.heroDateVie || '');
             setInvitationTextEng(data.invitationTextEng || '');
@@ -535,6 +537,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
       await setDoc(doc(db, 'site_content', 'main'), {
         brideName,
         groomName,
+        heroTitle,
         heroDateEng,
         heroDateVie,
         invitationTextEng,
@@ -1366,6 +1369,20 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           placeholder="Johnathan"
                           className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
                         />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Hero Couple Header (Names on Opening Screen)</label>
+                        <textarea 
+                          value={heroTitle}
+                          onChange={(e) => setHeroTitle(e.target.value)}
+                          placeholder={"Sarah &\nAlderson"}
+                          rows={2}
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none"
+                        />
+                        <p className="font-mono text-[7.5px] uppercase text-neutral-400 leading-tight font-semibold">
+                          Press Enter to break into multiple lines. Default fallback is "Sarah &\nAlderson".
+                        </p>
                       </div>
                     </div>
                   </div>
