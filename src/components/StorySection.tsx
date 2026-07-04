@@ -289,102 +289,112 @@ export const StorySection = ({
         >
           
           {/* IMAGE 1: Upper Right (Block ba6e4fb) */}
-          <div 
-            className="group absolute overflow-hidden bg-stone-50 transition-all duration-300 shadow-sm"
-            style={{ 
-              left: '80.8%', 
-              top: '1%', 
-              width: '19.2%', 
-              zIndex: 2,
-              aspectRatio: '1280 / 1920'
-            }}
-          >
-            <img 
-              src={rightPortraitUrl || "https://images.squarespace-cdn.com/content/v1/69a5a56a5a76f0578c2e374e/1772463469885-00IS12CZLY3SF6UFRHDE/pexels-vikkirillova-15102055.jpg"} 
-              className="gallery-image w-full h-full object-cover select-none transition-all duration-700 hover:scale-105" 
-              alt="Chelsea Romance Path Portrait" 
-              referrerPolicy="no-referrer"
-            />
-          </div>
+          {rightPortraitUrl && (
+            <div 
+              className="group absolute overflow-hidden bg-stone-50 transition-all duration-300 shadow-sm"
+              style={{ 
+                left: '80.8%', 
+                top: '1%', 
+                width: '19.2%', 
+                zIndex: 2,
+                aspectRatio: '1280 / 1920'
+              }}
+            >
+              <img 
+                src={rightPortraitUrl} 
+                className="gallery-image w-full h-full object-cover select-none transition-all duration-700 hover:scale-105" 
+                alt="Chelsea Romance Path Portrait" 
+                referrerPolicy="no-referrer"
+              />
+            </div>
+          )}
 
           {/* IMAGE 2: Left Middle (Block b0e7250) */}
-          <div 
-            className="group absolute overflow-hidden bg-stone-50 transition-all duration-300 shadow-sm"
-            style={{ 
-              left: '3.8%', 
-              top: '16.7%', 
-              width: '23.1%', 
-              zIndex: 1,
-              aspectRatio: '1280 / 1920'
-            }}
-          >
-            <img 
-              src={leftPortraitUrl || "https://images.squarespace-cdn.com/content/v1/69a5a56a5a76f0578c2e374e/1772463469897-765GLULNCOJ4LM48N3PK/pexels-vikkirillova-15266111.jpg"} 
-              className="gallery-image w-full h-full object-cover select-none transition-all duration-700 hover:scale-105" 
-              alt="Chelsea Walking Together" 
-              referrerPolicy="no-referrer"
-            />
-          </div>
+          {leftPortraitUrl && (
+            <div 
+              className="group absolute overflow-hidden bg-stone-50 transition-all duration-300 shadow-sm"
+              style={{ 
+                left: '3.8%', 
+                top: '16.7%', 
+                width: '23.1%', 
+                zIndex: 1,
+                aspectRatio: '1280 / 1920'
+              }}
+            >
+              <img 
+                src={leftPortraitUrl} 
+                className="gallery-image w-full h-full object-cover select-none transition-all duration-700 hover:scale-105" 
+                alt="Chelsea Walking Together" 
+                referrerPolicy="no-referrer"
+              />
+            </div>
+          )}
 
           {/* IMAGE 3: Right Middle OVERLAY (Block 4b7f960) */}
           {/* This sits at zIndex 5 so it overlays above the sticky center text wrapping! */}
-          <div 
-            className="group absolute overflow-hidden bg-stone-50 shadow-md transition-all duration-300"
-            style={{ 
-              left: '61.5%', 
-              top: '42.9%', 
-              width: '360px', 
-              height: '240px', 
-              zIndex: 5
-            }}
-          >
-            <img 
-              src={storyThreeUrl || "https://images.squarespace-cdn.com/content/v1/69a5a56a5a76f0578c2e374e/1772463469911-NVXD5WLOV689KNTRMOAR/pexels-vikkirillova-15280972.jpg"} 
-              className="gallery-image w-full h-full object-cover select-none transition-all duration-700 hover:scale-105" 
-              alt="Chelsea Forest Hug" 
-              referrerPolicy="no-referrer"
-            />
-          </div>
+          {storyThreeUrl && (
+            <div 
+              className="group absolute overflow-hidden bg-stone-50 shadow-md transition-all duration-300"
+              style={{ 
+                left: '61.5%', 
+                top: '42.9%', 
+                width: '360px', 
+                height: '240px', 
+                zIndex: 5
+              }}
+            >
+              <img 
+                src={storyThreeUrl} 
+                className="gallery-image w-full h-full object-cover select-none transition-all duration-700 hover:scale-105" 
+                alt="Chelsea Forest Hug" 
+                referrerPolicy="no-referrer"
+              />
+            </div>
+          )}
 
           {/* IMAGE 4: Lower Left (Block afb2a1d) */}
-          <div 
-            className="group absolute overflow-hidden bg-stone-50 transition-all duration-300 shadow-sm"
-            style={{ 
-              left: '19.2%', 
-              top: '57.1%', 
-              width: '15.4%', 
-              zIndex: 3,
-              aspectRatio: '1280 / 1920',
-              transform: 'translateY(300px)'
-            }}
-          >
-            <img 
-              src={storyFourUrl || "https://images.squarespace-cdn.com/content/v1/69a5a56a5a76f0578c2e374e/1772463469921-AUZDKVU38IDB61BAJJ0W/pexels-vikkirillova-15266110.jpg"} 
-              className="gallery-image w-full h-full object-cover select-none transition-all duration-700 hover:scale-105" 
-              alt="Chelsea Close-up holding hands" 
-              referrerPolicy="no-referrer"
-            />
-          </div>
+          {storyFourUrl && (
+            <div 
+              className="group absolute overflow-hidden bg-stone-50 transition-all duration-300 shadow-sm"
+              style={{ 
+                left: '19.2%', 
+                top: '57.1%', 
+                width: '15.4%', 
+                zIndex: 3,
+                aspectRatio: '1280 / 1920',
+                transform: 'translateY(300px)'
+              }}
+            >
+              <img 
+                src={storyFourUrl} 
+                className="gallery-image w-full h-full object-cover select-none transition-all duration-700 hover:scale-105" 
+                alt="Chelsea Close-up holding hands" 
+                referrerPolicy="no-referrer"
+              />
+            </div>
+          )}
 
           {/* IMAGE 5: Bottom Right (Block f0bb467) */}
-          <div 
-            className="group absolute overflow-hidden bg-stone-50 transition-all duration-300 shadow-sm"
-            style={{ 
-              left: '73.1%', 
-              top: '81%', 
-              width: '19.2%', 
-              zIndex: 4,
-              aspectRatio: '1280 / 1920',
-              transform: 'translateY(200px)'
-            }}
-          >
-            <img 
-              src={storyFiveUrl || "https://images.squarespace-cdn.com/content/v1/69a5a56a5a76f0578c2e374e/1772463469930-BPBK33AUJHSG9Y7BT6GL/pexels-vikkirillova-15280966.jpg"} 
-              className="gallery-image w-full h-full object-cover select-none transition-all duration-700 hover:scale-105" 
-              alt="Chelsea Soft Gaze" 
-              referrerPolicy="no-referrer"
-            />
-          </div>
+          {storyFiveUrl && (
+            <div 
+              className="group absolute overflow-hidden bg-stone-50 transition-all duration-300 shadow-sm"
+              style={{ 
+                left: '73.1%', 
+                top: '81%', 
+                width: '19.2%', 
+                zIndex: 4,
+                aspectRatio: '1280 / 1920',
+                transform: 'translateY(200px)'
+              }}
+            >
+              <img 
+                src={storyFiveUrl} 
+                className="gallery-image w-full h-full object-cover select-none transition-all duration-700 hover:scale-105" 
+                alt="Chelsea Soft Gaze" 
+                referrerPolicy="no-referrer"
+              />
+            </div>
+          )}
 
         </div>
 
@@ -395,55 +405,65 @@ export const StorySection = ({
           {/* Row 1: Asymmetric split */}
           <div className="flex items-start justify-between w-full gap-4">
             {/* Image 1: Left & shifted down */}
-            <div className="w-[47%] aspect-[3/4] overflow-hidden rounded-[1px] bg-stone-50 shadow-sm mt-8">
-              <img 
-                src={rightPortraitUrl || "https://images.squarespace-cdn.com/content/v1/69a5a56a5a76f0578c2e374e/1772463469885-00IS12CZLY3SF6UFRHDE/pexels-vikkirillova-15102055.jpg"} 
-                className="w-full h-full object-cover" 
-                alt="Chelsea Romance Path" 
-                referrerPolicy="no-referrer"
-              />
-            </div>
+            {rightPortraitUrl && (
+              <div className="w-[47%] aspect-[3/4] overflow-hidden rounded-[1px] bg-stone-50 shadow-sm mt-8">
+                <img 
+                  src={rightPortraitUrl} 
+                  className="w-full h-full object-cover" 
+                  alt="Chelsea Romance Path" 
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+            )}
             {/* Image 2: Right */}
-            <div className="w-[47%] aspect-[3/4] overflow-hidden rounded-[1px] bg-stone-50 shadow-sm">
-              <img 
-                src={leftPortraitUrl || "https://images.squarespace-cdn.com/content/v1/69a5a56a5a76f0578c2e374e/1772463469897-765GLULNCOJ4LM48N3PK/pexels-vikkirillova-15266111.jpg"} 
-                className="w-full h-full object-cover" 
-                alt="Chelsea Walking Together" 
-                referrerPolicy="no-referrer"
-              />
-            </div>
+            {leftPortraitUrl && (
+              <div className="w-[47%] aspect-[3/4] overflow-hidden rounded-[1px] bg-stone-50 shadow-sm">
+                <img 
+                  src={leftPortraitUrl} 
+                  className="w-full h-full object-cover" 
+                  alt="Chelsea Walking Together" 
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+            )}
           </div>
 
           {/* Row 2: Wide horizontal landscape hero, reflecting the desktop overlay proportions */}
-          <div className="w-full aspect-[1.6/1] overflow-hidden rounded-[1px] bg-stone-50 shadow-sm my-2">
-            <img 
-              src={storyThreeUrl || "https://images.squarespace-cdn.com/content/v1/69a5a56a5a76f0578c2e374e/1772463469911-NVXD5WLOV689KNTRMOAR/pexels-vikkirillova-15280972.jpg"} 
-              className="w-full h-full object-cover object-center" 
-              alt="Chelsea Forest Embrace" 
-              referrerPolicy="no-referrer"
-            />
-          </div>
+          {storyThreeUrl && (
+            <div className="w-full aspect-[1.6/1] overflow-hidden rounded-[1px] bg-stone-50 shadow-sm my-2">
+              <img 
+                src={storyThreeUrl} 
+                className="w-full h-full object-cover object-center" 
+                alt="Chelsea Forest Embrace" 
+                referrerPolicy="no-referrer"
+              />
+            </div>
+          )}
 
           {/* Row 3: Asymmetric split */}
           <div className="flex items-start justify-between w-full gap-4">
             {/* Image 4: Left */}
-            <div className="w-[47%] aspect-[3/4] overflow-hidden rounded-[1px] bg-stone-50 shadow-sm">
-              <img 
-                src={storyFourUrl || "https://images.squarespace-cdn.com/content/v1/69a5a56a5a76f0578c2e374e/1772463469921-AUZDKVU38IDB61BAJJ0W/pexels-vikkirillova-15266110.jpg"} 
-                className="w-full h-full object-cover" 
-                alt="Chelsea Hands Detail" 
-                referrerPolicy="no-referrer"
-              />
-            </div>
+            {storyFourUrl && (
+              <div className="w-[47%] aspect-[3/4] overflow-hidden rounded-[1px] bg-stone-50 shadow-sm">
+                <img 
+                  src={storyFourUrl} 
+                  className="w-full h-full object-cover" 
+                  alt="Chelsea Hands Detail" 
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+            )}
             {/* Image 5: Right & shifted down */}
-            <div className="w-[47%] aspect-[3/4] overflow-hidden rounded-[1px] bg-stone-50 shadow-sm mt-8">
-              <img 
-                src={storyFiveUrl || "https://images.squarespace-cdn.com/content/v1/69a5a56a5a76f0578c2e374e/1772463469930-BPBK33AUJHSG9Y7BT6GL/pexels-vikkirillova-15280966.jpg"} 
-                className="w-full h-full object-cover pb-px" 
-                alt="Chelsea Soft Portrait" 
-                referrerPolicy="no-referrer"
-              />
-            </div>
+            {storyFiveUrl && (
+              <div className="w-[47%] aspect-[3/4] overflow-hidden rounded-[1px] bg-stone-50 shadow-sm mt-8">
+                <img 
+                  src={storyFiveUrl} 
+                  className="w-full h-full object-cover pb-px" 
+                  alt="Chelsea Soft Portrait" 
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+            )}
           </div>
 
         </div>

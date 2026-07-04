@@ -1009,15 +1009,17 @@ export default function App() {
       {/* Style Reference Hero Section with full-background image and darken overlay */}
       <section id="hero" className="relative w-full h-screen flex items-end justify-center overflow-hidden bg-stone-950 px-6 pb-[30px] pt-24">
         {/* Full-background image with darken overlay */}
-        <div className="absolute inset-0 z-0">
-          <img 
-            src={siteContent.imageUrl || "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=2000&q=80"} 
-            alt="Warm mystical forest wedding" 
-            className="w-full h-full object-cover contrast-[105%] brightness-[0.80]" 
-            referrerPolicy="no-referrer"
-          />
-          <div className="absolute inset-0 bg-black/25" /> {/* Darken overlay */}
-        </div>
+        {siteContent.imageUrl && (
+          <div className="absolute inset-0 z-0">
+            <img 
+              src={siteContent.imageUrl} 
+              alt="Warm mystical forest wedding" 
+              className="w-full h-full object-cover contrast-[105%] brightness-[0.80]" 
+              referrerPolicy="no-referrer"
+            />
+            <div className="absolute inset-0 bg-black/25" /> {/* Darken overlay */}
+          </div>
+        )}
 
         {/* Center Typography & Emblem */}
         <div className="relative z-10 max-w-4xl mx-auto text-center">
@@ -1226,21 +1228,23 @@ export default function App() {
           </div>
 
           {/* Details Photo */}
-          <div className="md:col-span-5 relative pt-16">
-            <h2 className="font-serif text-5xl font-light absolute top-4 left-0 z-20 -rotate-3 text-ink">{t.detailsTitle}</h2>
-            <div className="relative bg-white p-3 shadow-sm border border-black/5">
-              {/* Tape */}
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 tape -rotate-2 z-10 opacity-80" />
-              <div className="aspect-square overflow-hidden grayscale contrast-125">
-                <img 
-                  src={siteContent.mapImageUrl || "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=500&q=80"} 
-                  alt="Details" 
-                  className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
-                />
+          {siteContent.mapImageUrl && (
+            <div className="md:col-span-5 relative pt-16">
+              <h2 className="font-serif text-5xl font-light absolute top-4 left-0 z-20 -rotate-3 text-ink">{t.detailsTitle}</h2>
+              <div className="relative bg-white p-3 shadow-sm border border-black/5">
+                {/* Tape */}
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 tape -rotate-2 z-10 opacity-80" />
+                <div className="aspect-square overflow-hidden grayscale contrast-125">
+                  <img 
+                    src={siteContent.mapImageUrl} 
+                    alt="Details" 
+                    className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
 
@@ -1252,22 +1256,24 @@ export default function App() {
         className="w-full relative py-12 sm:py-20 md:py-24 overflow-hidden bg-stone-950 min-h-[550px] sm:min-h-[650px] md:min-h-[800px] flex flex-col items-center justify-center select-none"
       >
         {/* Background romantic wedding photo with high-contrast grayscale/dark overlay */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.5, ease: 'easeOut' }}
-          className="absolute inset-0 z-0"
-        >
-          <img 
-            src={siteContent.collageBgUrl || "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=2000&q=80"} 
-            alt="Wedding Couple Silhouette" 
-            className="w-full h-full object-cover grayscale contrast-125 brightness-[0.24] pointer-events-none select-none"
-            referrerPolicy="no-referrer"
-          />
-          {/* Subtle vignette layer */}
-          <div className="absolute inset-0 bg-black/40 pointer-events-none" />
-        </motion.div>
+        {siteContent.collageBgUrl && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.5, ease: 'easeOut' }}
+            className="absolute inset-0 z-0"
+          >
+            <img 
+              src={siteContent.collageBgUrl} 
+              alt="Wedding Couple Silhouette" 
+              className="w-full h-full object-cover grayscale contrast-125 brightness-[0.24] pointer-events-none select-none"
+              referrerPolicy="no-referrer"
+            />
+            {/* Subtle vignette layer */}
+            <div className="absolute inset-0 bg-black/40 pointer-events-none" />
+          </motion.div>
+        )}
 
         {/* Outer Draggable Constraining Stage wrapper to contain draggable wax stamps */}
         <motion.div 
