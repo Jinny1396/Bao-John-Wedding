@@ -161,17 +161,7 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
               />
             </div>
 
-            {/* Couple Note */}
-            <div className="space-y-4">
-              <p className="text-muted">{t.noteLabel}</p>
-              <textarea
-                rows={3}
-                placeholder={t.notePlaceholder}
-                className="w-full bg-transparent border-b border-black/10 py-2 focus:border-ink outline-none transition-colors resize-none"
-                value={formData.coupleNote}
-                onChange={(e) => setFormData({ ...formData, coupleNote: e.target.value })}
-              />
-            </div>
+
 
             {submitError && (
               <div className="text-red-500 font-sans normal-case text-xs text-center border border-red-200/50 bg-red-50/50 p-3 rounded-md">

@@ -1,10 +1,11 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Space+Mono:wght@400;700&family=Nothing+You+Could+Do&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Space+Mono:wght@400;700&family=Nothing+You+Could+Do&family=Pinyon+Script&family=Inter:wght@300;400;500;600&display=swap');
 
 @theme {
   --font-serif: "Cormorant Garamond", serif;
   --font-mono: "Space Mono", monospace;
   --font-script: "Nothing You Could Do", cursive;
+  --font-script-elegant: "Pinyon Script", cursive;
   --font-sans: "Inter", sans-serif;
   --color-bg: #F4F3EF;
   --color-forest: #1A3015;
@@ -29,6 +30,10 @@ body {
 
 .font-script {
   font-family: var(--font-script);
+}
+
+.font-script-elegant {
+  font-family: var(--font-script-elegant);
 }
 
 .tape {
@@ -71,4 +76,111 @@ html {
   animation-delay: 0.2s;
   transform-origin: bottom;
 }
+
+/* Story Section Sticky Scroll Styling */
+.story-section {
+  position: relative;
+  min-height: 180vh; /* Extra height for scrolling */
+  background: #FFFFFF;
+  padding: 120px 40px;
+}
+
+.story-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.text-wrapper {
+  position: fixed; /* Use fixed, not sticky */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  width: 900px;
+  max-width: 90%;
+  text-align: center;
+  pointer-events: auto;
+}
+
+.story-heading {
+  font-family: 'Cormorant Garamond', 'Lora', 'Playfair Display', serif;
+  font-size: 34px;
+  line-height: 1.8;
+  letter-spacing: 0.5px;
+  color: #2C2C2C;
+  margin: 0;
+}
+
+.image-gallery {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  position: relative;
+  z-index: 1;
+  margin-top: 15vh; /* Space for overlap */
+}
+
+.gallery-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gallery-image:hover {
+  transform: scale(1.03) translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+}
+
+/* RESPONSIVE */
+@media (max-width: 1199px) {
+  .image-gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .text-wrapper {
+    width: 700px;
+  }
+  .story-heading {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 767px) {
+  .story-section {
+    min-height: auto !important; /* Normal height on mobile */
+    padding: 80px 20px;
+  }
+  
+  .text-wrapper {
+    position: static !important; /* Disable sticky on mobile */
+    transform: none !important;
+    width: 100%;
+    margin-bottom: 60px;
+    margin-top: 20px;
+  }
+  
+  .image-gallery {
+    grid-template-columns: 1fr;
+    margin-top: 0;
+  }
+  
+  .story-heading {
+    font-size: 22px;
+    line-height: 1.6;
+  }
+}
+
+/* Hide scrollbars for Chrome, Safari and Opera */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbars for IE, Edge and Firefox */
+.scrollbar-none {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 

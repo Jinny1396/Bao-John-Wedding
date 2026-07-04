@@ -6,10 +6,14 @@ service cloud.firestore {
       allow create: if true;
       allow update, delete: if false;
     }
-    match /guestNotes/{noteId} {
+    match /guest_notes/{noteId} {
+      allow read, write: if true;
+    }
+    match /site_content/{contentId} {
+      allow read, write: if true;
+    }
+    match /test/{docId} {
       allow read: if true;
-      allow create: if true;
-      allow update, delete: if false;
     }
   }
 }

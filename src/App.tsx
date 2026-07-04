@@ -1,18 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { RSVPForm } from './components/RSVPForm';
-import { GuestNotes } from './components/GuestNotes';
 import { AdminPanel } from './components/AdminPanel';
+import { StorySection } from './components/StorySection';
+import CountdownSection from './components/CountdownSection';
+import { GatheringSection } from './components/GatheringSection';
 import { VolumeX, Volume2, Music } from 'lucide-react';
-import { collection, addDoc, onSnapshot, query, orderBy, limit, serverTimestamp, Timestamp } from 'firebase/firestore';
+import { onSnapshot, doc, collection, addDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from './firebase';
-
-interface CollageGuestNote {
-  id: string;
-  guestName: string;
-  noteText: string;
-  createdAt: Timestamp | null;
-}
 
 // Reusable elegant Oval Monogram SVG Component
 const OvalMonogram = ({ className = 'w-16 h-16' }: { className?: string }) => (
@@ -282,123 +277,268 @@ class AmbientPianoSynth {
 
 export default function App() {
   const [lang, setLang] = useState<'VIE' | 'ENG'>('VIE');
-  const [selectedCategory, setSelectedCategory] = useState('all');
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [hoveredSidebarIndex, setHoveredSidebarIndex] = useState<number | null>(null);
   const [isPastHero, setIsPastHero] = useState(false);
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
 
-  // States for interactive collage guest notes
-  const [collageNoteText, setCollageNoteText] = useState('');
-  const [collageGuestName, setCollageGuestName] = useState('');
-  const [isCollageSubmitting, setIsCollageSubmitting] = useState(false);
-  const [isCollageSubmitted, setIsCollageSubmitted] = useState(false);
-  const [collageSubmitError, setCollageSubmitError] = useState<string | null>(null);
-  const [collageNotes, setCollageNotes] = useState<CollageGuestNote[]>([]);
+  // Section drag constraints and local notes state for collage
+  const constraintsRef = useRef<HTMLDivElement>(null);
+  const [localNoteText, setLocalNoteText] = useState('');
+  const [localGuestName, setLocalGuestName] = useState('');
+  const [isLocalModalOpen, setIsLocalModalOpen] = useState(false);
+  const [localNotes, setLocalNotes] = useState<Array<{name: string, text: string, id: number}>>(() => {
+    try {
+      const saved = localStorage.getItem('wedding_local_notes');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [isLocalSubmitted, setIsLocalSubmitted] = useState(false);
+  const [dbNotes, setDbNotes] = useState<Array<{name: string, text: string, id: string}>>([]);
 
-  // Real-time synchronization of guest notes
+  // States for live dynamic Cloudinary images and CMS text content
+  const [siteContent, setSiteContent] = useState<{
+    imageUrl?: string;
+    leftPortraitUrl?: string;
+    rightPortraitUrl?: string;
+    mapImageUrl?: string;
+    storyThreeUrl?: string;
+    storyFourUrl?: string;
+    storyFiveUrl?: string;
+    collageBgUrl?: string;
+    collageLaceBgUrl?: string;
+    collagePinkStampUrl?: string;
+    collageSageStampUrl?: string;
+    brideName?: string;
+    groomName?: string;
+    heroDateEng?: string;
+    heroDateVie?: string;
+    invitationTextEng?: string;
+    invitationTextVie?: string;
+    venueNameEng?: string;
+    venueNameVie?: string;
+    weddingDateShortEng?: string;
+    weddingDateShortVie?: string;
+    photoQuoteEng?: string;
+    photoQuoteVie?: string;
+    attireDescEng?: string;
+    attireDescVie?: string;
+    registryTextEng?: string;
+    registryTextVie?: string;
+    countdownTargetDate?: string;
+    countdownHeight?: string;
+    countdownTitleEng?: string;
+    countdownTitleVie?: string;
+    countdownEndTitleEng?: string;
+    countdownEndTitleVie?: string;
+    countdownLoc1City?: string;
+    countdownLoc1Country?: string;
+    countdownLoc2City?: string;
+    countdownLoc2Country?: string;
+    countdownLoc3City?: string;
+    countdownLoc3Country?: string;
+    countdownSinceText?: string;
+    sidebarHomeEng?: string;
+    sidebarHomeVie?: string;
+    sidebarStoryEng?: string;
+    sidebarStoryVie?: string;
+    sidebarEventsEng?: string;
+    sidebarEventsVie?: string;
+    sidebarGatherEng?: string;
+    sidebarGatherVie?: string;
+    sidebarRsvpEng?: string;
+    sidebarRsvpVie?: string;
+    heroBtnEng?: string;
+    heroBtnVie?: string;
+    registryBtnEng?: string;
+    registryBtnVie?: string;
+    respondByEng?: string;
+    respondByVie?: string;
+    writeNoteTitleEng?: string;
+    writeNoteTitleVie?: string;
+    writeNoteSubtitleEng?: string;
+    writeNoteSubtitleVie?: string;
+    gatherHeadingEng?: string;
+    gatherHeadingVie?: string;
+    gatherSubtitleEng?: string;
+    gatherSubtitleVie?: string;
+    gatherDescEng?: string;
+    gatherDescVie?: string;
+    gatherCereTitleEng?: string;
+    gatherCereTitleVie?: string;
+    gatherCereDescEng?: string;
+    gatherCereDescVie?: string;
+    gatherFeastTitleEng?: string;
+    gatherFeastTitleVie?: string;
+    gatherFeastDescEng?: string;
+    gatherFeastDescVie?: string;
+    gatherNoteEng?: string;
+    gatherNoteVie?: string;
+    gatherMapPillEng?: string;
+    gatherMapPillVie?: string;
+    gatherLatitude?: string;
+    gatherLongitude?: string;
+    gatherDirectionsTextEng?: string;
+    gatherDirectionsTextVie?: string;
+    gatherDirectionsUrl?: string;
+  }>({});
+
+  // Real-time synchronization of custom website images and text content
   useEffect(() => {
-    const notesQuery = query(
-      collection(db, 'guestNotes'),
-      orderBy('createdAt', 'desc'),
-      limit(24)
-    );
-
-    const unsubscribe = onSnapshot(
-      notesQuery,
-      (snapshot) => {
-        const fetchedNotes: CollageGuestNote[] = [];
-        snapshot.forEach((doc) => {
-          const data = doc.data();
-          fetchedNotes.push({
-            id: doc.id,
-            guestName: data.guestName || 'Anonymous',
-            noteText: data.noteText || '',
-            createdAt: data.createdAt || null,
-          });
+    const unsubscribe = onSnapshot(doc(db, 'site_content', 'main'), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setSiteContent({
+          imageUrl: data.imageUrl || '',
+          leftPortraitUrl: data.leftPortraitUrl || '',
+          rightPortraitUrl: data.rightPortraitUrl || '',
+          mapImageUrl: data.mapImageUrl || '',
+          storyThreeUrl: data.storyThreeUrl || '',
+          storyFourUrl: data.storyFourUrl || '',
+          storyFiveUrl: data.storyFiveUrl || '',
+          collageBgUrl: data.collageBgUrl || '',
+          collageLaceBgUrl: data.collageLaceBgUrl || '',
+          collagePinkStampUrl: data.collagePinkStampUrl || '',
+          collageSageStampUrl: data.collageSageStampUrl || '',
+          brideName: data.brideName || '',
+          groomName: data.groomName || '',
+          heroDateEng: data.heroDateEng || '',
+          heroDateVie: data.heroDateVie || '',
+          invitationTextEng: data.invitationTextEng || '',
+          invitationTextVie: data.invitationTextVie || '',
+          venueNameEng: data.venueNameEng || '',
+          venueNameVie: data.venueNameVie || '',
+          weddingDateShortEng: data.weddingDateShortEng || '',
+          weddingDateShortVie: data.weddingDateShortVie || '',
+          photoQuoteEng: data.photoQuoteEng || '',
+          photoQuoteVie: data.photoQuoteVie || '',
+          attireDescEng: data.attireDescEng || '',
+          attireDescVie: data.attireDescVie || '',
+          registryTextEng: data.registryTextEng || '',
+          registryTextVie: data.registryTextVie || '',
+          countdownTargetDate: data.countdownTargetDate || '',
+          countdownHeight: data.countdownHeight || '',
+          countdownTitleEng: data.countdownTitleEng || '',
+          countdownTitleVie: data.countdownTitleVie || '',
+          countdownEndTitleEng: data.countdownEndTitleEng || '',
+          countdownEndTitleVie: data.countdownEndTitleVie || '',
+          countdownLoc1City: data.countdownLoc1City || '',
+          countdownLoc1Country: data.countdownLoc1Country || '',
+          countdownLoc2City: data.countdownLoc2City || '',
+          countdownLoc2Country: data.countdownLoc2Country || '',
+          countdownLoc3City: data.countdownLoc3City || '',
+          countdownLoc3Country: data.countdownLoc3Country || '',
+          countdownSinceText: data.countdownSinceText || '',
+          sidebarHomeEng: data.sidebarHomeEng || '',
+          sidebarHomeVie: data.sidebarHomeVie || '',
+          sidebarStoryEng: data.sidebarStoryEng || '',
+          sidebarStoryVie: data.sidebarStoryVie || '',
+          sidebarEventsEng: data.sidebarEventsEng || '',
+          sidebarEventsVie: data.sidebarEventsVie || '',
+          sidebarGatherEng: data.sidebarGatherEng || '',
+          sidebarGatherVie: data.sidebarGatherVie || '',
+          sidebarRsvpEng: data.sidebarRsvpEng || '',
+          sidebarRsvpVie: data.sidebarRsvpVie || '',
+          heroBtnEng: data.heroBtnEng || '',
+          heroBtnVie: data.heroBtnVie || '',
+          registryBtnEng: data.registryBtnEng || '',
+          registryBtnVie: data.registryBtnVie || '',
+          respondByEng: data.respondByEng || '',
+          respondByVie: data.respondByVie || '',
+          writeNoteTitleEng: data.writeNoteTitleEng || '',
+          writeNoteTitleVie: data.writeNoteTitleVie || '',
+          writeNoteSubtitleEng: data.writeNoteSubtitleEng || '',
+          writeNoteSubtitleVie: data.writeNoteSubtitleVie || '',
+          gatherHeadingEng: data.gatherHeadingEng || '',
+          gatherHeadingVie: data.gatherHeadingVie || '',
+          gatherSubtitleEng: data.gatherSubtitleEng || '',
+          gatherSubtitleVie: data.gatherSubtitleVie || '',
+          gatherDescEng: data.gatherDescEng || '',
+          gatherDescVie: data.gatherDescVie || '',
+          gatherCereTitleEng: data.gatherCereTitleEng || '',
+          gatherCereTitleVie: data.gatherCereTitleVie || '',
+          gatherCereDescEng: data.gatherCereDescEng || '',
+          gatherCereDescVie: data.gatherCereDescVie || '',
+          gatherFeastTitleEng: data.gatherFeastTitleEng || '',
+          gatherFeastTitleVie: data.gatherFeastTitleVie || '',
+          gatherFeastDescEng: data.gatherFeastDescEng || '',
+          gatherFeastDescVie: data.gatherFeastDescVie || '',
+          gatherNoteEng: data.gatherNoteEng || '',
+          gatherNoteVie: data.gatherNoteVie || '',
+          gatherMapPillEng: data.gatherMapPillEng || '',
+          gatherMapPillVie: data.gatherMapPillVie || '',
+          gatherLatitude: data.gatherLatitude || '',
+          gatherLongitude: data.gatherLongitude || '',
+          gatherDirectionsTextEng: data.gatherDirectionsTextEng || '',
+          gatherDirectionsTextVie: data.gatherDirectionsTextVie || '',
+          gatherDirectionsUrl: data.gatherDirectionsUrl || '',
         });
-        setCollageNotes(fetchedNotes);
-      },
-      (error) => {
-        console.error('Error listening to guest notes:', error);
       }
-    );
-
+    });
     return () => unsubscribe();
   }, []);
 
-  const handleCollageSubmitNote = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!collageNoteText.trim()) {
-      setCollageSubmitError(lang === 'VIE' ? 'Vui lòng viết lời chúc mừng nhé.' : 'Please write your message.');
-      return;
-    }
-    if (!collageGuestName.trim()) {
-      setCollageSubmitError(lang === 'VIE' ? 'Vui lòng ký tên của bạn.' : 'Please sign your name.');
-      return;
-    }
-
-    setIsCollageSubmitting(true);
-    setCollageSubmitError(null);
-
-    const notePayload = {
-      guestName: collageGuestName.trim(),
-      noteText: collageNoteText.trim(),
-      createdAt: serverTimestamp(),
-    };
-
-    try {
-      await addDoc(collection(db, 'guestNotes'), notePayload);
-      setIsCollageSubmitted(true);
-      setCollageNoteText('');
-      setCollageGuestName('');
-      setTimeout(() => setIsCollageSubmitted(false), 5000);
-    } catch (err) {
-      console.error('Error adding guest note:', err);
-      setCollageSubmitError(lang === 'VIE' ? 'Gửi lời chúc không thành công. Hãy thử lại.' : 'Failed to pin note. Please try again.');
+  // Real-time synchronization of guestbook database notes
+  useEffect(() => {
+    const q = query(collection(db, 'guest_notes'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const notesList: Array<{name: string, text: string, id: string}> = [];
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        notesList.push({
+          id: docSnap.id,
+          name: data.name || '',
+          text: data.text || ''
+        });
+      });
+      setDbNotes(notesList);
+    }, (error) => {
       try {
-        handleFirestoreError(err, OperationType.CREATE, 'guestNotes');
-      } catch (e) {
-        // Handled format
+        handleFirestoreError(error, OperationType.LIST, 'guest_notes');
+      } catch (err) {
+        console.error("Failed to load guestbook notes:", err);
       }
-    } finally {
-      setIsCollageSubmitting(false);
-    }
-  };
+    });
+    return () => unsubscribe();
+  }, []);
 
   const appTranslations = {
     ENG: {
-      home: "HOME",
+      home: siteContent.sidebarHomeEng || "HOME",
+      story: siteContent.sidebarStoryEng || "OUR STORY",
+      gathering: siteContent.sidebarGatherEng || "VENUE",
       date: "THE DATE",
-      events: "EVENTS",
-      rsvp: "RSVP",
-      heroBtn: "RSVP NOW",
-      heroDate: "22 JUNE 2026, FRIDAY",
+      events: siteContent.sidebarEventsEng || "EVENTS",
+      rsvp: siteContent.sidebarRsvpEng || "RSVP",
+      heroBtn: siteContent.heroBtnEng || "RSVP NOW",
+      heroDate: siteContent.heroDateEng || "22 JUNE 2026, FRIDAY",
       gettingMarried: "are getting married",
-      invitationText: "Invite you to share in a quiet weekend of woodfire, forest walks, and the commitment of vows.",
-      tokyoJapan: "TOKYO, JAPAN",
-      october2027: "OCT, 2027",
+      invitationText: siteContent.invitationTextEng || "Invite you to share in a quiet weekend of woodfire, forest walks, and the commitment of vows.",
+      tokyoJapan: siteContent.venueNameEng || "TOKYO, JAPAN",
+      october2027: siteContent.weddingDateShortEng || "OCT, 2027",
       closeEsc: "CLOSE (ESC)",
       frameInfo: "FRAME INFO",
       locationLabel: "LOCATION:",
       dateTimeLabel: "DATE TIME:",
       cameraLabel: "CAMERA:",
-      photoQuote: "A quiet instant captured on analogue medium, celebrating the silent beauty of modern devotion.",
+      photoQuote: siteContent.photoQuoteEng || "A quiet instant captured on analogue medium, celebrating the silent beauty of modern devotion.",
       prevBtn: "PREV",
       nextBtn: "NEXT",
       itinerary: "Itinerary",
       attire: "Attire",
-      attireDesc: "Cocktail Attire. Black tie optional.",
+      attireDesc: siteContent.attireDescEng || "Cocktail Attire. Black tie optional.",
       sage: "Sage",
       sand: "Sand",
       clay: "Clay",
       detailsTitle: "The Details",
       registry: "REGISTRY",
-      registryParagraph: "We are so grateful to have you as a part of our lives, and your presence at our wedding is the greatest gift of all. If you would like to celebrate this joyous occasion with a gift, we have created a wedding registry to make it easier for you.",
-      registryBtn: "View Our Wedding Registry",
-      respondBy: "Kindly respond by March 23, 2026.",
-      writeNoteTitle: "WRITE US A NOTE",
-      writeNoteSubtitle: "Leave a memory, wish, or guidance on our wedding board.",
+      registryParagraph: siteContent.registryTextEng || "We are so grateful to have you as a part of our lives, and your presence at our wedding is the greatest gift of all. If you would like to celebrate this joyous occasion with a gift, we have created a wedding registry to make it easier for you.",
+      registryBtn: siteContent.registryBtnEng || "View Our Wedding Registry",
+      respondBy: siteContent.respondByEng || "Kindly respond by March 23, 2026.",
+      writeNoteTitle: siteContent.writeNoteTitleEng || "WRITE US A NOTE",
+      writeNoteSubtitle: siteContent.writeNoteSubtitleEng || "Leave a memory, wish, or guidance on our wedding board.",
       musicPopup: "♫ TURN SOUND ON FOR AMBIENCE",
       musicToggleTitleMute: "Mute Background Music",
       musicToggleTitlePlay: "Play Wedding Song",
@@ -415,37 +555,39 @@ export default function App() {
       ]
     },
     VIE: {
-      home: "TRANG CHỦ",
+      home: siteContent.sidebarHomeVie || "TRANG CHỦ",
+      story: siteContent.sidebarStoryVie || "CÂU CHUYỆN",
+      gathering: siteContent.sidebarGatherVie || "ĐỊA ĐIỂM",
       date: "NGÀY CƯỚI",
-      events: "SỰ KIỆN",
-      rsvp: "XÁC NHẬN",
-      heroBtn: "PHẢN HỒI NGAY",
-      heroDate: "THỨ SÁU, 22 THÁNG 6, 2026",
+      events: siteContent.sidebarEventsVie || "SỰ KIỆN",
+      rsvp: siteContent.sidebarRsvpVie || "XÁC NHẬN",
+      heroBtn: siteContent.heroBtnVie || "PHẢN HỒI NGAY",
+      heroDate: siteContent.heroDateVie || "THƯ SÁU, 22 THÁNG 6, 2026",
       gettingMarried: "sẽ về chung một nhà",
-      invitationText: "Trân trọng kính mời bạn ghé thăm một ngày ấm áp đầy tiếng cười, hoa cỏ và lời thề ước chung đôi.",
-      tokyoJapan: "TOKYO, NHẬT BẢN",
-      october2027: "TH.10, 2027",
+      invitationText: siteContent.invitationTextVie || "Trân trọng kính mời bạn ghé thăm một ngày ấm áp đầy tiếng cười, hoa cỏ và lời thề ước chung đôi.",
+      tokyoJapan: siteContent.venueNameVie || "TOKYO, NHẬT BẢN",
+      october2027: siteContent.weddingDateShortVie || "TH.10, 2027",
       closeEsc: "ĐÓNG (ESC)",
       frameInfo: "THÔNG TIN ẢNH",
       locationLabel: "ĐỊA ĐIỂM:",
       dateTimeLabel: "THỜI GIAN:",
       cameraLabel: "MÁY ẢNH:",
-      photoQuote: "Khoảnh khắc an yên ghi dấu qua thước phim màu, mừng ngày hạnh phúc đơm hoa.",
+      photoQuote: siteContent.photoQuoteVie || "Khoảnh khắc an yên ghi dấu qua thước phim màu, mừng ngày hạnh phúc đơm hoa.",
       prevBtn: "TRƯỚC",
       nextBtn: "SAU",
       itinerary: "Lịch trình",
       attire: "Trang phục",
-      attireDesc: "Trang phục bán trang trọng (Cocktail). Nam có thể thắt nơ.",
+      attireDesc: siteContent.attireDescVie || "Trang phục bán trang trọng (Cocktail). Nam có thể thắt nơ.",
       sage: "Màu Xanh",
       sand: "Màu Cát",
       clay: "Màu Đất sét",
       detailsTitle: "Chi tiết ngày vui",
       registry: "HỘP QUÀ",
-      registryParagraph: "Sự hiện diện của bạn là niềm hạnh phúc lớn nhất của chúng mình. Nếu bạn muốn gửi chúc mừng, chúng mình đã chuẩn bị danh sách quà cưới nhỏ xinh dưới đây để bạn dễ dàng lựa chọn.",
-      registryBtn: "Xem Hộp Quà Chúc Mừng",
-      respondBy: "Vui lòng cho tụi mình biết phản hồi trước ngày 23 tháng 3, 2026.",
-      writeNoteTitle: "GỬI LỜI CHÚC MỪNG",
-      writeNoteSubtitle: "Ghi lại kỷ niệm hoặc lời nhắn nhủ dành cho ngày hạnh phúc của chúng mình.",
+      registryParagraph: siteContent.registryTextVie || "Sự hiện diện của bạn là niềm hạnh phúc lớn nhất của chúng mình. Nếu bạn muốn gửi chúc mừng, chúng mình đã chuẩn bị danh sách quà cưới nhỏ xinh dưới đây để bạn dễ dàng lựa chọn.",
+      registryBtn: siteContent.registryBtnVie || "Xem Hộp Quà Chúc Mừng",
+      respondBy: siteContent.respondByVie || "Vui lòng cho tụi mình biết phản hồi trước ngày 23 tháng 3, 2026.",
+      writeNoteTitle: siteContent.writeNoteTitleVie || "GỬI LỜI CHÚC MỪNG",
+      writeNoteSubtitle: siteContent.writeNoteSubtitleVie || "Ghi lại kỷ niệm hoặc lời nhắn nhủ dành cho ngày hạnh phúc của chúng mình.",
       musicPopup: "♫ BẬT ÂM THANH ĐỂ CẢM NHẬN KHÔNG GIAN",
       musicToggleTitleMute: "Tắt nhạc nền",
       musicToggleTitlePlay: "Bật nhạc đám cưới",
@@ -509,27 +651,11 @@ export default function App() {
 
   const sidebarItems = [
     { num: "01", label: t.home, target: "hero" },
-    { num: "02", label: t.date, target: "gallery" },
+    { num: "02", label: t.story, target: "story" },
     { num: "03", label: t.events, target: "events" },
-    { num: "04", label: t.rsvp, target: "rsvp" },
+    { num: "04", label: t.gathering, target: "gathering-grounds" },
+    { num: "05", label: t.rsvp, target: "rsvp" },
   ];
-
-  const galleryRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: galleryRef,
-    offset: ["start end", "end start"]
-  });
-
-  const ySlow1 = useTransform(scrollYProgress, [0, 1], [-30, 30]);
-  const ySlow2 = useTransform(scrollYProgress, [0, 1], [-10, 10]);
-  const yMed1  = useTransform(scrollYProgress, [0, 1], [-60, 60]);
-  const yMed2  = useTransform(scrollYProgress, [0, 1], [-90, 90]);
-  const yFast1 = useTransform(scrollYProgress, [0, 1], [-130, 130]);
-  const yFast2 = useTransform(scrollYProgress, [0, 1], [-160, 160]);
-
-  const filteredImages = selectedCategory === 'all' 
-    ? galleryImages 
-    : galleryImages.filter(img => img.category === selectedCategory);
 
   const handleScrollTo = (id: string) => {
     const el = document.getElementById(id);
@@ -663,7 +789,7 @@ export default function App() {
         {/* Full-background image with darken overlay */}
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=2000&q=80" 
+            src={siteContent.imageUrl || "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=2000&q=80"} 
             alt="Warm mystical forest wedding" 
             className="w-full h-full object-cover grayscale contrast-[105%] brightness-[0.80]" 
             referrerPolicy="no-referrer"
@@ -707,216 +833,22 @@ export default function App() {
         </div>
       </section>
 
-      {/* Pristine Interactive Gallery Section ("Weaved Journeys") */}
-      <section id="gallery" ref={galleryRef} className="py-24 md:py-36 bg-[#F4F3EF] px-6 md:px-12 relative overflow-hidden transition-colors duration-500">
-        <div className="max-w-7xl mx-auto space-y-12">
+      {/* Wedding Story Section with Proper JavaScript-Powered Sticky Scroll */}
+      <StorySection 
+        lang={lang} 
+        leftPortraitUrl={siteContent.leftPortraitUrl}
+        rightPortraitUrl={siteContent.rightPortraitUrl}
+        storyThreeUrl={siteContent.storyThreeUrl}
+        storyFourUrl={siteContent.storyFourUrl}
+        storyFiveUrl={siteContent.storyFiveUrl}
+        brideName={siteContent.brideName}
+        groomName={siteContent.groomName}
+        invitationText={lang === 'VIE' ? siteContent.invitationTextVie : siteContent.invitationTextEng}
+        venueName={lang === 'VIE' ? siteContent.venueNameVie : siteContent.venueNameEng}
+        weddingDateShort={lang === 'VIE' ? siteContent.weddingDateShortVie : siteContent.weddingDateShortEng}
+      />
 
-          {/* Fallback Beautiful Stack Layout for Mobile Devices (Fully responsive) */}
-          <div className="block md:hidden space-y-12 pt-6">
-            
-            {/* Center card first on mobile so it's readable */}
-            <div className="py-6 px-2 bg-white/40 rounded-sm border border-[#3A2220]/5 backdrop-blur-sm shadow-sm">
-                <div className="flex flex-col items-center text-center space-y-6">
-                  {/* Two columns layout for names on mobile too! */}
-                  <div className="flex items-center justify-center gap-4 w-full text-[#3A2220]">
-                    <div className="text-right">
-                      <p className="font-serif italic font-light text-2xl leading-tight">Bảo Eve</p>
-                      <p className="font-serif italic font-light text-lg leading-none opacity-85">& Johnathan</p>
-                    </div>
-                    <span className="font-serif text-sm text-[#3A2220]/60 italic font-light">&</span>
-                    <div className="text-left">
-                      <p className="font-serif italic font-light text-2xl leading-tight">Bảo Eve</p>
-                      <p className="font-serif italic font-light text-lg leading-none opacity-85">& Johnathan</p>
-                    </div>
-                  </div>
 
-                  <p className="font-serif italic text-sm text-[#3A2220]/80 mt-1">{t.gettingMarried}</p>
-                  
-                  <div className="h-px w-24 bg-[#3A2220]/15" />
-                  
-                  <p className="font-serif text-[11px] leading-relaxed text-[#3A2220]/75 max-w-xs italic text-center px-4">
-                    {t.invitationText}
-                  </p>
-                  
-                  <div className="h-px w-24 bg-[#3A2220]/15" />
-                  
-                  <div className="grid grid-cols-3 w-full font-mono text-[8px] tracking-widest text-[#3A2220]/65 uppercase px-4">
-                    <div>
-                      <span className="block font-serif text-sm font-light text-[#3A2220]">10</span>
-                      <span className="block text-[7px] mt-0.5">{t.october2027}</span>
-                    </div>
-                    <div className="border-l border-r border-[#3A2220]/10 px-1 py-0.5">
-                      <span className="block">TOKYO,</span>
-                      <span className="block font-light">{lang === 'VIE' ? 'NHẬT BẢN' : 'JAPAN'}</span>
-                    </div>
-                    <div>
-                      <span className="block font-serif text-sm font-light text-[#3A2220]">10</span>
-                      <span className="block text-[7px] mt-0.5">{t.october2027}</span>
-                    </div>
-                  </div>
-                </div>
-            </div>
-
-            {/* List the pictures as gorgeous polaroids with occasional elegant seals */}
-            <div className="space-y-16">
-              {galleryImages.map((img, index) => (
-                <div key={img.id} className="relative">
-                  {/* Decorative seal for certain mobile images to maintain the luxurious feel of the mockup */}
-                  {index === 0 && (
-                    <div className="absolute -top-6 -right-4 z-20 scale-75">
-                      <EmbossedSeal className="w-20 h-20" />
-                    </div>
-                  )}
-                  {index === 4 && (
-                    <div className="absolute -top-6 -left-4 z-20 scale-75">
-                      <EmbossedSeal className="w-20 h-20" />
-                    </div>
-                  )}
-                  
-                  <div 
-                    onClick={() => openLightbox(img.id)} 
-                    className="bg-white p-4 pb-12 shadow-md border border-neutral-100 rounded-sm cursor-pointer hover:shadow-xl transition-shadow duration-300"
-                  >
-                    <div className={`overflow-hidden grayscale ${img.id === 1 || img.id === 5 ? 'aspect-[3/4]' : 'aspect-[4/3]'}`}>
-                      <img src={img.url} alt={img.title} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Desktop Masterpiece Scrumptuous Collage Layout with Differential Parallax Speed */}
-          <div className="hidden md:block relative w-full h-[1420px] overflow-hidden select-none">
-            
-            {/* Centerpiece Text Card */}
-            <motion.div 
-              style={{ y: ySlow2 }}
-              className="absolute top-[32%] left-1/2 -translate-x-1/2 w-[42%] z-10 flex flex-col items-center text-center"
-            >
-              <div className="flex flex-col items-center justify-center text-center w-full">
-                {/* Two Column Names Layout exactly mirroring the screenshot */}
-                <div className="flex items-center justify-center gap-10 lg:gap-14 w-full text-[#3A2220]">
-                  {/* Left Column */}
-                  <div className="text-right">
-                    <p className="font-serif italic font-light text-3xl lg:text-4xl leading-tight">Bảo Eve</p>
-                    <p className="font-serif italic font-light text-2xl lg:text-3xl leading-none opacity-85">& Johnathan</p>
-                  </div>
-                  
-                  {/* Center & */}
-                  <span className="font-serif text-lg lg:text-xl text-[#3A2220]/50 italic font-light">&</span>
-                  
-                  {/* Right Column */}
-                  <div className="text-left">
-                    <p className="font-serif italic font-light text-3xl lg:text-4xl leading-tight">Bảo Eve</p>
-                    <p className="font-serif italic font-light text-2xl lg:text-3xl leading-none opacity-85">& Johnathan</p>
-                  </div>
-                </div>
-                
-                <h3 className="font-serif italic text-base lg:text-lg text-[#3A2220]/80 mt-4">
-                  {t.gettingMarried}
-                </h3>
-                
-                <div className="w-full h-px bg-[#3A2220]/15 my-5" />
-                
-                <p className="font-serif text-[11.5px] lg:text-[12.5px] leading-relaxed text-[#3A2220]/75 max-w-lg italic font-light px-4">
-                  {t.invitationText}
-                </p>
-                
-                <div className="w-full h-px bg-[#3A2220]/15 my-5" />
-                
-                <div className="grid grid-cols-3 w-full max-w-md mx-auto items-center text-center font-mono text-[9px] tracking-[0.25em] text-[#3A2220]/70 uppercase">
-                  <div>
-                    <span className="block font-serif text-2xl font-light text-[#3A2220] leading-none">10</span>
-                    <span className="block text-[8px] mt-1.5 text-muted">{t.october2027}</span>
-                  </div>
-                  <div className="border-l border-r border-[#3A2220]/12 py-1 px-4">
-                    <span className="block text-[9.5px] leading-tight font-medium">TOKYO,</span>
-                    <span className="block text-[9.5px] leading-tight font-light">{lang === 'VIE' ? 'NHẬT BẢN' : 'JAPAN'}</span>
-                  </div>
-                  <div>
-                    <span className="block font-serif text-2xl font-light text-[#3A2220] leading-none">10</span>
-                    <span className="block text-[8px] mt-1.5 text-muted">{t.october2027}</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Photo 1: Left Vertical (silhouette doorway) - Slow Parallax */}
-            <motion.div 
-              style={{ y: ySlow1 }}
-              onClick={() => openLightbox(1)}
-              className="absolute top-[18%] left-[4%] w-[23%] bg-white p-4 pb-14 shadow-[2px_12px_24px_rgba(0,0,0,0.06),_0_2px_4px_rgba(0,0,0,0.02)] border border-neutral-100/50 rounded-sm cursor-pointer group hover:shadow-2xl transition-all duration-500 z-20 hover:z-30 rotate-[-1.5deg]"
-            >
-              <div className="aspect-[3/4] overflow-hidden grayscale contrast-110 group-hover:grayscale-0 group-hover:contrast-100 transition-all duration-700">
-                <img src={galleryImages[0].url} alt={galleryImages[0].title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              </div>
-            </motion.div>
-
-            {/* Embossed Seal Top Left: Overlapping top-right of left photo */}
-            <motion.div
-              style={{ y: ySlow1 }}
-              className="absolute top-[12%] left-[21%] z-30 pointer-events-none rotate-[4deg]"
-            >
-              <EmbossedSeal className="w-28 h-28" />
-            </motion.div>
-
-            {/* Photo 2: Top-Right (forest cabin) - Med Parallax */}
-            <motion.div 
-              style={{ y: yMed1 }}
-              onClick={() => openLightbox(2)}
-              className="absolute top-[5%] right-[11%] w-[26%] bg-white p-4 pb-14 shadow-[2px_12px_24px_rgba(0,0,0,0.06),_0_2px_4px_rgba(0,0,0,0.02)] border border-neutral-100/50 rounded-sm cursor-pointer group hover:shadow-2xl transition-all duration-500 z-20 hover:z-30 rotate-[1.2deg]"
-            >
-              <div className="aspect-[4/3] overflow-hidden grayscale contrast-110 group-hover:grayscale-0 group-hover:contrast-100 transition-all duration-700">
-                <img src={galleryImages[1].url} alt={galleryImages[1].title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              </div>
-            </motion.div>
-
-            {/* Photo 3: Middle-Right (couple dancing B&W) - Slow Parallax */}
-            <motion.div 
-              style={{ y: ySlow2 }}
-              onClick={() => openLightbox(3)}
-              className="absolute top-[31%] right-[2%] w-[24%] bg-white p-4 pb-14 shadow-[2px_12px_24px_rgba(0,0,0,0.06),_0_2px_4px_rgba(0,0,0,0.02)] border border-neutral-100/50 rounded-sm cursor-pointer group hover:shadow-2xl transition-all duration-500 z-20 hover:z-30 rotate-[-1deg]"
-            >
-              <div className="aspect-[4/3] overflow-hidden grayscale contrast-110 group-hover:grayscale-0 group-hover:contrast-100 transition-all duration-700">
-                <img src={galleryImages[2].url} alt={galleryImages[2].title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              </div>
-            </motion.div>
-
-            {/* Photo 4: Bottom-Center (forest trees pathway) - Med Parallax */}
-            <motion.div 
-              style={{ y: yMed2 }}
-              onClick={() => openLightbox(4)}
-              className="absolute top-[57%] left-[25%] w-[26%] bg-white p-4 pb-14 shadow-[px_12px_24px_rgba(0,0,0,0.06),_0_2px_4px_rgba(0,0,0,0.02)] border border-neutral-100/50 rounded-sm cursor-pointer group hover:shadow-2xl transition-all duration-500 z-20 hover:z-30 rotate-[1.5deg]"
-            >
-              <div className="aspect-[4/3] overflow-hidden grayscale contrast-110 group-hover:grayscale-0 group-hover:contrast-100 transition-all duration-700">
-                <img src={galleryImages[3].url} alt={galleryImages[3].title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              </div>
-            </motion.div>
-
-            {/* Photo 5: Bottom-Right Portrait (bride outside) - Fast Parallax */}
-            <motion.div 
-              style={{ y: yFast2 }}
-              onClick={() => openLightbox(5)}
-              className="absolute top-[72%] right-[10%] w-[20%] bg-white p-4 pb-14 shadow-[2px_12px_24px_rgba(0,0,0,0.06),_0_2px_4px_rgba(0,0,0,0.02)] border border-neutral-100/50 rounded-sm cursor-pointer group hover:shadow-2xl transition-all duration-500 z-20 hover:z-30 rotate-[2.5deg]"
-            >
-              <div className="aspect-[3/4] overflow-hidden grayscale contrast-110 group-hover:grayscale-0 group-hover:contrast-100 transition-all duration-700">
-                <img src={galleryImages[4].url} alt={galleryImages[4].title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              </div>
-            </motion.div>
-
-            {/* Embossed Seal Bottom Right: Overlapping top-left of bottom-right photo */}
-            <motion.div
-              style={{ y: yFast2 }}
-              className="absolute top-[66%] right-[24%] z-30 pointer-events-none rotate-[-6deg]"
-            >
-              <EmbossedSeal className="w-28 h-28" />
-            </motion.div>
-
-          </div>
-
-        </div>
-      </section>
 
       {/* Style Reference Lightbox Modal */}
       <AnimatePresence>
@@ -1075,7 +1007,7 @@ export default function App() {
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 tape -rotate-2 z-10 opacity-80" />
               <div className="aspect-square overflow-hidden grayscale contrast-125">
                 <img 
-                  src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=500&q=80" 
+                  src={siteContent.mapImageUrl || "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=500&q=80"} 
                   alt="Details" 
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
@@ -1086,40 +1018,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* Gifts Registry Section */}
-      <section className="max-w-5xl mx-auto py-24 md:py-36 grid md:grid-cols-12 gap-16 items-center px-6">
-        <div className="md:col-span-5 relative">
-          <div className="relative bg-white p-3 shadow-sm border border-black/5">
-            {/* Tape */}
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-28 h-8 tape rotate-1 z-10 opacity-80" />
-            <div className="aspect-square overflow-hidden grayscale contrast-125">
-              <img 
-                src="https://images.unsplash.com/photo-1469371670807-013ccf25f16a?auto=format&fit=crop&w=500&q=80" 
-                alt="Registry Gifts" 
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="md:col-span-7 space-y-10">
-          <div className="flex items-center gap-3">
-            <h2 className="font-serif text-4xl uppercase tracking-tight">{t.registry}</h2>
-            <span className="text-2xl text-forest inline-block translate-y-1">♡</span>
-          </div>
-          <div className="space-y-8 max-w-md">
-            <p className="font-mono text-[10px] leading-relaxed text-muted tracking-wide">
-              {t.registryParagraph}
-            </p>
-            <div className="pt-4">
-              <button className="font-mono text-[9px] tracking-[0.3em] uppercase border border-[#3A2220]/15 bg-white/40 backdrop-blur-md px-6 py-3 rounded-full hover:bg-white/75 text-ink transition-all shadow-sm active:scale-95 ease-out cursor-pointer">
-                {t.registryBtn}
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
+      <GatheringSection lang={lang} siteContent={siteContent} />
 
       {/* RSVP Form Section */}
       <section id="rsvp" className="max-w-4xl mx-auto py-24 md:py-36 px-6">
@@ -1135,228 +1034,295 @@ export default function App() {
       </section>
 
       {/* Coastal Blue Elegant Visual Collage Section */}
-      <section id="coastal-blue-collage" className="w-full relative py-16 md:py-24 overflow-hidden bg-stone-100 min-h-[500px] sm:min-h-[600px] md:min-h-[850px] flex flex-col items-center justify-center">
-        {/* Background beach cliff photo with high-contrast grayscale feel */}
-        <div className="absolute inset-0 z-0">
+      <section 
+        id="coastal-blue-collage" 
+        className="w-full relative py-12 sm:py-20 md:py-24 overflow-hidden bg-stone-950 min-h-[550px] sm:min-h-[650px] md:min-h-[800px] flex flex-col items-center justify-center select-none"
+      >
+        {/* Background romantic wedding photo with high-contrast grayscale/dark overlay */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.5, ease: 'easeOut' }}
+          className="absolute inset-0 z-0"
+        >
           <img 
-            src="https://images.unsplash.com/photo-1542224566-6e85f2e6772f?auto=format&fit=crop&w=2000&q=80" 
-            alt="Coastal rocks" 
-            className="w-full h-full object-cover grayscale contrast-125 brightness-95"
+            src={siteContent.collageBgUrl || "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=2000&q=80"} 
+            alt="Wedding Couple Silhouette" 
+            className="w-full h-full object-cover grayscale contrast-125 brightness-[0.24] pointer-events-none select-none"
             referrerPolicy="no-referrer"
           />
-          {/* Subtle vignette/shading overlay to match the image's artistic depth */}
-          <div className="absolute inset-0 bg-black/5 mix-blend-multiply" />
-        </div>
+          {/* Subtle vignette layer */}
+          <div className="absolute inset-0 bg-black/40 pointer-events-none" />
+        </motion.div>
 
-        {/* Scaled stage for the paper collage to assure responsive alignment */}
-        <div className="relative z-10 w-full max-w-4xl h-[420px] sm:h-[550px] md:h-[700px] flex items-center justify-center">
-          <div className="scale-[0.8] xs:scale-[0.9] sm:scale-[0.95] md:scale-100 hover:scale-[1.01] transition-transform duration-700 ease-out relative w-full h-full flex items-center justify-center">
+        {/* Outer Draggable Constraining Stage wrapper to contain draggable wax stamps */}
+        <motion.div 
+          ref={constraintsRef} 
+          initial={{ opacity: 0, scale: 0.96, y: 40 }}
+          whileInView={{ opacity: 1, scale: 1, y: 0 }}
+          viewport={{ once: true, margin: "-120px" }}
+          transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="relative z-10 w-full max-w-5xl h-[460px] sm:h-[580px] md:h-[720px] flex items-center justify-center px-4 overflow-visible"
+        >
+          {/* Main Lace Doily Card Background */}
+          <div className="relative w-full max-w-md sm:max-w-xl md:max-w-2xl aspect-[1.38/1] flex items-center justify-center p-6 sm:p-12 md:p-14 rounded-[32px] sm:rounded-[44px] md:rounded-[52px] overflow-hidden bg-transparent shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/5 select-none">
+            {/* Underneath high-quality generated lace doily background image */}
+            <img 
+              src={siteContent.collageLaceBgUrl || "/src/assets/images/lace_card_bg_1781950708806.jpg"} 
+              alt="Lace Frame Decor"
+              className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none rounded-[32px] sm:rounded-[44px] md:rounded-[52px]"
+              referrerPolicy="no-referrer"
+            />
             
-            {/* 1. Large Lined Notebook Paper Turned Interactive Notebook */}
-            <form 
-              onSubmit={handleCollageSubmitNote} 
-              className="relative bg-[#FAF8F5] shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-stone-200/40 w-[280px] sm:w-[360px] md:w-[460px] h-[340px] sm:h-[450px] md:h-[570px] rounded-[1px] p-5 sm:p-8 md:p-12 flex flex-col justify-between"
-            >
-              {/* Notebook rule lines */}
-              <div 
-                className="absolute inset-0 opacity-[0.25] pointer-events-none rounded-[1px]"
-                style={{
-                  backgroundImage: 'linear-gradient(#A2BCA0 1.2px, transparent 1.2px)',
-                  backgroundSize: '100% 25px',
-                  backgroundPosition: '0 12px',
-                }}
-              />
-              
-              {/* Header inside paper */}
-              <div className="relative z-10 text-center mt-1 sm:mt-4 pb-2 border-b border-stone-200">
-                <h3 className="font-serif text-[18px] sm:text-[24px] md:text-[28px] text-[#3A2220] tracking-tight italic select-none">
-                  {lang === 'VIE' ? "Gửi Lời Chúc Mừng" : "Write Us a Note..."}
-                </h3>
-                <p className="font-mono text-[6px] sm:text-[8px] md:text-[10px] tracking-[0.25em] text-[#3A2220]/50 uppercase leading-normal">
-                  {lang === 'VIE' ? "SỔ LƯU BÚT KỶ NIỆM" : "WEDDING GUEST BOOK"}
-                </p>
-              </div>
-
-              {/* Message text area */}
-              <div className="relative z-10 flex-1 my-3 sm:my-4 md:my-6 min-h-[120px] overflow-hidden">
-                <textarea
-                  value={collageNoteText}
-                  onChange={(e) => {
-                    setCollageNoteText(e.target.value);
-                    if (collageSubmitError) setCollageSubmitError(null);
-                  }}
-                  placeholder={lang === 'VIE' ? "Hãy viết một câu chúc, lời nhắn nhủ hay kỷ niệm ngọt ngào tại đây nhé..." : "Leave a warm wish, loving note, or advice for our journey..."}
-                  required
-                  maxLength={400}
-                  className="w-full h-full bg-transparent border-none outline-none font-script text-[14px] sm:text-[18px] md:text-[21px] leading-[25px] text-[#3A2220]/90 placeholder-[#3A2220]/30 resize-none focus:ring-0 selection:bg-stone-200 py-1"
-                  style={{ lineHeight: '25px' }}
-                />
-              </div>
-
-              {/* Signature Input and Submit at the bottom */}
-              <div className="relative z-10 space-y-3 sm:space-y-4 pt-2 border-t border-stone-300/40">
-                <div className="flex items-center gap-2">
-                  <span className="font-mono text-[7px] sm:text-[9px] tracking-widest text-[#3A2220]/60 uppercase whitespace-nowrap select-none">{lang === 'VIE' ? "THÂN THƯƠNG," : "WITH LOVE,"}</span>
-                  <input
-                    type="text"
-                    value={collageGuestName}
-                    onChange={(e) => {
-                      setCollageGuestName(e.target.value);
-                      if (collageSubmitError) setCollageSubmitError(null);
-                    }}
-                    placeholder={lang === 'VIE' ? "Tên của bạn..." : "Your Name(s)"}
-                    required
-                    maxLength={50}
-                    className="bg-transparent border-b border-[#3A2220]/20 hover:border-[#3A2220]/40 focus:border-[#3A2220] focus:ring-0 outline-none font-script text-[14px] sm:text-[18px] text-[#3A2220] py-0.5 px-1 flex-1 min-w-0 transition-colors"
-                  />
-                </div>
-
-                <div className="flex items-center justify-between gap-4">
-                  {/* Error display inline inside paper */}
-                  <span className="text-[9px] text-red-500 font-sans line-clamp-1">
-                    {collageSubmitError}
-                  </span>
-
-                  <button
-                    type="submit"
-                    disabled={isCollageSubmitting}
-                    className={`py-1.5 sm:py-2 px-4 sm:px-6 font-mono text-[6px] sm:text-[8px] md:text-[9px] tracking-[0.2em] uppercase rounded-full transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm select-none border whitespace-nowrap ${
-                      isCollageSubmitted
-                        ? 'bg-emerald-800 text-stone-100 border-emerald-800'
-                        : 'bg-stone-900 border-stone-900 text-stone-100 hover:bg-stone-800'
-                    } disabled:opacity-50`}
-                  >
-                    {isCollageSubmitting ? (
-                      <span>{lang === 'VIE' ? "ĐANG GỬI..." : "SAVING..."}</span>
-                    ) : isCollageSubmitted ? (
-                      <span>✓ {lang === 'VIE' ? "ĐÃ GỬI!" : "PINNED!"}</span>
-                    ) : (
-                      <span>{lang === 'VIE' ? "GỬI CHÚC MỪNG" : "PIN TO BOARD"}</span>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </form>
-
-            {/* 2. Kraft/Tan Textured Card (Tilted Left, overlapping) - Welcoming greeting from the couple */}
-            <div className="absolute bottom-[10%] left-[8%] xs:left-[12%] sm:left-[16%] md:left-[14%] -rotate-[6deg] hover:-rotate-[4deg] bg-[#C1B7A4] shadow-[0_12px_30px_rgba(0,0,0,0.18)] border border-stone-300/40 w-[180px] sm:w-[220px] md:w-[280px] h-[90px] sm:h-[110px] md:h-[140px] p-4 sm:p-5 md:p-7 flex flex-col justify-between overflow-hidden transition-all duration-300 cursor-grab active:cursor-grabbing">
-              {/* Kraft Paper fiber noise simulation */}
-              <div className="absolute inset-0 bg-white/5 opacity-40 pointer-events-none mix-blend-overlay" />
-              
-              <p className="font-script text-[11px] sm:text-[13px] md:text-[16px] text-[#3A2220]/90 leading-tight font-medium text-left pr-4 leading-relaxed tracking-wide select-none">
-                {lang === 'VIE' ? (
-                  <>
-                    Cảm ơn tất cả mọi người <br />
-                    đã đồng hành & chia sẻ <br />
-                    những khoảnh khắc tuyệt vời <br />
-                    trong ngày hạnh phúc của tụi mình.
-                  </>
-                ) : (
-                  <>
-                    Thank you so much <br />
-                    for celebrating with us! <br />
-                    Your love, support and presence <br />
-                    mean the entire world to us.
-                  </>
-                )}
-              </p>
-              
-              {/* Vertical brand line on the right edge */}
-              <div className="absolute right-[1px] md:right-[4px] top-1/2 -translate-y-1/2 rotate-90 origin-center text-[4px] sm:text-[5px] md:text-[6px] tracking-[0.3em] text-[#3a2220]/60 font-mono whitespace-nowrap">
-                SARAH & MICHAEL • TOKYO 2026
-              </div>
-            </div>
-
-            {/* 3. Charcoal Card (Tilted Right, overlapping) */}
-            <div className="absolute top-[18%] right-[8%] xs:right-[12%] sm:right-[16%] md:right-[14%] rotate-[3deg] hover:rotate-[1deg] bg-[#2E2E2D] shadow-[0_15px_40px_rgba(0,0,0,0.25)] w-[140px] sm:w-[180px] md:w-[230px] h-[140px] sm:h-[180px] md:h-[230px] p-5 sm:p-6 md:p-8 flex flex-col items-center justify-center text-center transition-all duration-300 cursor-grab active:cursor-grabbing z-20">
-              {/* White mock punch hole at top center */}
-              <div className="absolute top-3 sm:top-4 md:top-6 left-1/2 -translate-x-1/2 w-2.5 sm:w-3 md:w-4 h-2.5 sm:h-3 md:h-4 rounded-full bg-stone-100 shadow-[inset_1px_1px_2px_rgba(0,0,0,0.35)]" />
-              
-              <div className="relative z-10 space-y-1 sm:space-y-1.5 md:space-y-2 pointer-events-none">
-                {/* Custom cursive calligraphy text */}
-                <h3 className="font-script text-lg sm:text-2xl md:text-3xl text-[#FAF8F5] leading-none select-none italic py-1">
-                  S & M
-                </h3>
-                <div className="space-y-0.5">
-                  <p className="font-mono text-[5px] sm:text-[6px] md:text-[8px] tracking-[0.35em] text-white/40 uppercase leading-none">
-                    {lang === 'VIE' ? "XIN CẢM ƠN" : "THANK YOU"}
-                  </p>
-                  <p className="font-mono text-[4px] sm:text-[5px] md:text-[6px] tracking-[0.35em] text-white/40 uppercase leading-none">
-                    {lang === 'VIE' ? "ƯỚC NGUYỆN TRỌN ĐỜI" : "FOREVER COLLAGE"}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        {/* Guestbook Live Board - Sticky Cards Grid */}
-        <AnimatePresence>
-          {collageNotes.length > 0 && (
-            <div className="w-full max-w-6xl mx-auto px-6 py-12 text-center space-y-8 relative z-10">
-              <div className="space-y-2">
-                <h4 className="font-serif text-xl sm:text-2xl uppercase tracking-wider text-[#3A2220]/80">
-                  {lang === 'VIE' ? "Lời Chúc Từ Người Thân & Bạn Bè" : "Wishes from Friends & Family"}
-                </h4>
-                <p className="font-mono text-[8px] sm:text-[10px] tracking-widest text-[#3A2220]/50 uppercase">
-                  {lang === 'VIE' ? "SỔ LƯU BÚT ĐIỆN TỬ THỜI GIAN THỰC" : "REALTIME GUEST LOG DESIGN"}
-                </p>
-              </div>
-
-              <motion.div 
-                layout
-                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pt-4"
+            {/* The Text & Button overlay inside the card */}
+            <div className="relative z-20 w-full h-full flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-8 pointer-events-auto">
+              {/* Elegant script display title matching the mockup */}
+              <span 
+                className="font-script text-[36px] sm:text-[48px] md:text-[56px] text-[#3a2220] block leading-tight font-medium mb-3 sm:mb-5 mt-2 select-none"
+                style={{ fontStyle: 'italic' }}
               >
-                <AnimatePresence mode="popLayout">
-                  {collageNotes.map((note, index) => {
-                    const rotations = ['-rotate-1', 'rotate-1', '-rotate-2', 'rotate-2', '-rotate-1.5', 'rotate-1.5'];
-                    const rotation = rotations[index % rotations.length];
-                    const tints = [
-                      'bg-[#FCFBF7] border-stone-200 shadow-sm',
-                      'bg-[#FAF9F5] border-stone-200 shadow-sm',
-                      'bg-[#FDFCF9] border-stone-200 shadow-sm',
-                    ];
-                    const tint = tints[index % tints.length];
+                Together with our families,
+              </span>
+              
+              {/* Wedding details paragraph */}
+              <div className="space-y-3 sm:space-y-4 max-w-[92%] sm:max-w-[85%] mx-auto font-serif">
+                <p className="text-[11px] sm:text-[13px] md:text-[15px] italic text-[#3a2220]/80 leading-relaxed font-semibold">
+                  Thank you for being part of one of the the most meaningful moments of our lives.
+                </p>
+                <p className="text-[11px] sm:text-[13px] md:text-[15px] italic text-[#3a2220]/80 leading-relaxed font-semibold">
+                  We cannot wait to celebrate love, laughter, and unforgettable memories with you.
+                </p>
+              </div>
 
-                    return (
-                      <motion.div
-                        key={note.id}
-                        initial={{ opacity: 0, scale: 0.9, y: 15 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.85, y: -15 }}
-                        transition={{ duration: 0.4 }}
-                        whileHover={{ scale: 1.03, zIndex: 10 }}
-                        className={`relative p-6 ${tint} ${rotation} border rounded-[1px] select-none transition-shadow duration-300 shadow-[0_4px_12px_rgba(0,0,0,0.03)] min-h-[140px] flex flex-col justify-between`}
-                      >
-                        {/* Polaroid Tape Accent */}
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-3.5 bg-white/50 backdrop-blur-[1px] border border-stone-200/40 shadow-[0_1px_2px_rgba(0,0,0,0.01)] rotate-[-1deg]" />
-                        
-                        <div className="space-y-4 text-left">
-                          <p className="font-script text-[18px] text-[#3A2220] leading-relaxed break-words whitespace-pre-wrap selection:bg-[#3A2220]/10">
-                            "{note.noteText}"
-                          </p>
-                          <div className="flex items-center justify-between pt-2 border-t border-[#3A2220]/5">
-                            <span className="font-script text-[15px] text-[#3A2220] font-medium leading-none">
-                              — {note.guestName}
-                            </span>
-                            <span className="text-red-400 text-[10px]">♥</span>
-                          </div>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </AnimatePresence>
+              {/* Handcrafted button */}
+              <button
+                onClick={() => setIsLocalModalOpen(true)}
+                className="mt-6 sm:mt-10 px-5 sm:px-7 py-2 sm:py-2.5 rounded-full border border-[#3a2220]/40 text-[#3a2220]/90 font-serif italic text-[11px] sm:text-[13px] bg-transparent hover:bg-[#3a2220]/5 active:scale-95 transition-all select-none cursor-pointer duration-300 shadow-sm"
+              >
+                Click to write us a note
+              </button>
+            </div>
+          </div>
+
+          {/* DRAGGABLE ITEM 1: Pink Circular Wax Seal Stamp (S monogram) */}
+          <motion.div
+            drag
+            dragConstraints={constraintsRef}
+            dragElastic={0.06}
+            whileHover={{ scale: 1.08, rotate: -2, cursor: 'grab' }}
+            whileDrag={{ scale: 1.15, rotate: 6, cursor: 'grabbing', zIndex: 100 }}
+            className="absolute left-[3%] sm:left-[6%] md:left-[8%] top-[35%] sm:top-[38%] z-30 select-none touch-none w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 rounded-full overflow-hidden border border-white/5 transition-shadow duration-300"
+          >
+            <img 
+              src={siteContent.collagePinkStampUrl || "/src/assets/images/pink_wax_seal_1781950725822.jpg"} 
+              alt="Draggable Pink Monogram Stamp"
+              className="w-full h-full object-cover scale-[1.08] pointer-events-none select-none rounded-full"
+              referrerPolicy="no-referrer"
+            />
+          </motion.div>
+
+          {/* DRAGGABLE ITEM 2: Sage Green Oval Wax Seal Stamp (Wildflower stem illustration) */}
+          <motion.div
+            drag
+            dragConstraints={constraintsRef}
+            dragElastic={0.06}
+            whileHover={{ scale: 1.08, rotate: 2, cursor: 'grab' }}
+            whileDrag={{ scale: 1.15, rotate: -4, cursor: 'grabbing', zIndex: 100 }}
+            className="absolute right-[3%] sm:right-[6%] md:right-[8%] bottom-[12%] sm:bottom-[15%] z-30 select-none touch-none w-20 h-28 sm:w-28 sm:h-38 md:w-36 md:h-48 rounded-[50%/40%] overflow-hidden border border-white/5 transition-shadow duration-300"
+          >
+            <img 
+              src={siteContent.collageSageStampUrl || "/src/assets/images/sage_wax_seal_1781950741169.jpg"} 
+              alt="Draggable Sage Green Botanical Stamp"
+              className="w-full h-full object-cover scale-[1.08] pointer-events-none select-none rounded-[50%/40%]"
+              referrerPolicy="no-referrer"
+            />
+          </motion.div>
+        </motion.div>
+
+        {/* Elegant Stationery Note Writing Popup Modal */}
+        <AnimatePresence>
+          {isLocalModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              {/* Back backdrop dark mask */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsLocalModalOpen(false)}
+                className="absolute inset-0 bg-stone-900/60 backdrop-blur-md"
+              />
+
+              {/* Stationery popup wrapper */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.94, y: 35 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.94, y: 35 }}
+                transition={{ type: 'spring', damping: 28, stiffness: 200 }}
+                className="relative bg-[#FAF9F5] border border-stone-250/70 shadow-[0_32px_80px_-12px_rgba(0,0,0,0.4)] w-full max-w-2xl mx-auto rounded-none p-6 sm:p-10 md:p-12 z-10 flex flex-col justify-between overflow-hidden"
+              >
+                {/* Vintage Postmark Stamp Top-Right Graphic Decoration */}
+                <div className="absolute top-6 right-8 opacity-[0.15] pointer-events-none select-none">
+                  <svg width="105" height="52" viewBox="0 0 105 52" fill="none" stroke="currentColor" className="text-stone-800">
+                    <path d="M 0 12 C 15 5, 20 18, 35 12 C 50 5, 55 18, 70 12 C 85 5, 90 18, 105 12" strokeWidth="1" />
+                    <path d="M 0 24 C 15 17, 20 30, 35 24 C 50 17, 55 30, 70 24 C 85 17, 90 30, 105 24" strokeWidth="1" />
+                    <path d="M 0 36 C 15 29, 20 42, 35 36 C 50 29, 55 42, 70 36 C 85 29, 90 42, 105 36" strokeWidth="1" />
+                  </svg>
+                </div>
+
+                {/* Minimal close button */}
+                <button 
+                  onClick={() => setIsLocalModalOpen(false)}
+                  className="absolute top-4 right-4 text-stone-400 hover:text-stone-800 focus:outline-none transition-colors z-20 cursor-pointer"
+                  aria-label="Close modal"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+
+                <div className="text-center w-full mb-6 relative z-10 select-none">
+                  {/* Small upper caps branding line */}
+                  <span className="font-mono text-[8px] sm:text-[9.5px] tracking-[0.3em] font-medium text-stone-400 uppercase block mb-3">
+                    {lang === 'VIE' ? "LƯU BÚT ĐÁM CƯỚI • KỶ NIỆM NGỌT NGÀO" : "GUESTBOOK MEMORIES • THE INK COLLECTION"}
+                  </span>
+                  
+                  {/* Editorial elegant mix heading exactly like template image */}
+                  <h3 className="font-serif text-[#3a2220] leading-tight max-w-[90%] mx-auto">
+                    <span className="block font-serif italic text-[24px] sm:text-[28px] text-stone-500 font-light leading-none mb-1">
+                      {lang === 'VIE' ? "Gửi trao nguyện ước," : "Leaving us a message,"}
+                    </span>
+                    <span className="block font-serif tracking-[0.08em] font-normal text-[22px] sm:text-[26px] uppercase leading-none mt-1">
+                      {lang === 'VIE' ? "ĐỂ KỶ NIỆM CÒN MÃI VỚI THỜI GIAN." : "TO CHERISH YOUR LOVE FOREVER."}
+                    </span>
+                  </h3>
+
+                  {/* Centered thin elegant vertical line */}
+                  <div className="w-[1px] h-12 bg-stone-300 mx-auto my-4" />
+                </div>
+
+                <form 
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const guestNameVal = localGuestName.trim();
+                    const noteTextVal = localNoteText.trim();
+                    if (!noteTextVal || !guestNameVal) return;
+                    
+                    // Save note in live Firestore database with a secure server timestamp
+                    addDoc(collection(db, 'guest_notes'), {
+                      name: guestNameVal,
+                      text: noteTextVal,
+                      createdAt: serverTimestamp()
+                    }).catch((error) => {
+                      try {
+                        handleFirestoreError(error, OperationType.WRITE, 'guest_notes');
+                      } catch (err) {
+                        console.error("Failed to add note to database: ", err);
+                      }
+                    });
+
+                    // Maintain local notes / device history as fallback
+                    const newNote = {
+                      id: Date.now(),
+                      name: guestNameVal,
+                      text: noteTextVal
+                    };
+                    const updated = [newNote, ...localNotes];
+                    setLocalNotes(updated);
+                    localStorage.setItem('wedding_local_notes', JSON.stringify(updated));
+                    
+                    setIsLocalSubmitted(true);
+                    setLocalNoteText('');
+                    setLocalGuestName('');
+                    setTimeout(() => {
+                      setIsLocalSubmitted(false);
+                      setIsLocalModalOpen(false);
+                    }, 1800);
+                  }} 
+                  className="space-y-4 relative h-full flex flex-col flex-1"
+                >
+                  {/* Lined stationery textarea with cursive fountain-pen style */}
+                  <div className="relative flex-1 z-15 min-h-[175px] rounded-sm pt-2">
+                    <textarea
+                      value={localNoteText}
+                      onChange={(e) => setLocalNoteText(e.target.value)}
+                      placeholder={lang === 'VIE' ? "Hãy viết một câu chúc mừng, lời dặn dò hay gửi gắm những yêu thương ngọt ngào tới tụi mình tại đây nhé..." : "Leave a warm wish, loving note, or advice for our journey..."}
+                      required
+                      maxLength={300}
+                      rows={5}
+                      className="w-full bg-transparent p-3 sm:px-4 font-script text-rose-900 text-[18px] sm:text-[21px] leading-[32px] placeholder-stone-400/80 outline-none resize-none border-none focus:ring-0 active:ring-0"
+                      style={{
+                        backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 31px, rgba(168, 162, 158, 0.15) 31px, rgba(168, 162, 158, 0.15) 32px)',
+                        backgroundSize: '100% 32px',
+                        lineHeight: '32px',
+                        paddingTop: '6px'
+                      }}
+                    />
+                  </div>
+
+                  {/* Signature line & Action submit */}
+                  <div className="pt-2 pb-5 z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-b border-stone-200/50">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-[8px] sm:text-[9px] tracking-widest text-[#3a2220]/60 uppercase whitespace-nowrap select-none">
+                        {lang === 'VIE' ? "KÝ TÊN / WITH LOVE," : "SIGNATURE / WITH LOVE:"}
+                      </span>
+                      <input
+                        type="text"
+                        value={localGuestName}
+                        onChange={(e) => setLocalGuestName(e.target.value)}
+                        placeholder="John Smith..."
+                        required
+                        maxLength={40}
+                        className="bg-transparent border-b border-stone-300 hover:border-stone-400 focus:border-[#3a2220] outline-none font-script text-[18px] text-[#3a2220]/90 py-1 px-1.5 w-44 sm:w-56 transition-colors focus:ring-0 focus:outline-none"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={!localNoteText.trim() || !localGuestName.trim() || isLocalSubmitted}
+                      className={`py-2 px-6 sm:px-8 font-mono text-[8.5px] tracking-[0.25em] uppercase rounded-full transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm select-none border whitespace-nowrap ${
+                        isLocalSubmitted
+                          ? 'bg-emerald-800 border-emerald-800 text-[#FAF9F5]'
+                          : 'bg-stone-900 border-stone-900 text-[#FAF9F5] hover:bg-stone-800 active:scale-95'
+                      } disabled:opacity-40`}
+                    >
+                      {isLocalSubmitted ? (
+                        <span>✓ {lang === 'VIE' ? "ĐÃ GỬI!" : "SENT!"}</span>
+                      ) : (
+                        <span>{lang === 'VIE' ? "GỬI CHÚC MỪNG" : "SEND NOTE"}</span>
+                      )}
+                    </button>
+                  </div>
+                </form>
               </motion.div>
             </div>
           )}
         </AnimatePresence>
       </section>
 
+      {/* Countdown Section Footer */}
+      <CountdownSection 
+        lang={lang} 
+        targetDate={siteContent.countdownTargetDate} 
+        brideName={siteContent.brideName} 
+        groomName={siteContent.groomName} 
+        titleEng={siteContent.countdownTitleEng}
+        titleVie={siteContent.countdownTitleVie}
+        endTitleEng={siteContent.countdownEndTitleEng}
+        endTitleVie={siteContent.countdownEndTitleVie}
+        loc1City={siteContent.countdownLoc1City}
+        loc1Country={siteContent.countdownLoc1Country}
+        loc2City={siteContent.countdownLoc2City}
+        loc2Country={siteContent.countdownLoc2Country}
+        loc3City={siteContent.countdownLoc3City}
+        loc3Country={siteContent.countdownLoc3Country}
+        sinceText={siteContent.countdownSinceText}
+        countdownHeight={siteContent.countdownHeight}
+      />
 
       {/* Footer */}
       <footer className="max-w-6xl mx-auto py-24 border-t border-black/5 text-center font-mono text-[8px] tracking-[0.4em] uppercase text-muted px-6 space-y-4">
-        <p>&copy; 2026 Sarah Williams & Michael Alderson. All rights reserved.</p>
+        <p>&copy; 2026 {siteContent.brideName || "Bảo Eve"} & {siteContent.groomName || "Johnathan"}. All rights reserved.</p>
         <div className="flex justify-center pt-2">
           <button 
             onClick={() => navigateTo('/admin')}

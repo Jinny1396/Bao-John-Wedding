@@ -32,16 +32,16 @@
     },
     "guestNote": {
       "title": "GuestNote",
-      "description": "Handwritten notes or messages written by wedding guests",
+      "description": "Warm wishes and messages from wedding guests",
       "type": "object",
       "properties": {
-        "guestName": {
+        "name": {
           "type": "string",
-          "description": "The name of the guest leaving the note"
+          "description": "Full name or signature of the guest"
         },
-        "noteText": {
+        "text": {
           "type": "string",
-          "description": "A personal message or letter written to the couple"
+          "description": "Personal message text written by the guest"
         },
         "createdAt": {
           "type": "string",
@@ -49,7 +49,306 @@
           "description": "Server-side creation timestamp"
         }
       },
-      "required": ["guestName", "noteText", "createdAt"]
+      "required": ["name", "text", "createdAt"]
+    },
+    "siteContent": {
+      "title": "SiteContent",
+      "description": "Customizable image URLs for the wedding website components",
+      "type": "object",
+      "properties": {
+        "imageUrl": {
+          "type": "string",
+          "description": "Main Hero Background image URL"
+        },
+        "leftPortraitUrl": {
+          "type": "string",
+          "description": "Left Story Portrait image URL"
+        },
+        "rightPortraitUrl": {
+          "type": "string",
+          "description": "Right Story Portrait image URL"
+        },
+        "dressCodeImageUrl": {
+          "type": "string",
+          "description": "Attire & Dress Code Inspiration image URL"
+        },
+        "mapImageUrl": {
+          "type": "string",
+          "description": "Venue Map & Logistics image URL"
+        },
+        "storyThreeUrl": {
+          "type": "string",
+          "description": "Story Gallery Image 3 (Horizontal)"
+        },
+        "storyFourUrl": {
+          "type": "string",
+          "description": "Story Gallery Image 4 (Vertical)"
+        },
+        "storyFiveUrl": {
+          "type": "string",
+          "description": "Story Gallery Image 5 (Vertical)"
+        },
+        "collageBgUrl": {
+          "type": "string",
+          "description": "Background image for the coastal-blue-collage section"
+        },
+        "collageLaceBgUrl": {
+          "type": "string",
+          "description": "Rectangular ivory lace doily background image"
+        },
+        "collagePinkStampUrl": {
+          "type": "string",
+          "description": "Draggable pink monogram wax seal stamp image"
+        },
+        "collageSageStampUrl": {
+          "type": "string",
+          "description": "Draggable sage green botanical wax seal stamp image"
+        },
+        "brideName": {
+          "type": "string",
+          "description": "Bride's dynamic first name"
+        },
+        "groomName": {
+          "type": "string",
+          "description": "Groom's dynamic first name"
+        },
+        "heroDateEng": {
+          "type": "string",
+          "description": "Main hero header celebration date (English)"
+        },
+        "heroDateVie": {
+          "type": "string",
+          "description": "Main hero header celebration date (Vietnamese)"
+        },
+        "invitationTextEng": {
+          "type": "string",
+          "description": "Primary story invitation paragraph (English)"
+        },
+        "invitationTextVie": {
+          "type": "string",
+          "description": "Primary story invitation paragraph (Vietnamese)"
+        },
+        "venueNameEng": {
+          "type": "string",
+          "description": "Dynamic venue/location name (English)"
+        },
+        "venueNameVie": {
+          "type": "string",
+          "description": "Dynamic venue/location name (Vietnamese)"
+        },
+        "weddingDateShortEng": {
+          "type": "string",
+          "description": "Short date indicator in story component (English)"
+        },
+        "weddingDateShortVie": {
+          "type": "string",
+          "description": "Short date indicator in story component (Vietnamese)"
+        },
+        "photoQuoteEng": {
+          "type": "string",
+          "description": "Polaroid analogue frame caption description (English)"
+        },
+        "photoQuoteVie": {
+          "type": "string",
+          "description": "Polaroid analogue frame caption description (Vietnamese)"
+        },
+        "attireDescEng": {
+          "type": "string",
+          "description": "Dress code guidelines detail text (English)"
+        },
+        "attireDescVie": {
+          "type": "string",
+          "description": "Dress code guidelines detail text (Vietnamese)"
+        },
+        "registryTextEng": {
+          "type": "string",
+          "description": "Wedding registry introduction paragraph (English)"
+        },
+        "registryTextVie": {
+          "type": "string",
+          "description": "Wedding registry introduction paragraph (Vietnamese)"
+        },
+        "countdownTargetDate": {
+          "type": "string",
+          "description": "ISO format target datetime stamp for countdown logic trigger"
+        },
+        "countdownHeight": {
+          "type": "string",
+          "description": "Custom countdown section display height string"
+        },
+        "sidebarHomeEng": {
+          "type": "string",
+          "description": "Custom label for English Home navigation link"
+        },
+        "sidebarHomeVie": {
+          "type": "string",
+          "description": "Custom label for Vietnamese Trang Chu navigation link"
+        },
+        "sidebarStoryEng": {
+          "type": "string",
+          "description": "Custom label for English Story navigation link"
+        },
+        "sidebarStoryVie": {
+          "type": "string",
+          "description": "Custom label for Vietnamese Cau Chuyen navigation link"
+        },
+        "sidebarEventsEng": {
+          "type": "string",
+          "description": "Custom label for English Events navigation link"
+        },
+        "sidebarEventsVie": {
+          "type": "string",
+          "description": "Custom label for Vietnamese Su Kien navigation link"
+        },
+        "sidebarGatherEng": {
+          "type": "string",
+          "description": "Custom label for English Venue navigation link"
+        },
+        "sidebarGatherVie": {
+          "type": "string",
+          "description": "Custom label for Vietnamese Venue navigation link"
+        },
+        "sidebarRsvpEng": {
+          "type": "string",
+          "description": "Custom label for English RSVP navigation link"
+        },
+        "sidebarRsvpVie": {
+          "type": "string",
+          "description": "Custom label for Vietnamese Xac Nhan navigation link"
+        },
+        "heroBtnEng": {
+          "type": "string",
+          "description": "Custom CTA text for primary English hero trigger"
+        },
+        "heroBtnVie": {
+          "type": "string",
+          "description": "Custom CTA text for primary Vietnamese hero trigger"
+        },
+        "registryBtnEng": {
+          "type": "string",
+          "description": "Custom text for English wedding registry button"
+        },
+        "registryBtnVie": {
+          "type": "string",
+          "description": "Custom text for Vietnamese wedding registry button"
+        },
+        "respondByEng": {
+          "type": "string",
+          "description": "Custom English deadline phrase for RSVP responses"
+        },
+        "respondByVie": {
+          "type": "string",
+          "description": "Custom Vietnamese deadline phrase for RSVP responses"
+        },
+        "writeNoteTitleEng": {
+          "type": "string",
+          "description": "Custom header title for the English Guestbook section"
+        },
+        "writeNoteTitleVie": {
+          "type": "string",
+          "description": "Custom header title for the Vietnamese Guestbook section"
+        },
+        "writeNoteSubtitleEng": {
+          "type": "string",
+          "description": "Custom description header for the English Guestbook form"
+        },
+        "writeNoteSubtitleVie": {
+          "type": "string",
+          "description": "Custom description header for the Vietnamese Guestbook form"
+        },
+        "gatherHeadingEng": {
+          "type": "string",
+          "description": "Gathering Grounds section main heading (English)"
+        },
+        "gatherHeadingVie": {
+          "type": "string",
+          "description": "Gathering Grounds section main heading (Vietnamese)"
+        },
+        "gatherSubtitleEng": {
+          "type": "string",
+          "description": "Gathering Grounds section small subtitle (English)"
+        },
+        "gatherSubtitleVie": {
+          "type": "string",
+          "description": "Gathering Grounds section small subtitle (Vietnamese)"
+        },
+        "gatherDescEng": {
+          "type": "string",
+          "description": "Gathering Grounds section main description paragraph (English)"
+        },
+        "gatherDescVie": {
+          "type": "string",
+          "description": "Gathering Grounds section main description paragraph (Vietnamese)"
+        },
+        "gatherCereTitleEng": {
+          "type": "string",
+          "description": "Gathering Grounds ceremony title (English)"
+        },
+        "gatherCereTitleVie": {
+          "type": "string",
+          "description": "Gathering Grounds ceremony title (Vietnamese)"
+        },
+        "gatherCereDescEng": {
+          "type": "string",
+          "description": "Gathering Grounds ceremony detailed description (English)"
+        },
+        "gatherCereDescVie": {
+          "type": "string",
+          "description": "Gathering Grounds ceremony detailed description (Vietnamese)"
+        },
+        "gatherFeastTitleEng": {
+          "type": "string",
+          "description": "Gathering Grounds feast title (English)"
+        },
+        "gatherFeastTitleVie": {
+          "type": "string",
+          "description": "Gathering Grounds feast title (Vietnamese)"
+        },
+        "gatherFeastDescEng": {
+          "type": "string",
+          "description": "Gathering Grounds feast detailed description (English)"
+        },
+        "gatherFeastDescVie": {
+          "type": "string",
+          "description": "Gathering Grounds feast detailed description (Vietnamese)"
+        },
+        "gatherNoteEng": {
+          "type": "string",
+          "description": "Gathering Grounds dynamic notice block description (English)"
+        },
+        "gatherNoteVie": {
+          "type": "string",
+          "description": "Gathering Grounds dynamic notice block description (Vietnamese)"
+        },
+        "gatherMapPillEng": {
+          "type": "string",
+          "description": "Interactive map card top pill badge text (English)"
+        },
+        "gatherMapPillVie": {
+          "type": "string",
+          "description": "Interactive map card top pill badge text (Vietnamese)"
+        },
+        "gatherLatitude": {
+          "type": "string",
+          "description": "Dynamic latitude coordinate label shown in map card footer"
+        },
+        "gatherLongitude": {
+          "type": "string",
+          "description": "Dynamic longitude coordinate label shown in map card footer"
+        },
+        "gatherDirectionsTextEng": {
+          "type": "string",
+          "description": "Dynamic directions CTA link anchor text (English)"
+        },
+        "gatherDirectionsTextVie": {
+          "type": "string",
+          "description": "Dynamic directions CTA link anchor text (Vietnamese)"
+        },
+        "gatherDirectionsUrl": {
+          "type": "string",
+          "description": "Direct redirection hyperlink target for Directions trigger"
+        }
+      }
     }
   },
   "firestore": {
@@ -57,9 +356,13 @@
       "schema": "rsvp",
       "description": "Collection of RSVP submissions"
     },
-    "guestNotes/{noteId}": {
+    "guest_notes/{noteId}": {
       "schema": "guestNote",
-      "description": "Collection of wedding guest notes"
+      "description": "Collection of wedding guestbook digital submissions"
+    },
+    "site_content/{contentId}": {
+      "schema": "siteContent",
+      "description": "Dynamic custom media or content configurations for pages"
     }
   }
 }
