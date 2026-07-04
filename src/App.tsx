@@ -638,20 +638,6 @@ export default function App() {
     // Instantiate fallback synth (zero network dependency)
     synthRef.current = new AmbientPianoSynth();
 
-    // Aggressively attempt immediate autoplay on load
-    const attemptAutoplay = async () => {
-      try {
-        await audio.play();
-        setIsMusicPlaying(true);
-        setHasInteracted(true);
-      } catch (err) {
-        console.warn("Initial autoplay blocked by browser policy. Will play on first interaction.", err);
-      }
-    };
-    
-    // Attempt autoplay immediately
-    attemptAutoplay();
-
     return () => {
       if (audioRef.current) {
         try {
@@ -732,7 +718,7 @@ export default function App() {
       }
     };
 
-    const interactionEvents = ['click', 'touchstart', 'scroll', 'mousemove', 'keydown', 'mousedown', 'pointerdown'];
+    const interactionEvents = ['mousemove', 'touchstart', 'click'];
     
     interactionEvents.forEach(event => {
       window.addEventListener(event, handleFirstInteraction, { once: true, passive: true });
