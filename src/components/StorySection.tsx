@@ -98,7 +98,7 @@ export const StorySection = ({
     <section 
       id="story" 
       ref={storySectionRef} 
-      className="story-section w-full relative overflow-hidden transition-colors duration-500 py-12 md:py-0 md:h-[1500px]"
+      className="story-section w-full relative overflow-hidden transition-colors duration-500 py-12 md:py-0 md:h-[1600px]"
       style={{ backgroundColor: '#F6E1E2' }}
     >
       <div className="story-content w-full max-w-7xl mx-auto relative px-4 sm:px-6 md:px-12">
