@@ -58,6 +58,12 @@ const IMAGE_FIELDS = [
     defaultUrl: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80'
   },
   {
+    key: 'heroMonogramUrl',
+    label: 'Hero Section Monogram Emblem',
+    description: 'The custom PNG image (e.g. transparent monogram emblem) displayed at the top of the Hero section, replacing the default elegant SVG monogram.',
+    defaultUrl: ''
+  },
+  {
     key: 'leftPortraitUrl',
     label: 'Left Story Portrait',
     description: 'The couple portrait displayed on the left of the wedding story sticky collage details.',
@@ -92,6 +98,12 @@ const IMAGE_FIELDS = [
     label: 'Story Gallery Image 5 (Vertical)',
     description: 'The bottom right vertical photo in the story sticky collage section (soft gaze).',
     defaultUrl: 'https://images.squarespace-cdn.com/content/v1/69a5a56a5a76f0578c2e374e/1772463469930-BPBK33AUJHSG9Y7BT6GL/pexels-vikkirillova-15280966.jpg'
+  },
+  {
+    key: 'storyTextBgUrl',
+    label: 'Story Invitation Text Background',
+    description: 'The circular romantic texture background behind the bride & groom names and invitation details in the Story section.',
+    defaultUrl: 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80&w=1200'
   },
   {
     key: 'collageBgUrl',
@@ -335,12 +347,18 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
           const data = docSnap.data();
           setSiteImages({
             imageUrl: data.imageUrl || '',
+            heroMonogramUrl: data.heroMonogramUrl || '',
             leftPortraitUrl: data.leftPortraitUrl || '',
             rightPortraitUrl: data.rightPortraitUrl || '',
             mapImageUrl: data.mapImageUrl || '',
             storyThreeUrl: data.storyThreeUrl || '',
             storyFourUrl: data.storyFourUrl || '',
             storyFiveUrl: data.storyFiveUrl || '',
+            storyTextBgUrl: data.storyTextBgUrl || '',
+            collageBgUrl: data.collageBgUrl || '',
+            collageLaceBgUrl: data.collageLaceBgUrl || '',
+            collagePinkStampUrl: data.collagePinkStampUrl || '',
+            collageSageStampUrl: data.collageSageStampUrl || '',
           });
 
           // Only initialize local input states once on load to prevent jumping cursors while editing

@@ -9,26 +9,35 @@ import { VolumeX, Volume2, Music, Menu, X } from 'lucide-react';
 import { onSnapshot, doc, collection, addDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from './firebase';
 
-// Reusable elegant Oval Monogram SVG Component
-const OvalMonogram = ({ className = 'w-16 h-16' }: { className?: string }) => (
+// Reusable elegant Oval Monogram SVG / PNG Component
+const OvalMonogram = ({ className = 'w-16 h-16', imageUrl, textClass = "text-current" }: { className?: string; imageUrl?: string; textClass?: string }) => (
   <div className={`relative flex items-center justify-center ${className}`}>
-    <svg viewBox="0 0 100 100" className="w-full h-full text-current" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Outer elegant vertical oval */}
-      <ellipse cx="50" cy="50" rx="30" ry="46" stroke="currentColor" strokeWidth="1.2" />
-      {/* Inner subtle decorative ellipse */}
-      <ellipse cx="50" cy="50" rx="27" ry="43" stroke="currentColor" strokeWidth="0.5" strokeDasharray="1 1" />
-      {/* Intersection initials */}
-      <text 
-        x="50" 
-        y="58" 
-        textAnchor="middle" 
-        className="font-serif text-3xl font-light tracking-tight fill-current"
-        style={{ fontFamily: '"Cormorant Garamond", serif' }}
-      >
-        <tspan dx="-2" dy="-5" fontSize="26">S</tspan>
-        <tspan dx="-8" dy="8" fontSize="23" opacity="0.8">A</tspan>
-      </text>
-    </svg>
+    {imageUrl ? (
+      <img 
+        src={imageUrl} 
+        alt="Wedding Monogram" 
+        className="w-full h-full object-contain" 
+        referrerPolicy="no-referrer"
+      />
+    ) : (
+      <svg viewBox="0 0 100 100" className={`w-full h-full ${textClass}`} fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* Outer elegant vertical oval */}
+        <ellipse cx="50" cy="50" rx="30" ry="46" stroke="currentColor" strokeWidth="1.2" />
+        {/* Inner subtle decorative ellipse */}
+        <ellipse cx="50" cy="50" rx="27" ry="43" stroke="currentColor" strokeWidth="0.5" strokeDasharray="1 1" />
+        {/* Intersection initials */}
+        <text 
+          x="50" 
+          y="58" 
+          textAnchor="middle" 
+          className="font-serif text-3xl font-light tracking-tight fill-current"
+          style={{ fontFamily: '"Cormorant Garamond", serif' }}
+        >
+          <tspan dx="-2" dy="-5" fontSize="26">S</tspan>
+          <tspan dx="-8" dy="8" fontSize="23" opacity="0.8">A</tspan>
+        </text>
+      </svg>
+    )}
   </div>
 );
 
@@ -303,12 +312,14 @@ export default function App() {
   // States for live dynamic Cloudinary images and CMS text content
   const [siteContent, setSiteContent] = useState<{
     imageUrl?: string;
+    heroMonogramUrl?: string;
     leftPortraitUrl?: string;
     rightPortraitUrl?: string;
     mapImageUrl?: string;
     storyThreeUrl?: string;
     storyFourUrl?: string;
     storyFiveUrl?: string;
+    storyTextBgUrl?: string;
     collageBgUrl?: string;
     collageLaceBgUrl?: string;
     collagePinkStampUrl?: string;
@@ -395,12 +406,14 @@ export default function App() {
         const data = docSnap.data();
         setSiteContent({
           imageUrl: data.imageUrl || '',
+          heroMonogramUrl: data.heroMonogramUrl || '',
           leftPortraitUrl: data.leftPortraitUrl || '',
           rightPortraitUrl: data.rightPortraitUrl || '',
           mapImageUrl: data.mapImageUrl || '',
           storyThreeUrl: data.storyThreeUrl || '',
           storyFourUrl: data.storyFourUrl || '',
           storyFiveUrl: data.storyFiveUrl || '',
+          storyTextBgUrl: data.storyTextBgUrl || '',
           collageBgUrl: data.collageBgUrl || '',
           collageLaceBgUrl: data.collageLaceBgUrl || '',
           collagePinkStampUrl: data.collagePinkStampUrl || '',
@@ -941,7 +954,7 @@ export default function App() {
             
             {/* Elegant Monogram at the bottom of mobile menu */}
             <div className="absolute bottom-12 left-1/2 -translate-x-1/2 opacity-30 scale-75">
-              <OvalMonogram className="w-20 h-20" />
+              <OvalMonogram className="w-20 h-20" imageUrl={siteContent.heroMonogramUrl} />
             </div>
           </motion.div>
         )}
@@ -1029,8 +1042,8 @@ export default function App() {
             transition={{ duration: 1.2 }}
             className="flex flex-col items-center text-center"
           >
-            <div className="flex justify-center">
-              <OvalMonogram className="w-16 h-16 text-bg/90" />
+            <div className="flex justify-center translate-y-[20px]">
+              <OvalMonogram className="w-[100px] h-[64px] text-bg/90" imageUrl={siteContent.heroMonogramUrl} />
             </div>
             
             <div className="mt-8">
@@ -1049,14 +1062,7 @@ export default function App() {
               </h2>
             </div>
 
-            <div className="mt-[10px] flex justify-center">
-              <button 
-                onClick={() => handleScrollTo('rsvp')}
-                className="font-mono text-[9px] tracking-[0.3em] uppercase border border-white/25 text-white bg-white/10 backdrop-blur-md py-[8px] px-[20px] rounded-full hover:bg-white/20 hover:border-white/45 transition-all duration-300 transform active:scale-95 ease-out cursor-pointer shadow-[0_4px_30px_rgba(0,0,0,0.1)]"
-              >
-                {t.heroBtn}
-              </button>
-            </div>
+
           </motion.div>
         </div>
       </section>
@@ -1069,6 +1075,7 @@ export default function App() {
         storyThreeUrl={siteContent.storyThreeUrl}
         storyFourUrl={siteContent.storyFourUrl}
         storyFiveUrl={siteContent.storyFiveUrl}
+        storyTextBgUrl={siteContent.storyTextBgUrl}
         brideName={siteContent.brideName}
         groomName={siteContent.groomName}
         invitationText={lang === 'VIE' ? siteContent.invitationTextVie : siteContent.invitationTextEng}
@@ -1192,7 +1199,7 @@ export default function App() {
           <div className="md:col-span-7 space-y-32">
             {/* Itinerary */}
             <div className="grid grid-cols-3 gap-4 font-mono text-[9px] tracking-[0.2em] uppercase">
-              <p className="text-muted">{t.itinerary}</p>
+              <p className="text-muted font-crimson text-[12px]">{t.itinerary}</p>
               <div className="col-span-2 space-y-3">
                 {t.itineraryItems.map(([time, event]) => (
                   <div key={time} className="flex justify-between border-b border-black/5 pb-1">
@@ -1206,7 +1213,7 @@ export default function App() {
 
             {/* Attire */}
             <div className="grid grid-cols-3 gap-4 font-mono text-[9px] tracking-[0.2em] uppercase">
-              <p className="text-muted">{t.attire}</p>
+              <p className="text-muted font-crimson text-[12px]">{t.attire}</p>
               <div className="col-span-2 space-y-2 leading-relaxed">
                 <p>{t.attireDesc}</p>
                 <div className="flex gap-4 pt-3 items-center">
@@ -1230,7 +1237,7 @@ export default function App() {
           {/* Details Photo */}
           {siteContent.mapImageUrl && (
             <div className="md:col-span-5 relative pt-16">
-              <h2 className="font-serif text-5xl font-light absolute top-4 left-0 z-20 -rotate-3 text-ink">{t.detailsTitle}</h2>
+              <h2 className="font-luxurious text-[100px] font-light absolute top-[-14px] left-[-50px] z-20 -rotate-3 text-ink leading-none">{t.detailsTitle}</h2>
               <div className="relative bg-white p-3 shadow-sm border border-black/5">
                 {/* Tape */}
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 tape -rotate-2 z-10 opacity-80" />

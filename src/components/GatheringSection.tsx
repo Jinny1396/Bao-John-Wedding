@@ -123,12 +123,12 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
           </div>
 
           {/* Large display elegant heading */}
-          <h2 className="font-serif text-[38px] sm:text-[46px] md:text-[52px] leading-[1.12] font-light text-[#3A2220] tracking-tight">
+          <h2 className="font-luxurious text-[100px] leading-[60px] font-light text-[#3A2220] tracking-tight">
             {title}
           </h2>
 
           {/* Description Paragraph */}
-          <p className="font-mono text-[10px] leading-relaxed text-stone-600 tracking-wide max-w-lg">
+          <p className="font-crimson text-[12px] leading-[14px] text-stone-600 tracking-wide max-w-lg font-normal not-italic">
             {description}
           </p>
 
@@ -140,10 +140,10 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
                 <Calendar className="w-3.5 h-3.5" strokeWidth={1.5} />
               </div>
               <div className="space-y-1">
-                <h4 className="font-mono text-[9.5px] font-bold tracking-[0.18em] uppercase text-[#3A2220]">
+                <h4 className="font-crimson text-[12px] font-bold tracking-[0.18em] uppercase text-[#3A2220]">
                   {cereTitle}
                 </h4>
-                <p className="font-serif italic text-xs sm:text-[13px] text-stone-600 leading-relaxed">
+                <p className="font-mono text-[9px] text-stone-600 leading-[12px] font-normal not-italic">
                   {cereDesc}
                 </p>
               </div>
@@ -155,10 +155,10 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
                 <Utensils className="w-3.5 h-3.5" strokeWidth={1.5} />
               </div>
               <div className="space-y-1">
-                <h4 className="font-mono text-[9.5px] font-bold tracking-[0.18em] uppercase text-[#3A2220]">
+                <h4 className="font-crimson text-[12px] font-bold tracking-[0.18em] uppercase text-[#3A2220]">
                   {feastTitle}
                 </h4>
-                <p className="font-serif italic text-xs sm:text-[13px] text-stone-600 leading-relaxed">
+                <p className="font-mono text-[9px] text-stone-600 leading-[12px] font-normal not-italic">
                   {feastDesc}
                 </p>
               </div>

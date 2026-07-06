@@ -7,6 +7,7 @@
   --font-script: "Nothing You Could Do", cursive;
   --font-script-elegant: "Pinyon Script", cursive;
   --font-luxurious: "Luxurious Script", cursive;
+  --font-crimson: "Crimson Pro", serif;
   --font-sans: "Inter", sans-serif;
   --color-bg: #F4F3EF;
   --color-forest: #1A3015;
@@ -39,6 +40,10 @@ body {
 
 .font-luxurious {
   font-family: var(--font-luxurious);
+}
+
+.font-crimson {
+  font-family: var(--font-crimson);
 }
 
 .tape {
@@ -145,10 +150,35 @@ html {
     grid-template-columns: repeat(2, 1fr);
   }
   .text-wrapper {
-    width: 700px;
+    width: 520px;
+    max-width: 90%;
   }
   .story-heading {
     font-size: 28px;
+  }
+  
+  /* Responsive Collage positions & scales for iPad & Tablets (768px to 1199px) */
+  .story-collage-img-1 {
+    left: 82% !important;
+    width: 18% !important;
+  }
+  .story-collage-img-2 {
+    left: 1.5% !important;
+    width: 21% !important;
+  }
+  .story-collage-img-3 {
+    left: 64% !important;
+    width: 280px !important;
+    height: 187px !important;
+  }
+  .story-collage-img-4 {
+    left: 1.5% !important;
+    width: 250px !important;
+    height: 216px !important;
+  }
+  .story-collage-img-5 {
+    left: 77.5% !important;
+    width: 18% !important;
   }
 }
 
@@ -159,7 +189,7 @@ html {
   }
   
   .text-wrapper {
-    position: static !important; /* Disable sticky on mobile */
+    position: relative !important; /* Keep relative on mobile so absolute background centers within it */
     transform: none !important;
     width: 100%;
     margin-bottom: 60px;
@@ -187,5 +217,30 @@ html {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* Story Section Responsive Background Layer */
+.story-bg-layer {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(90deg) scale(0.8);
+  width: 100vw;
+  height: 100vw;
+}
+
+@media (min-width: 640px) {
+  .story-bg-layer {
+    transform: translate(-50%, -50%) rotate(0deg) scale(0.8);
+    width: calc(100% + 220px);
+    height: calc(100% + 220px);
+  }
+}
+
+@media (min-width: 768px) {
+  .story-bg-layer {
+    width: calc(100% + 300px);
+    height: calc(100% + 300px);
+  }
+}
+
 
 

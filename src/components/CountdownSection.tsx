@@ -135,7 +135,7 @@ export default function CountdownSection({
       <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center space-y-8 sm:space-y-12 md:space-y-14">
         
         {/* Calligraphic Script Title */}
-        <h2 className="font-script-elegant text-[54px] sm:text-[76px] md:text-[96px] lg:text-[112px] xl:text-[124px] text-[#3A2220] font-light leading-none capitalize tracking-normal text-center select-none pt-4">
+        <h2 className="font-luxurious text-[120px] md:text-[200px] text-[#3A2220] font-light leading-none capitalize tracking-normal text-center select-none pt-4">
           {lang === 'VIE' ? (titleVie || "Cùng đếm ngược") : (titleEng || "Let's the countdown")}
         </h2>
 
@@ -146,7 +146,7 @@ export default function CountdownSection({
             <span className="font-serif italic font-light text-4xl sm:text-6xl md:text-7xl lg:text-[85px] leading-none text-[#3A2220] tracking-tight">
               {isMounted ? days : "00"}
             </span>
-            <span className="font-mono text-[7px] sm:text-[8.5px] tracking-[0.2em] text-[#3A2220]/65 uppercase mt-3">
+            <span className="font-crimson text-[14px] tracking-[0.2em] text-[#3A2220]/65 uppercase mt-3">
               {t.days}
             </span>
           </div>
@@ -159,7 +159,7 @@ export default function CountdownSection({
             <span className="font-serif italic font-light text-4xl sm:text-6xl md:text-7xl lg:text-[85px] leading-none text-[#3A2220] tracking-tight">
               {isMounted ? String(hours).padStart(2, '0') : "00"}
             </span>
-            <span className="font-mono text-[7px] sm:text-[8.5px] tracking-[0.2em] text-[#3A2220]/65 uppercase mt-3">
+            <span className="font-crimson text-[14px] tracking-[0.2em] text-[#3A2220]/65 uppercase mt-3">
               {t.hours}
             </span>
           </div>
@@ -172,7 +172,7 @@ export default function CountdownSection({
             <span className="font-serif italic font-light text-4xl sm:text-6xl md:text-7xl lg:text-[85px] leading-none text-[#3A2220] tracking-tight">
               {isMounted ? String(minutes).padStart(2, '0') : "00"}
             </span>
-            <span className="font-mono text-[7px] sm:text-[8.5px] tracking-[0.2em] text-[#3A2220]/65 uppercase mt-3">
+            <span className="font-crimson text-[14px] tracking-[0.2em] text-[#3A2220]/65 uppercase mt-3">
               {t.minutes}
             </span>
           </div>
@@ -185,7 +185,7 @@ export default function CountdownSection({
             <span className="font-serif italic font-light text-4xl sm:text-6xl md:text-7xl lg:text-[85px] leading-none text-[#3A2220] tracking-tight">
               {isMounted ? String(seconds).padStart(2, '0') : "00"}
             </span>
-            <span className="font-mono text-[7px] sm:text-[8.5px] tracking-[0.2em] text-[#3A2220]/65 uppercase mt-3">
+            <span className="font-crimson text-[14px] tracking-[0.2em] text-[#3A2220]/65 uppercase mt-3">
               {t.seconds}
             </span>
           </div>
@@ -194,21 +194,21 @@ export default function CountdownSection({
         {/* Location Columns */}
         <div className="w-full max-w-3xl mx-auto grid grid-cols-3 gap-2 sm:gap-4 text-center text-[#3A2220]/75 font-mono text-[8px] sm:text-[9.5px] tracking-[0.22em] uppercase leading-relaxed pt-6 sm:pt-10">
           <div className="space-y-0.5 sm:space-y-1">
-            <p className="font-semibold text-[#3A2220]">{loc1City || "DANANG"}</p>
-            <p className="text-[#3A2220]/50 font-normal">{loc1Country || "VIETNAM"}</p>
+            <p className="font-crimson font-normal text-[14px] text-[#3A2220]">{loc1City || "DANANG"}</p>
+            <p className="font-crimson text-[14px] text-[#3A2220]/50">{loc1Country || "VIETNAM"}</p>
           </div>
           <div className="space-y-0.5 sm:space-y-1">
-            <p className="font-semibold text-[#3A2220]">{loc2City || "TOKYO"}</p>
-            <p className="text-[#3A2220]/50 font-normal">{loc2Country || "JAPAN"}</p>
+            <p className="font-crimson font-normal text-[14px] text-[#3A2220]">{loc2City || "TOKYO"}</p>
+            <p className="font-crimson text-[14px] text-[#3A2220]/50">{loc2Country || "JAPAN"}</p>
           </div>
           <div className="space-y-0.5 sm:space-y-1">
-            <p className="font-semibold text-[#3A2220]">{loc3City || "CITY"}</p>
-            <p className="text-[#3A2220]/50 font-normal">{loc3Country || "ENGLAND"}</p>
+            <p className="font-crimson font-normal text-[14px] text-[#3A2220]">{loc3City || "CITY"}</p>
+            <p className="font-crimson text-[14px] text-[#3A2220]/50">{loc3Country || "ENGLAND"}</p>
           </div>
         </div>
 
         {/* Calligraphic Script Bottom Line */}
-        <h2 className="font-script-elegant text-[62px] sm:text-[82px] md:text-[102px] lg:text-[118px] xl:text-[132px] text-[#3A2220] font-light leading-none lowercase tracking-normal text-center select-none -mt-4">
+        <h2 className="font-luxurious text-[120px] md:text-[200px] text-[#3A2220] font-light leading-none lowercase tracking-normal text-center select-none -mt-4">
           {lang === 'VIE' ? (endTitleVie || "bắt đầu") : (endTitleEng || "begin")}
         </h2>
 
