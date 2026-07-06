@@ -697,13 +697,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFDFB] text-[#3A2220] px-4 md:px-12 py-12 flex flex-col font-sans selection:bg-[#3A2220]/10 selection:text-[#3A2220]">
+    <div className="min-h-screen bg-[#FDFDFB] text-[#362223] px-4 md:px-12 py-12 flex flex-col font-sans selection:bg-[#362223]/10 selection:text-[#362223]">
       
       {/* Top control bar */}
       <div className="max-w-7xl w-full mx-auto flex items-center justify-between mb-12 py-4 border-b border-black/5 font-mono text-[9px] tracking-widest uppercase">
         <button 
           onClick={onBackToHome}
-          className="flex items-center gap-2 px-4 py-2 border border-black/5 bg-white/30 backdrop-blur-md text-[#3A2220]/75 hover:text-[#3A2220] hover:bg-white/60 transition-all cursor-pointer group rounded-full shadow-sm animate-fade-in"
+          className="flex items-center gap-2 px-4 py-2 border border-black/5 bg-white/30 backdrop-blur-md text-[#362223]/75 hover:text-[#362223] hover:bg-white/60 transition-all cursor-pointer group rounded-full shadow-sm animate-fade-in"
           id="admin-back-btn"
         >
           <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
@@ -738,11 +738,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
             className="flex-1 flex items-center justify-center max-w-md w-full mx-auto"
           >
             <div className="bg-white border border-black/5 shadow-xl rounded-sm p-8 md:p-10 w-full text-center space-y-8">
-              <div className="mx-auto w-12 h-12 rounded-full bg-[#3A2220]/5 flex items-center justify-center text-[#3A2220]/75">
+              <div className="mx-auto w-12 h-12 rounded-full bg-[#362223]/5 flex items-center justify-center text-[#362223]/75">
                 <Lock size={20} />
               </div>
               <div className="space-y-2">
-                <h2 className="font-serif text-2xl tracking-normal text-[#3A2220] uppercase font-semibold">ADMIN LEDGER</h2>
+                <h2 className="font-serif text-2xl tracking-normal text-[#362223] uppercase font-semibold">ADMIN LEDGER</h2>
                 <p className="font-mono text-[9px] tracking-wider text-neutral-400 mt-1 uppercase">Enter Host PIN to open session</p>
               </div>
 
@@ -757,7 +757,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                     maxLength={4}
                     value={pin}
                     onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
-                    className="w-full text-center bg-transparent border-b border-black/15 py-3 font-mono text-3xl tracking-[1em] focus:border-[#3A2220] outline-none transition-colors"
+                    className="w-full text-center bg-transparent border-b border-black/15 py-3 font-mono text-3xl tracking-[1em] focus:border-[#362223] outline-none transition-colors"
                   />
                 </div>
 
@@ -768,7 +768,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full py-4 bg-[#3A2220]/80 hover:bg-[#3A2220] text-white font-mono text-xs tracking-[0.25em] transition-all uppercase rounded-none border border-[#3A2220]/20 backdrop-blur-md shadow-md cursor-pointer font-bold"
+                    className="w-full py-4 bg-[#362223]/80 hover:bg-[#362223] text-white font-mono text-xs tracking-[0.25em] transition-all uppercase rounded-none border border-[#362223]/20 backdrop-blur-md shadow-md cursor-pointer font-bold"
                   >
                     CONTINUE
                   </button>
@@ -792,7 +792,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 border-b border-black/5 pb-8">
               <div className="space-y-2">
                 <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-neutral-400 block font-semibold">Wedding Suite Control Deck</span>
-                <h1 className="font-serif text-4xl md:text-5xl uppercase tracking-tight text-[#3A2220]">RSVP LEDGER BOARD</h1>
+                <h1 className="font-serif text-4xl md:text-5xl uppercase tracking-tight text-[#362223]">RSVP LEDGER BOARD</h1>
                 <p className="font-mono text-[9.5px] uppercase tracking-widest text-neutral-500/85">
                   Real-time database stream active
                 </p>
@@ -822,7 +822,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               
               <div className="bg-white p-6 border border-black/5 shadow-sm rounded-sm flex items-center gap-5">
-                <div className="w-12 h-12 rounded-full bg-[#3A2220]/5 flex items-center justify-center text-[#3A2220]">
+                <div className="w-12 h-12 rounded-full bg-[#362223]/5 flex items-center justify-center text-[#362223]">
                   <Users size={20} />
                 </div>
                 <div className="space-y-1">
@@ -859,8 +859,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                 onClick={() => { setActiveTab('rsvps'); setSearchQuery(''); }}
                 className={`pb-3 px-2 font-mono text-[10px] tracking-[0.25em] uppercase transition-all relative cursor-pointer font-bold ${
                   activeTab === 'rsvps'
-                    ? 'text-[#3A2220] border-b-2 border-[#3A2220]'
-                    : 'text-neutral-400 hover:text-[#3A2220]'
+                    ? 'text-[#362223] border-b-2 border-[#362223]'
+                    : 'text-neutral-400 hover:text-[#362223]'
                 }`}
               >
                 RSVP Responses ({rsvps.length})
@@ -869,8 +869,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                 onClick={() => { setActiveTab('notes'); setSearchQuery(''); }}
                 className={`pb-3 px-2 font-mono text-[10px] tracking-[0.25em] uppercase transition-all relative cursor-pointer font-bold ${
                   activeTab === 'notes'
-                    ? 'text-[#3A2220] border-b-2 border-[#3A2220]'
-                    : 'text-neutral-400 hover:text-[#3A2220]'
+                    ? 'text-[#362223] border-b-2 border-[#362223]'
+                    : 'text-neutral-400 hover:text-[#362223]'
                 }`}
               >
                 Guestbook Wishes ({guestNotes.length})
@@ -879,8 +879,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                 onClick={() => { setActiveTab('images'); setSearchQuery(''); }}
                 className={`pb-3 px-2 font-mono text-[10px] tracking-[0.25em] uppercase transition-all relative cursor-pointer font-bold ${
                   activeTab === 'images'
-                    ? 'text-[#3A2220] border-b-2 border-[#3A2220]'
-                    : 'text-neutral-400 hover:text-[#3A2220]'
+                    ? 'text-[#362223] border-b-2 border-[#362223]'
+                    : 'text-neutral-400 hover:text-[#362223]'
                 }`}
               >
                 Website Images
@@ -889,8 +889,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                 onClick={() => { setActiveTab('texts'); setSearchQuery(''); }}
                 className={`pb-3 px-2 font-mono text-[10px] tracking-[0.25em] uppercase transition-all relative cursor-pointer font-bold ${
                   activeTab === 'texts'
-                    ? 'text-[#3A2220] border-b-2 border-[#3A2220]'
-                    : 'text-neutral-400 hover:text-[#3A2220]'
+                    ? 'text-[#362223] border-b-2 border-[#362223]'
+                    : 'text-neutral-400 hover:text-[#362223]'
                 }`}
               >
                 Website Text & Content
@@ -912,7 +912,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                       placeholder="Filter guests by name, note, or diet..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full bg-white border border-black/10 hover:border-black/20 focus:border-[#3A2220] py-2 pl-10 pr-4 font-mono text-[9px] tracking-widest uppercase outline-none transition-colors"
+                      className="w-full bg-white border border-black/10 hover:border-black/20 focus:border-[#362223] py-2 pl-10 pr-4 font-mono text-[9px] tracking-widest uppercase outline-none transition-colors"
                     />
                     {searchQuery && (
                       <button 
@@ -948,14 +948,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                     </div>
                     <button
                       onClick={fetchRSVPs}
-                      className="px-6 py-2.5 bg-[#3A2220]/80 hover:bg-[#3A2220] text-white border border-[#3A2220]/20 backdrop-blur-md font-mono text-[9px] tracking-widest uppercase rounded-full transition-all cursor-pointer font-bold shadow-md"
+                      className="px-6 py-2.5 bg-[#362223]/80 hover:bg-[#362223] text-white border border-[#362223]/20 backdrop-blur-md font-mono text-[9px] tracking-widest uppercase rounded-full transition-all cursor-pointer font-bold shadow-md"
                     >
                       Retry Fetch Query
                     </button>
                   </div>
                 ) : isDataLoading && rsvps.length === 0 ? (
                   <div className="p-20 text-center flex flex-col items-center justify-center gap-4">
-                    <RefreshCw size={24} className="animate-spin text-[#3A2220]/40" />
+                    <RefreshCw size={24} className="animate-spin text-[#362223]/40" />
                     <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-neutral-400 font-semibold">Querying Firestore tables...</p>
                   </div>
                 ) : filteredRSVPs.length === 0 ? (
@@ -983,7 +983,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             key={rsvp.id} 
                             className="hover:bg-neutral-50/75 transition-colors font-mono tracking-wide"
                           >
-                            <td className="py-5 px-6 font-serif text-base italic leading-none font-medium text-[#3A2220]">
+                            <td className="py-5 px-6 font-serif text-base italic leading-none font-medium text-[#362223]">
                               {rsvp.guestName}
                             </td>
                             <td className="py-5 px-6 uppercase text-[9px] tracking-widest">
@@ -1040,7 +1040,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                       placeholder="Filter wishes by guest name or message..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full bg-white border border-black/10 hover:border-black/20 focus:border-[#3A2220] py-2 pl-10 pr-4 font-mono text-[9px] tracking-widest uppercase outline-none transition-colors"
+                      className="w-full bg-white border border-black/10 hover:border-black/20 focus:border-[#362223] py-2 pl-10 pr-4 font-mono text-[9px] tracking-widest uppercase outline-none transition-colors"
                     />
                     {searchQuery && (
                       <button 
@@ -1069,7 +1069,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                   </div>
                 ) : isDataLoading && guestNotes.length === 0 ? (
                   <div className="p-20 text-center flex flex-col items-center justify-center gap-4">
-                    <RefreshCw size={24} className="animate-spin text-[#3A2220]/40" />
+                    <RefreshCw size={24} className="animate-spin text-[#362223]/40" />
                     <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-neutral-400 font-semibold">Querying guestbook tables...</p>
                   </div>
                 ) : filteredNotes.length === 0 ? (
@@ -1096,10 +1096,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             key={note.id} 
                             className="hover:bg-neutral-50/75 transition-colors font-sans"
                           >
-                            <td className="py-5 px-6 font-serif text-base italic leading-none font-medium text-[#3A2220] whitespace-nowrap">
+                            <td className="py-5 px-6 font-serif text-base italic leading-none font-medium text-[#362223] whitespace-nowrap">
                               {note.name}
                             </td>
-                            <td className="py-4 px-6 text-[#3A2220] text-sm/relaxed font-serif italic max-w-md">
+                            <td className="py-4 px-6 text-[#362223] text-sm/relaxed font-serif italic max-w-md">
                               "{note.text}"
                             </td>
                             <td className="py-5 px-6 text-neutral-500 text-[8.5px] uppercase whitespace-nowrap font-semibold font-mono">
@@ -1125,7 +1125,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
 
             {/* Tab: Website Images */}
             {activeTab === 'images' && (
-              <div className="space-y-8 animate-fade-in text-[#3A2220]">
+              <div className="space-y-8 animate-fade-in text-[#362223]">
                 <div className="bg-[#FAF9F6] p-6 md:p-8 border border-black/5 rounded-sm space-y-4">
                   <h3 className="font-serif text-xl md:text-2xl uppercase tracking-tight font-semibold">Cloudinary Image Asset Control Panel</h3>
                   <p className="font-mono text-[9px] tracking-widest uppercase text-neutral-400 leading-relaxed font-semibold">
@@ -1152,7 +1152,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                         <div className="space-y-3">
                           <div className="flex items-start justify-between">
                             <h4 className="font-serif text-lg tracking-normal font-semibold uppercase">{field.label}</h4>
-                            <span className="font-mono text-[8px] bg-[#3A2220]/5 text-[#3A2220]/70 px-2.5 py-1 rounded-full uppercase tracking-wider font-semibold">
+                            <span className="font-mono text-[8px] bg-[#362223]/5 text-[#362223]/70 px-2.5 py-1 rounded-full uppercase tracking-wider font-semibold">
                               {isCustom ? 'Active Custom' : 'Static Default'}
                             </span>
                           </div>
@@ -1227,13 +1227,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           {/* Progress Indicator */}
                           {uploading && (
                             <div className="space-y-2">
-                              <div className="flex justify-between items-center font-mono text-[8.5px] uppercase text-[#3A2220]/60">
+                              <div className="flex justify-between items-center font-mono text-[8.5px] uppercase text-[#362223]/60">
                                 <span className="animate-pulse font-semibold">Uploading direct to Cloudinary...</span>
                                 <span className="font-bold">{progress}%</span>
                               </div>
                               <div className="w-full bg-stone-100 h-1 rounded-full overflow-hidden">
                                 <div 
-                                  className="bg-[#3A2220] h-full transition-all duration-300"
+                                  className="bg-[#362223] h-full transition-all duration-300"
                                   style={{ width: `${progress}%` }}
                                 />
                               </div>
@@ -1252,7 +1252,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           <button
                             disabled={!selectedFile || uploading}
                             onClick={() => handleImageUpload(field.key)}
-                            className="w-full py-4 border border-black/10 bg-white/45 hover:bg-[#3A2220] text-[#3A2220] hover:text-white font-mono text-[9px] tracking-widest uppercase flex items-center justify-center gap-2 rounded-full transition-all duration-300 cursor-pointer shadow-sm disabled:opacity-30 disabled:hover:bg-white/45 disabled:hover:text-[#3A2220] disabled:cursor-not-allowed font-bold"
+                            className="w-full py-4 border border-black/10 bg-white/45 hover:bg-[#362223] text-[#362223] hover:text-white font-mono text-[9px] tracking-widest uppercase flex items-center justify-center gap-2 rounded-full transition-all duration-300 cursor-pointer shadow-sm disabled:opacity-30 disabled:hover:bg-white/45 disabled:hover:text-[#362223] disabled:cursor-not-allowed font-bold"
                           >
                             <Upload size={12} />
                             <span>{uploading ? `Uploading ${progress}%` : 'Upload & Save Image'}</span>
@@ -1267,7 +1267,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
 
             {/* Tab: Website Texts & Content CMS */}
             {activeTab === 'texts' && (
-              <form onSubmit={handleSaveTexts} className="space-y-8 animate-fade-in text-[#3A2220]">
+              <form onSubmit={handleSaveTexts} className="space-y-8 animate-fade-in text-[#362223]">
                 <div className="bg-[#FAF9F6] p-6 md:p-8 border border-black/5 rounded-sm space-y-4">
                   <h3 className="font-serif text-xl md:text-2xl uppercase tracking-tight font-semibold">Website Texts & Content CMS</h3>
                   <p className="font-mono text-[9px] tracking-widest uppercase text-neutral-400 leading-relaxed font-semibold">
@@ -1296,8 +1296,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                     onClick={() => setTextSubTab('identity')}
                     className={`px-4 py-2.5 font-mono text-[9px] tracking-widest uppercase rounded-full transition-all border font-bold ${
                       textSubTab === 'identity'
-                        ? 'bg-[#3A2220] border-[#3A2220] text-stone-100 shadow-sm'
-                        : 'bg-white border-black/5 text-[#3A2220] hover:bg-[#3A2220]/5'
+                        ? 'bg-[#362223] border-[#362223] text-stone-100 shadow-sm'
+                        : 'bg-white border-black/5 text-[#362223] hover:bg-[#362223]/5'
                     }`}
                   >
                     1. Identity & Countdown
@@ -1307,8 +1307,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                     onClick={() => setTextSubTab('story')}
                     className={`px-4 py-2.5 font-mono text-[9px] tracking-widest uppercase rounded-full transition-all border font-bold ${
                       textSubTab === 'story'
-                        ? 'bg-[#3A2220] border-[#3A2220] text-stone-100 shadow-sm'
-                        : 'bg-white border-black/5 text-[#3A2220] hover:bg-[#3A2220]/5'
+                        ? 'bg-[#362223] border-[#362223] text-stone-100 shadow-sm'
+                        : 'bg-white border-black/5 text-[#362223] hover:bg-[#362223]/5'
                     }`}
                   >
                     2. Story & Photo Quote
@@ -1318,8 +1318,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                     onClick={() => setTextSubTab('timeline')}
                     className={`px-4 py-2.5 font-mono text-[9px] tracking-widest uppercase rounded-full transition-all border font-bold ${
                       textSubTab === 'timeline'
-                        ? 'bg-[#3A2220] border-[#3A2220] text-stone-100 shadow-sm'
-                        : 'bg-white border-black/5 text-[#3A2220] hover:bg-[#3A2220]/5'
+                        ? 'bg-[#362223] border-[#362223] text-stone-100 shadow-sm'
+                        : 'bg-white border-black/5 text-[#362223] hover:bg-[#362223]/5'
                     }`}
                   >
                     3. Timeline & Dress Code
@@ -1329,8 +1329,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                     onClick={() => setTextSubTab('registry')}
                     className={`px-4 py-2.5 font-mono text-[9px] tracking-widest uppercase rounded-full transition-all border font-bold ${
                       textSubTab === 'registry'
-                        ? 'bg-[#3A2220] border-[#3A2220] text-stone-100 shadow-sm'
-                        : 'bg-white border-black/5 text-[#3A2220] hover:bg-[#3A2220]/5'
+                        ? 'bg-[#362223] border-[#362223] text-stone-100 shadow-sm'
+                        : 'bg-white border-black/5 text-[#362223] hover:bg-[#362223]/5'
                     }`}
                   >
                     4. Registry & Guestbook
@@ -1340,8 +1340,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                     onClick={() => setTextSubTab('navigation')}
                     className={`px-4 py-2.5 font-mono text-[9px] tracking-widest uppercase rounded-full transition-all border font-bold ${
                       textSubTab === 'navigation'
-                        ? 'bg-[#3A2220] border-[#3A2220] text-stone-100 shadow-sm'
-                        : 'bg-white border-black/5 text-[#3A2220] hover:bg-[#3A2220]/5'
+                        ? 'bg-[#362223] border-[#362223] text-stone-100 shadow-sm'
+                        : 'bg-white border-black/5 text-[#362223] hover:bg-[#362223]/5'
                     }`}
                   >
                     5. Sidebar & Action Buttons
@@ -1351,8 +1351,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                     onClick={() => setTextSubTab('venue')}
                     className={`px-4 py-2.5 font-mono text-[9px] tracking-widest uppercase rounded-full transition-all border font-bold ${
                       textSubTab === 'venue'
-                        ? 'bg-[#3A2220] border-[#3A2220] text-stone-100 shadow-sm'
-                        : 'bg-white border-black/5 text-[#3A2220] hover:bg-[#3A2220]/5'
+                        ? 'bg-[#362223] border-[#362223] text-stone-100 shadow-sm'
+                        : 'bg-white border-black/5 text-[#362223] hover:bg-[#362223]/5'
                     }`}
                   >
                     6. Venue & Trails
@@ -1374,7 +1374,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={brideName}
                           onChange={(e) => setBrideName(e.target.value)}
                           placeholder="Bảo Eve"
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
                         />
                       </div>
 
@@ -1385,7 +1385,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={groomName}
                           onChange={(e) => setGroomName(e.target.value)}
                           placeholder="Johnathan"
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
                         />
                       </div>
 
@@ -1396,7 +1396,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           onChange={(e) => setHeroTitle(e.target.value)}
                           placeholder={"Sarah &\nAlderson"}
                           rows={2}
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none"
                         />
                         <p className="font-mono text-[7.5px] uppercase text-neutral-400 leading-tight font-semibold">
                           Press Enter to break into multiple lines. Default fallback is "Sarah &\nAlderson".
@@ -1419,7 +1419,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={countdownTargetDate}
                           onChange={(e) => setCountdownTargetDate(e.target.value)}
                           placeholder="2027-10-10T17:00:00"
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-mono text-xs outline-none transition-colors"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-mono text-xs outline-none transition-colors"
                         />
                         <p className="font-mono text-[7.5px] uppercase text-neutral-400 leading-tight font-semibold">Must follow ISO format: YYYY-MM-DDTHH:MM:SS</p>
                       </div>
@@ -1431,7 +1431,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={countdownHeight}
                           onChange={(e) => setCountdownHeight(e.target.value)}
                           placeholder="800"
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-mono text-xs outline-none transition-colors"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-mono text-xs outline-none transition-colors"
                         />
                         <p className="font-mono text-[7.5px] uppercase text-neutral-400 leading-tight font-semibold">Examples: 800 (for 800px), 80vh, 100vh. Default is 800px.</p>
                       </div>
@@ -1453,7 +1453,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={countdownTitleEng}
                             onChange={(e) => setCountdownTitleEng(e.target.value)}
                             placeholder="Let's the countdown"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
                           />
                         </div>
                         <div className="space-y-1.5">
@@ -1463,7 +1463,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={countdownTitleVie}
                             onChange={(e) => setCountdownTitleVie(e.target.value)}
                             placeholder="Cùng đếm ngược"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
                           />
                         </div>
                       </div>
@@ -1476,7 +1476,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={countdownEndTitleEng}
                             onChange={(e) => setCountdownEndTitleEng(e.target.value)}
                             placeholder="begin"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
                           />
                         </div>
                         <div className="space-y-1.5">
@@ -1486,7 +1486,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={countdownEndTitleVie}
                             onChange={(e) => setCountdownEndTitleVie(e.target.value)}
                             placeholder="bắt đầu"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
                           />
                         </div>
                       </div>
@@ -1494,7 +1494,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
 
                     <div className="border-t border-black/5 pt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
                       <div className="space-y-3">
-                        <span className="font-serif text-xs tracking-wide uppercase text-[#3A2220]/70 font-semibold block">Location 1</span>
+                        <span className="font-serif text-xs tracking-wide uppercase text-[#362223]/70 font-semibold block">Location 1</span>
                         <div className="space-y-1.5">
                           <label className="block font-mono text-[8px] uppercase tracking-wider text-neutral-400 font-semibold">City</label>
                           <input 
@@ -1502,7 +1502,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={countdownLoc1City}
                             onChange={(e) => setCountdownLoc1City(e.target.value)}
                             placeholder="DANANG"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-mono text-xs outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-xs outline-none transition-colors"
                           />
                         </div>
                         <div className="space-y-1.5">
@@ -1512,13 +1512,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={countdownLoc1Country}
                             onChange={(e) => setCountdownLoc1Country(e.target.value)}
                             placeholder="VIETNAM"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-mono text-xs outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-xs outline-none transition-colors"
                           />
                         </div>
                       </div>
 
                       <div className="space-y-3">
-                        <span className="font-serif text-xs tracking-wide uppercase text-[#3A2220]/70 font-semibold block">Location 2</span>
+                        <span className="font-serif text-xs tracking-wide uppercase text-[#362223]/70 font-semibold block">Location 2</span>
                         <div className="space-y-1.5">
                           <label className="block font-mono text-[8px] uppercase tracking-wider text-neutral-400 font-semibold">City</label>
                           <input 
@@ -1526,7 +1526,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={countdownLoc2City}
                             onChange={(e) => setCountdownLoc2City(e.target.value)}
                             placeholder="TOKYO"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-mono text-xs outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-xs outline-none transition-colors"
                           />
                         </div>
                         <div className="space-y-1.5">
@@ -1542,7 +1542,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                       </div>
 
                       <div className="space-y-3">
-                        <span className="font-serif text-xs tracking-wide uppercase text-[#3A2220]/70 font-semibold block">Location 3</span>
+                        <span className="font-serif text-xs tracking-wide uppercase text-[#362223]/70 font-semibold block">Location 3</span>
                         <div className="space-y-1.5">
                           <label className="block font-mono text-[8px] uppercase tracking-wider text-neutral-400 font-semibold">City</label>
                           <input 
@@ -1550,7 +1550,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={countdownLoc3City}
                             onChange={(e) => setCountdownLoc3City(e.target.value)}
                             placeholder="CITY"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-mono text-xs outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-xs outline-none transition-colors"
                           />
                         </div>
                         <div className="space-y-1.5">
@@ -1560,7 +1560,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={countdownLoc3Country}
                             onChange={(e) => setCountdownLoc3Country(e.target.value)}
                             placeholder="ENGLAND"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-mono text-xs outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-xs outline-none transition-colors"
                           />
                         </div>
                       </div>
@@ -1574,7 +1574,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={countdownSinceText}
                           onChange={(e) => setCountdownSinceText(e.target.value)}
                           placeholder="SINCE 2022"
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-mono text-xs outline-none transition-colors"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-mono text-xs outline-none transition-colors"
                         />
                       </div>
                     </div>
@@ -1594,7 +1594,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={invitationTextEng}
                           onChange={(e) => setInvitationTextEng(e.target.value)}
                           placeholder="Invite you to share in a quiet weekend of woodfire, forest walks..."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
                         />
                       </div>
 
@@ -1605,7 +1605,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={invitationTextVie}
                           onChange={(e) => setInvitationTextVie(e.target.value)}
                           placeholder="Trân trọng kính mời bạn ghé thăm một ngày ấm áp đầy tiếng cười..."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
                         />
                       </div>
                     </div>
@@ -1626,7 +1626,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={heroDateEng}
                             onChange={(e) => setHeroDateEng(e.target.value)}
                             placeholder="22 JUNE 2026, FRIDAY"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
                           />
                         </div>
                         <div className="space-y-1.5">
@@ -1636,7 +1636,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={heroDateVie}
                             onChange={(e) => setHeroDateVie(e.target.value)}
                             placeholder="THỨ SÁU, 22 THÁNG 6, 2026"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
                           />
                         </div>
                       </div>
@@ -1649,7 +1649,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={venueNameEng}
                             onChange={(e) => setVenueNameEng(e.target.value)}
                             placeholder="TOKYO, JAPAN"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
                           />
                         </div>
                         <div className="space-y-1.5">
@@ -1659,7 +1659,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={venueNameVie}
                             onChange={(e) => setVenueNameVie(e.target.value)}
                             placeholder="TOKYO, NHẬT BẢN"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
                           />
                         </div>
                       </div>
@@ -1672,7 +1672,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={weddingDateShortEng}
                             onChange={(e) => setWeddingDateShortEng(e.target.value)}
                             placeholder="OCT, 2027"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
                           />
                         </div>
                         <div className="space-y-1.5">
@@ -1682,7 +1682,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={weddingDateShortVie}
                             onChange={(e) => setWeddingDateShortVie(e.target.value)}
                             placeholder="TH.10, 2027"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
                           />
                         </div>
                       </div>
@@ -1703,7 +1703,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={attireDescEng}
                           onChange={(e) => setAttireDescEng(e.target.value)}
                           placeholder="Cocktail Attire. Black tie optional."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
                         />
                       </div>
 
@@ -1714,7 +1714,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={attireDescVie}
                           onChange={(e) => setAttireDescVie(e.target.value)}
                           placeholder="Trang phục bán trang trọng (Cocktail). Nam có thể thắt nơ."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
                         />
                       </div>
                     </div>
@@ -1734,7 +1734,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={registryTextEng}
                           onChange={(e) => setRegistryTextEng(e.target.value)}
                           placeholder="We are so grateful to have you as a part of our lives..."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
                         />
                       </div>
 
@@ -1745,7 +1745,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={registryTextVie}
                           onChange={(e) => setRegistryTextVie(e.target.value)}
                           placeholder="Sự hiện diện của bạn là niềm hạnh phúc lớn nhất của chúng mình..."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
                         />
                       </div>
                     </div>
@@ -1765,7 +1765,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={photoQuoteEng}
                           onChange={(e) => setPhotoQuoteEng(e.target.value)}
                           placeholder="A quiet instant captured on analogue medium..."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
                         />
                       </div>
 
@@ -1776,7 +1776,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={photoQuoteVie}
                           onChange={(e) => setPhotoQuoteVie(e.target.value)}
                           placeholder="Khoảnh khắc an yên ghi dấu qua thước phim màu..."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
                         />
                       </div>
                     </div>
@@ -1797,7 +1797,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={sidebarHomeEng}
                             onChange={(e) => setSidebarHomeEng(e.target.value)}
                             placeholder="HOME"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
                           />
                         </div>
                         <div className="space-y-1.5">
@@ -1807,7 +1807,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={sidebarHomeVie}
                             onChange={(e) => setSidebarHomeVie(e.target.value)}
                             placeholder="TRANG CHỦ"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
                           />
                         </div>
                       </div>
@@ -1820,7 +1820,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={sidebarStoryEng}
                             onChange={(e) => setSidebarStoryEng(e.target.value)}
                             placeholder="OUR STORY"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
                           />
                         </div>
                         <div className="space-y-1.5">
@@ -1830,7 +1830,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={sidebarStoryVie}
                             onChange={(e) => setSidebarStoryVie(e.target.value)}
                             placeholder="CÂU CHUYỆN"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
                           />
                         </div>
                       </div>
@@ -1843,7 +1843,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={sidebarEventsEng}
                             onChange={(e) => setSidebarEventsEng(e.target.value)}
                             placeholder="EVENTS"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
                           />
                         </div>
                         <div className="space-y-1.5">
@@ -1853,7 +1853,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={sidebarEventsVie}
                             onChange={(e) => setSidebarEventsVie(e.target.value)}
                             placeholder="SỰ KIỆN"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
                           />
                         </div>
                       </div>
@@ -1866,7 +1866,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={sidebarRsvpEng}
                             onChange={(e) => setSidebarRsvpEng(e.target.value)}
                             placeholder="RSVP"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
                           />
                         </div>
                         <div className="space-y-1.5">
@@ -1876,7 +1876,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={sidebarRsvpVie}
                             onChange={(e) => setSidebarRsvpVie(e.target.value)}
                             placeholder="XÁC NHẬN"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
                           />
                         </div>
                       </div>
@@ -1898,7 +1898,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={heroBtnEng}
                             onChange={(e) => setHeroBtnEng(e.target.value)}
                             placeholder="RSVP NOW"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
                           />
                         </div>
                         <div className="space-y-1.5">
@@ -1908,7 +1908,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={heroBtnVie}
                             onChange={(e) => setHeroBtnVie(e.target.value)}
                             placeholder="PHẢN HỒI NGAY"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
                           />
                         </div>
                       </div>
@@ -1921,7 +1921,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={registryBtnEng}
                             onChange={(e) => setRegistryBtnEng(e.target.value)}
                             placeholder="View Our Wedding Registry"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
                           />
                         </div>
                         <div className="space-y-1.5">
@@ -1931,7 +1931,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={registryBtnVie}
                             onChange={(e) => setRegistryBtnVie(e.target.value)}
                             placeholder="Xem Hộp Quà Chúc Mừng"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
                           />
                         </div>
                       </div>
@@ -1943,7 +1943,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={respondByEng}
                           onChange={(e) => setRespondByEng(e.target.value)}
                           placeholder="Kindly respond by March 23, 2026."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
                         />
                       </div>
 
@@ -1954,7 +1954,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={respondByVie}
                           onChange={(e) => setRespondByVie(e.target.value)}
                           placeholder="Vui lòng cho tụi mình biết phản hồi trước ngày 23 tháng 3, 2026."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
                         />
                       </div>
                     </div>
@@ -1975,7 +1975,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={writeNoteTitleEng}
                             onChange={(e) => setWriteNoteTitleEng(e.target.value)}
                             placeholder="WRITE US A NOTE"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
                           />
                         </div>
                         <div className="space-y-1.5">
@@ -1985,7 +1985,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={writeNoteTitleVie}
                             onChange={(e) => setWriteNoteTitleVie(e.target.value)}
                             placeholder="GỬI LỜI CHÚC MỪNG"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
                           />
                         </div>
                       </div>
@@ -1997,7 +1997,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={writeNoteSubtitleEng}
                           onChange={(e) => setWriteNoteSubtitleEng(e.target.value)}
                           placeholder="Leave a memory, wish, or guidance on our wedding board."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
                         />
                       </div>
 
@@ -2008,7 +2008,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={writeNoteSubtitleVie}
                           onChange={(e) => setWriteNoteSubtitleVie(e.target.value)}
                           placeholder="Ghi lại kỷ niệm hoặc lời nhắn nhủ dành cho ngày hạnh phúc của chúng mình."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
                         />
                       </div>
                     </div>
@@ -2027,7 +2027,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={gatherSubtitleEng}
                           onChange={(e) => setGatherSubtitleEng(e.target.value)}
                           placeholder="02 // The Gathering Grounds"
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
                         />
                       </div>
                       <div className="space-y-1.5">
@@ -2037,7 +2037,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={gatherSubtitleVie}
                           onChange={(e) => setGatherSubtitleVie(e.target.value)}
                           placeholder="02 // Địa Điểm Hội Tụ"
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
                         />
                       </div>
                       <div className="space-y-1.5">
@@ -2047,7 +2047,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={gatherHeadingEng}
                           onChange={(e) => setGatherHeadingEng(e.target.value)}
                           placeholder="Where the world slows down."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
                         />
                       </div>
                       <div className="space-y-1.5">
@@ -2057,7 +2057,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={gatherHeadingVie}
                           onChange={(e) => setGatherHeadingVie(e.target.value)}
                           placeholder="Nơi thế giới ngừng trôi."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
                         />
                       </div>
                       <div className="space-y-1.5 md:col-span-2">
@@ -2067,7 +2067,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={gatherDescEng}
                           onChange={(e) => setGatherDescEng(e.target.value)}
                           placeholder="The ceremony and celebratory feast will both be hosted..."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
                         />
                       </div>
                       <div className="space-y-1.5 md:col-span-2">
@@ -2077,7 +2077,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={gatherDescVie}
                           onChange={(e) => setGatherDescVie(e.target.value)}
                           placeholder="Lễ cưới và tiệc mừng hân hoan đều được tổ chức..."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
                         />
                       </div>
                     </div>
@@ -2097,7 +2097,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={gatherCereTitleEng}
                             onChange={(e) => setGatherCereTitleEng(e.target.value)}
                             placeholder="THE CEREMONY"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
                           />
                         </div>
                         <div className="space-y-1.5">
@@ -2107,7 +2107,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={gatherCereTitleVie}
                             onChange={(e) => setGatherCereTitleVie(e.target.value)}
                             placeholder="LỄ THÀNH HÔN"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
                           />
                         </div>
                       </div>
@@ -2118,7 +2118,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={gatherCereDescEng}
                           onChange={(e) => setGatherCereDescEng(e.target.value)}
                           placeholder="Four P.M. Under the giant Oak..."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
                         />
                       </div>
                       <div className="space-y-1.5">
@@ -2128,7 +2128,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={gatherCereDescVie}
                           onChange={(e) => setGatherCereDescVie(e.target.value)}
                           placeholder="Bốn giờ chiều. Dưới tán cây sồi..."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
                         />
                       </div>
                       
@@ -2140,7 +2140,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={gatherFeastTitleEng}
                             onChange={(e) => setGatherFeastTitleEng(e.target.value)}
                             placeholder="THE GATHERING & FEAST"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
                           />
                         </div>
                         <div className="space-y-1.5">
@@ -2150,7 +2150,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={gatherFeastTitleVie}
                             onChange={(e) => setGatherFeastTitleVie(e.target.value)}
                             placeholder="TIỆC GIAO LƯU & CHIÊU ĐÃI"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
                           />
                         </div>
                       </div>
@@ -2161,7 +2161,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={gatherFeastDescEng}
                           onChange={(e) => setGatherFeastDescEng(e.target.value)}
                           placeholder="To follow immediately within the wooden Glass Barn..."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
                         />
                       </div>
                       <div className="space-y-1.5">
@@ -2171,7 +2171,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={gatherFeastDescVie}
                           onChange={(e) => setGatherFeastDescVie(e.target.value)}
                           placeholder="Khai tiệc ngay sau đó tại Glass Barn..."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
                         />
                       </div>
                     </div>
@@ -2191,7 +2191,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={gatherMapPillEng}
                             onChange={(e) => setGatherMapPillEng(e.target.value)}
                             placeholder="INTERACTIVE MAP & TRAILS"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
                           />
                         </div>
                         <div className="space-y-1.5">
@@ -2201,7 +2201,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={gatherMapPillVie}
                             onChange={(e) => setGatherMapPillVie(e.target.value)}
                             placeholder="BẢN ĐỒ CHI TIẾT & LỐI ĐI"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
                           />
                         </div>
                       </div>
@@ -2214,7 +2214,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={gatherLatitude}
                             onChange={(e) => setGatherLatitude(e.target.value)}
                             placeholder="Latitude: 45.4192° N"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
                           />
                         </div>
                         <div className="space-y-1.5">
@@ -2224,7 +2224,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={gatherLongitude}
                             onChange={(e) => setGatherLongitude(e.target.value)}
                             placeholder="Longitude: 122.1824° W"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
                           />
                         </div>
                       </div>
@@ -2237,7 +2237,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={gatherDirectionsTextEng}
                             onChange={(e) => setGatherDirectionsTextEng(e.target.value)}
                             placeholder="GET DIRECTIONS"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
                           />
                         </div>
                         <div className="space-y-1.5">
@@ -2247,7 +2247,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             value={gatherDirectionsTextVie}
                             onChange={(e) => setGatherDirectionsTextVie(e.target.value)}
                             placeholder="CHỈ ĐƯỜNG CHI TIẾT"
-                            className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
                           />
                         </div>
                       </div>
@@ -2259,7 +2259,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={gatherDirectionsUrl}
                           onChange={(e) => setGatherDirectionsUrl(e.target.value)}
                           placeholder="https://maps.google.com/?q=45.4192,-122.1824"
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-mono text-xs outline-none transition-colors"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-xs outline-none transition-colors"
                         />
                       </div>
                     </div>
@@ -2278,7 +2278,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={gatherNoteEng}
                           onChange={(e) => setGatherNoteEng(e.target.value)}
                           placeholder="Accommodation details & guidelines available upon request."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
                         />
                       </div>
                       <div className="space-y-1.5">
@@ -2288,7 +2288,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={gatherNoteVie}
                           onChange={(e) => setGatherNoteVie(e.target.value)}
                           placeholder="Thông tin phòng lưu trú & hướng dẫn hành trình chi tiết..."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
                         />
                       </div>
 
@@ -2299,7 +2299,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={sidebarGatherEng}
                           onChange={(e) => setSidebarGatherEng(e.target.value)}
                           placeholder="VENUE"
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
                         />
                       </div>
                       <div className="space-y-1.5">
@@ -2309,7 +2309,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           value={sidebarGatherVie}
                           onChange={(e) => setSidebarGatherVie(e.target.value)}
                           placeholder="ĐỊA ĐIỂM"
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#3A2220] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
                         />
                       </div>
                     </div>
@@ -2329,7 +2329,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                     <button
                       type="submit"
                       disabled={isSavingTexts}
-                      className="w-full max-w-xs py-4 px-6 bg-[#3A2220] hover:bg-[#20100F] text-white font-mono text-[10px] tracking-[0.25em] uppercase flex items-center justify-center gap-2 rounded-full transition-all duration-300 cursor-pointer shadow-md disabled:opacity-50 disabled:cursor-not-allowed font-bold"
+                      className="w-full max-w-xs py-4 px-6 bg-[#362223] hover:bg-[#20100F] text-white font-mono text-[10px] tracking-[0.25em] uppercase flex items-center justify-center gap-2 rounded-full transition-all duration-300 cursor-pointer shadow-md disabled:opacity-50 disabled:cursor-not-allowed font-bold"
                     >
                       <span>{isSavingTexts ? 'Writing to DB...' : 'Save & Publish Texts'}</span>
                     </button>

@@ -117,25 +117,28 @@ export default function CountdownSection({
   return (
     <section 
       id="countdown"
-      className="w-full relative overflow-hidden flex flex-col items-center justify-center py-20 sm:py-28 md:py-32 px-6 sm:px-12 text-[#3A2220] transition-all duration-500 bg-[radial-gradient(circle_at_center,_#FCFBFA_10%,_#EAE4E5_42%,_#C6B2B5_72%,_#9B8084_100%)] select-none"
-      style={{ height: heightVal }}
+      className="w-full relative overflow-hidden flex flex-col items-center justify-center py-20 sm:py-28 md:py-32 px-6 sm:px-12 text-[#362223] transition-all duration-500 bg-[radial-gradient(circle_at_center,_#FCFBFA_10%,_#EAE4E5_42%,_#C6B2B5_72%,_#9B8084_100%)] select-none"
+      style={{ height: heightVal, paddingLeft: '20px', paddingRight: '20px' }}
     >
       {/* 4. Fine Organic Paper Texture overlay */}
       <div className="absolute inset-0 bg-white/[0.015] opacity-35 pointer-events-none mix-blend-overlay" />
 
       {/* Corners - Top Left & Top Right */}
-      <div className="absolute top-8 left-8 sm:top-12 sm:left-12 font-mono text-[8px] sm:text-[9.5px] tracking-[0.25em] text-[#3A2220]/75 uppercase">
+      <div className="absolute top-8 left-8 sm:top-12 sm:left-12 font-mono text-[8px] sm:text-[9.5px] tracking-[0.25em] text-[#362223]/75 uppercase">
         {displayMonth}
       </div>
-      <div className="absolute top-8 right-8 sm:top-12 sm:right-12 font-mono text-[8px] sm:text-[9.5px] tracking-[0.25em] text-[#3A2220]/75 uppercase">
+      <div className="absolute top-8 right-8 sm:top-12 sm:right-12 font-mono text-[8px] sm:text-[9.5px] tracking-[0.25em] text-[#362223]/75 uppercase">
         {displayYear}
       </div>
 
       {/* Main Content Layout */}
-      <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center space-y-8 sm:space-y-12 md:space-y-14">
+      <div className="relative z-10 w-full max-w-full mx-auto flex flex-col items-center space-y-8 sm:space-y-12 md:space-y-14">
         
         {/* Calligraphic Script Title */}
-        <h2 className="font-luxurious text-[120px] md:text-[200px] text-[#3A2220] font-light leading-none capitalize tracking-normal text-center select-none pt-4">
+        <h2 
+          className="font-luxurious text-[#362223] font-light leading-none capitalize tracking-normal text-center select-none pt-4 whitespace-nowrap w-full"
+          style={{ fontSize: 'clamp(36px, 12.5vw, 240px)', width: '100%', maxWidth: '100%' }}
+        >
           {lang === 'VIE' ? (titleVie || "Cùng đếm ngược") : (titleEng || "Let's the countdown")}
         </h2>
 
@@ -143,82 +146,85 @@ export default function CountdownSection({
         <div className="flex items-center justify-center gap-3 sm:gap-6 md:gap-10 lg:gap-14 max-w-2xl mx-auto w-full">
           {/* DAYS */}
           <div className="flex flex-col items-center min-w-[55px] sm:min-w-[80px] md:min-w-[100px]">
-            <span className="font-serif italic font-light text-4xl sm:text-6xl md:text-7xl lg:text-[85px] leading-none text-[#3A2220] tracking-tight">
+            <span className="font-serif italic font-light text-4xl sm:text-6xl md:text-7xl lg:text-[85px] leading-none text-[#362223] tracking-tight">
               {isMounted ? days : "00"}
             </span>
-            <span className="font-crimson text-[14px] tracking-[0.2em] text-[#3A2220]/65 uppercase mt-3">
+            <span className="font-crimson text-[14px] tracking-[0.2em] text-[#362223]/65 uppercase mt-3">
               {t.days}
             </span>
           </div>
 
           {/* DIVIDER 1 */}
-          <div className="h-10 sm:h-16 md:h-20 w-[1px] bg-[#3A2220]/15 self-center -translate-y-3" />
+          <div className="h-10 sm:h-16 md:h-20 w-[1px] bg-[#362223]/15 self-center -translate-y-3" />
 
           {/* HOURS */}
           <div className="flex flex-col items-center min-w-[55px] sm:min-w-[80px] md:min-w-[100px]">
-            <span className="font-serif italic font-light text-4xl sm:text-6xl md:text-7xl lg:text-[85px] leading-none text-[#3A2220] tracking-tight">
+            <span className="font-serif italic font-light text-4xl sm:text-6xl md:text-7xl lg:text-[85px] leading-none text-[#362223] tracking-tight">
               {isMounted ? String(hours).padStart(2, '0') : "00"}
             </span>
-            <span className="font-crimson text-[14px] tracking-[0.2em] text-[#3A2220]/65 uppercase mt-3">
+            <span className="font-crimson text-[14px] tracking-[0.2em] text-[#362223]/65 uppercase mt-3">
               {t.hours}
             </span>
           </div>
 
           {/* DIVIDER 2 */}
-          <div className="h-10 sm:h-16 md:h-20 w-[1px] bg-[#3A2220]/15 self-center -translate-y-3" />
+          <div className="h-10 sm:h-16 md:h-20 w-[1px] bg-[#362223]/15 self-center -translate-y-3" />
 
           {/* MINUTES */}
           <div className="flex flex-col items-center min-w-[55px] sm:min-w-[80px] md:min-w-[100px]">
-            <span className="font-serif italic font-light text-4xl sm:text-6xl md:text-7xl lg:text-[85px] leading-none text-[#3A2220] tracking-tight">
+            <span className="font-serif italic font-light text-4xl sm:text-6xl md:text-7xl lg:text-[85px] leading-none text-[#362223] tracking-tight">
               {isMounted ? String(minutes).padStart(2, '0') : "00"}
             </span>
-            <span className="font-crimson text-[14px] tracking-[0.2em] text-[#3A2220]/65 uppercase mt-3">
+            <span className="font-crimson text-[14px] tracking-[0.2em] text-[#362223]/65 uppercase mt-3">
               {t.minutes}
             </span>
           </div>
 
           {/* DIVIDER 3 */}
-          <div className="h-10 sm:h-16 md:h-20 w-[1px] bg-[#3A2220]/15 self-center -translate-y-3" />
+          <div className="h-10 sm:h-16 md:h-20 w-[1px] bg-[#362223]/15 self-center -translate-y-3" />
 
           {/* SECONDS */}
           <div className="flex flex-col items-center min-w-[55px] sm:min-w-[80px] md:min-w-[100px]">
-            <span className="font-serif italic font-light text-4xl sm:text-6xl md:text-7xl lg:text-[85px] leading-none text-[#3A2220] tracking-tight">
+            <span className="font-serif italic font-light text-4xl sm:text-6xl md:text-7xl lg:text-[85px] leading-none text-[#362223] tracking-tight">
               {isMounted ? String(seconds).padStart(2, '0') : "00"}
             </span>
-            <span className="font-crimson text-[14px] tracking-[0.2em] text-[#3A2220]/65 uppercase mt-3">
+            <span className="font-crimson text-[14px] tracking-[0.2em] text-[#362223]/65 uppercase mt-3">
               {t.seconds}
             </span>
           </div>
         </div>
 
         {/* Location Columns */}
-        <div className="w-full max-w-3xl mx-auto grid grid-cols-3 gap-2 sm:gap-4 text-center text-[#3A2220]/75 font-mono text-[8px] sm:text-[9.5px] tracking-[0.22em] uppercase leading-relaxed pt-6 sm:pt-10">
+        <div className="w-full max-w-3xl mx-auto grid grid-cols-3 gap-2 sm:gap-4 text-center text-[#362223]/75 font-mono text-[8px] sm:text-[9.5px] tracking-[0.22em] uppercase leading-relaxed pt-6 sm:pt-10">
           <div className="space-y-0.5 sm:space-y-1">
-            <p className="font-crimson font-normal text-[14px] text-[#3A2220]">{loc1City || "DANANG"}</p>
-            <p className="font-crimson text-[14px] text-[#3A2220]/50">{loc1Country || "VIETNAM"}</p>
+            <p className="font-crimson font-normal text-[14px] text-[#362223]">{loc1City || "DANANG"}</p>
+            <p className="font-crimson text-[14px] text-[#362223]/50">{loc1Country || "VIETNAM"}</p>
           </div>
           <div className="space-y-0.5 sm:space-y-1">
-            <p className="font-crimson font-normal text-[14px] text-[#3A2220]">{loc2City || "TOKYO"}</p>
-            <p className="font-crimson text-[14px] text-[#3A2220]/50">{loc2Country || "JAPAN"}</p>
+            <p className="font-crimson font-normal text-[14px] text-[#362223]">{loc2City || "TOKYO"}</p>
+            <p className="font-crimson text-[14px] text-[#362223]/50">{loc2Country || "JAPAN"}</p>
           </div>
           <div className="space-y-0.5 sm:space-y-1">
-            <p className="font-crimson font-normal text-[14px] text-[#3A2220]">{loc3City || "CITY"}</p>
-            <p className="font-crimson text-[14px] text-[#3A2220]/50">{loc3Country || "ENGLAND"}</p>
+            <p className="font-crimson font-normal text-[14px] text-[#362223]">{loc3City || "CITY"}</p>
+            <p className="font-crimson text-[14px] text-[#362223]/50">{loc3Country || "ENGLAND"}</p>
           </div>
         </div>
 
         {/* Calligraphic Script Bottom Line */}
-        <h2 className="font-luxurious text-[120px] md:text-[200px] text-[#3A2220] font-light leading-none lowercase tracking-normal text-center select-none -mt-4">
+        <h2 
+          className="font-luxurious text-[#362223] font-light leading-none lowercase tracking-normal text-center select-none -mt-4 whitespace-nowrap w-full"
+          style={{ fontSize: 'clamp(36px, 12.5vw, 240px)', width: '100%', maxWidth: '100%' }}
+        >
           {lang === 'VIE' ? (endTitleVie || "bắt đầu") : (endTitleEng || "begin")}
         </h2>
 
       </div>
 
       {/* Corners - Bottom Left & Bottom Right */}
-      <div className="absolute bottom-8 left-8 sm:bottom-12 sm:left-12 font-mono text-[8px] sm:text-[9.5px] tracking-[0.25em] text-[#3A2220]/75 uppercase">
+      <div className="absolute bottom-8 left-8 sm:bottom-12 sm:left-12 font-mono text-[8px] sm:text-[9.5px] tracking-[0.25em] text-[#362223]/75 uppercase">
         {coupleNames}
       </div>
-      <div className="absolute bottom-8 right-8 sm:bottom-12 sm:right-12 font-mono text-[8px] sm:text-[9.5px] tracking-[0.25em] text-[#3A2220]/75 uppercase">
+      <div className="absolute bottom-8 right-8 sm:bottom-12 sm:right-12 font-mono text-[8px] sm:text-[9.5px] tracking-[0.25em] text-[#362223]/75 uppercase">
         {sinceText || "SINCE 2022"}
       </div>
     </section>

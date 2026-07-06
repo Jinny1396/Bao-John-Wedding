@@ -126,7 +126,7 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
                     onClick={() => setFormData({ ...formData, attendingStatus: option.id })}
                     className={`px-6 py-2 border rounded-full transition-all backdrop-blur-md shadow-sm ${
                       formData.attendingStatus === option.id 
-                        ? 'bg-[#3A2220]/90 text-white border-ink/40 hover:bg-ink' 
+                        ? 'bg-[#362223]/90 text-white border-ink/40 hover:bg-ink' 
                         : 'border-black/15 bg-white/30 text-ink/75 hover:bg-white/60 hover:border-black/30'
                     }`}
                   >
@@ -176,7 +176,7 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
                 className={`px-12 py-4 border uppercase tracking-[0.3em] font-medium transition-all duration-500 text-ink backdrop-blur-md ${
                   isLoading 
                     ? 'opacity-55 bg-black/5 border-black/10 cursor-not-allowed' 
-                    : 'bg-white/40 border-black/15 hover:bg-[#3A2220] hover:text-white hover:border-[#3A2220] cursor-pointer shadow-md'
+                    : 'bg-white/40 border-black/15 hover:bg-[#362223] hover:text-white hover:border-[#362223] cursor-pointer shadow-md'
                 }`}
               >
                 {isLoading ? t.btnSending : t.btnSend}

@@ -832,7 +832,10 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-bg text-ink selection:bg-forest/10 selection:text-ink font-sans transition-colors duration-500 overflow-x-hidden relative">
+    <div 
+      className="min-h-screen bg-bg text-ink selection:bg-forest/10 selection:text-ink font-sans transition-colors duration-500 overflow-x-hidden relative"
+      style={{ backgroundColor: '#F8F4F2' }}
+    >
       
       {/* Top Floating Header with Language Selector and Sound Button */}
       <header className="fixed top-6 right-6 z-50 flex items-center gap-3">
@@ -845,13 +848,13 @@ export default function App() {
           >
             {isMusicPlaying ? (
               <div className="flex items-end gap-[2px] h-4 w-4 px-0.5 justify-center pb-[2px]">
-                <span className="w-0.5 h-3 bg-[#3A2220] rounded-sm animate-audio-bounce-1" />
-                <span className="w-0.5 h-3 bg-[#3A2220] rounded-sm animate-audio-bounce-2" />
-                <span className="w-0.5 h-3 bg-[#3A2220] rounded-sm animate-audio-bounce-3" />
-                <span className="w-0.5 h-3 bg-[#3A2220] rounded-sm animate-audio-bounce-4" />
+                <span className="w-0.5 h-3 bg-[#362223] rounded-sm animate-audio-bounce-1" />
+                <span className="w-0.5 h-3 bg-[#362223] rounded-sm animate-audio-bounce-2" />
+                <span className="w-0.5 h-3 bg-[#362223] rounded-sm animate-audio-bounce-3" />
+                <span className="w-0.5 h-3 bg-[#362223] rounded-sm animate-audio-bounce-4" />
               </div>
             ) : (
-              <VolumeX className="w-4 h-4 text-[#3A2220]" strokeWidth={1.5} />
+              <VolumeX className="w-4 h-4 text-[#362223]" strokeWidth={1.5} />
             )}
           </button>
 
@@ -863,7 +866,7 @@ export default function App() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.3 }}
-                className="absolute right-0 top-12 whitespace-nowrap bg-white/90 backdrop-blur-md border border-black/10 text-[#3A2220] text-[10px] tracking-[0.08em] font-mono px-3 py-1.5 rounded-lg shadow-[0_4px_16px_rgba(0,0,0,0.06)] flex items-center gap-2 select-none"
+                className="absolute right-0 top-12 whitespace-nowrap bg-white/90 backdrop-blur-md border border-black/10 text-[#362223] text-[10px] tracking-[0.08em] font-mono px-3 py-1.5 rounded-lg shadow-[0_4px_16px_rgba(0,0,0,0.06)] flex items-center gap-2 select-none"
               >
                 <span>{t.musicPopup}</span>
                 <button 
@@ -883,8 +886,8 @@ export default function App() {
             onClick={() => setLang('ENG')}
             className={`font-mono text-[9px] tracking-[0.2em] transition-all cursor-pointer font-bold ${
               lang === 'ENG' 
-                ? 'text-[#3A2220] scale-105' 
-                : 'text-neutral-400 hover:text-[#3A2220]'
+                ? 'text-[#362223] scale-105' 
+                : 'text-neutral-400 hover:text-[#362223]'
             }`}
           >
             ENG
@@ -894,8 +897,8 @@ export default function App() {
             onClick={() => setLang('VIE')}
             className={`font-mono text-[9px] tracking-[0.2em] transition-all cursor-pointer font-bold ${
               lang === 'VIE' 
-                ? 'text-[#3A2220] scale-105' 
-                : 'text-neutral-400 hover:text-[#3A2220]'
+                ? 'text-[#362223] scale-105' 
+                : 'text-neutral-400 hover:text-[#362223]'
             }`}
           >
             VIE
@@ -910,9 +913,9 @@ export default function App() {
         aria-label="Toggle Menu"
       >
         {isMobileMenuOpen ? (
-          <X className="w-4 h-4 text-[#3A2220]" strokeWidth={1.5} />
+          <X className="w-4 h-4 text-[#362223]" strokeWidth={1.5} />
         ) : (
-          <Menu className="w-4 h-4 text-[#3A2220]" strokeWidth={1.5} />
+          <Menu className="w-4 h-4 text-[#362223]" strokeWidth={1.5} />
         )}
       </button>
 
@@ -945,7 +948,7 @@ export default function App() {
                   <span className="font-mono text-[10px] tracking-widest text-[#AA9082] uppercase opacity-80">
                     {item.num}
                   </span>
-                  <span className="font-serif text-2xl tracking-wide text-[#3A2220] hover:text-[#AA9082] transition-colors duration-300 uppercase">
+                  <span className="font-serif text-2xl tracking-wide text-[#362223] hover:text-[#AA9082] transition-colors duration-300 uppercase">
                     {item.label}
                   </span>
                 </motion.button>
@@ -962,7 +965,10 @@ export default function App() {
 
       {/* High-End Floating Navigation Sidebar */}
       <div className="fixed left-6 top-1/2 -translate-y-1/2 z-50 bg-transparent shadow-none border-none pointer-events-auto hidden md:block select-none">
-        <div className="group/sidebar flex flex-col gap-6 items-start">
+        <div 
+          className="group/sidebar flex flex-col gap-6 items-start"
+          style={{ transform: 'scale(0.9)', transformOrigin: 'left center' }}
+        >
           {sidebarItems.map((item, index) => {
             const isHovered = hoveredSidebarIndex === index;
             return (
@@ -976,7 +982,7 @@ export default function App() {
                 {/* Micro hover indicator dot on the very left with adaptive color */}
                 <span 
                   className={`w-1 h-1 rounded-full transition-all duration-300 ease-out ${
-                    isPastHero ? 'bg-[#3A2220]' : 'bg-white'
+                    isPastHero ? 'bg-[#362223]' : 'bg-white'
                   } ${
                     isHovered ? 'scale-[2.5] opacity-100' : 'scale-100 opacity-40'
                   }`}
@@ -990,7 +996,7 @@ export default function App() {
                   className={`absolute left-6 font-mono text-sm tracking-wider transition-all duration-300 ease-out ${
                     isHovered
                       ? 'opacity-0 -translate-x-4 pointer-events-none'
-                      : `opacity-65 ${isPastHero ? 'text-[#3A2220]' : 'text-white'}`
+                      : `opacity-65 ${isPastHero ? 'text-[#362223]' : 'text-white'}`
                   }`}
                   style={{
                     mixBlendMode: isPastHero ? 'normal' : 'difference'
@@ -1003,7 +1009,7 @@ export default function App() {
                 <span
                   className={`absolute left-6 font-mono text-xs tracking-[0.25em] font-medium transition-all duration-300 ease-out whitespace-nowrap uppercase ${
                     isHovered
-                      ? `opacity-100 translate-x-0 ${isPastHero ? 'text-[#3A2220]' : 'text-white'}`
+                      ? `opacity-100 translate-x-0 ${isPastHero ? 'text-[#362223]' : 'text-white'}`
                       : 'opacity-0 translate-x-4 pointer-events-none text-transparent'
                   }`}
                   style={{
@@ -1173,14 +1179,14 @@ export default function App() {
                     <div className="flex justify-between items-center pt-2">
                       <button 
                         onClick={prevLightbox} 
-                        className="text-[9px] font-mono tracking-widest uppercase text-ink hover:bg-[#3A2220]/10 bg-white/40 backdrop-blur-sm border border-black/10 rounded-full px-3 py-1 transition-all"
+                        className="text-[9px] font-mono tracking-widest uppercase text-ink hover:bg-[#362223]/10 bg-white/40 backdrop-blur-sm border border-black/10 rounded-full px-3 py-1 transition-all"
                       >
                         {t.prevBtn}
                       </button>
                       <p className="text-[9px] text-[#A2BCA0]">0{lightboxIndex + 1} / 0{galleryImages.length}</p>
                       <button 
                         onClick={nextLightbox} 
-                        className="text-[9px] font-mono tracking-widest uppercase text-ink hover:bg-[#3A2220]/10 bg-white/40 backdrop-blur-sm border border-black/10 rounded-full px-3 py-1 transition-all"
+                        className="text-[9px] font-mono tracking-widest uppercase text-ink hover:bg-[#362223]/10 bg-white/40 backdrop-blur-sm border border-black/10 rounded-full px-3 py-1 transition-all"
                       >
                         {t.nextBtn}
                       </button>
@@ -1194,7 +1200,11 @@ export default function App() {
       </AnimatePresence>
 
       {/* Details / Events Section */}
-      <section id="events" className="py-24 md:py-36 border-t border-ink/5 bg-[#FAF9F6] px-6 md:px-12">
+      <section 
+        id="events" 
+        className="py-24 md:py-36 border-t border-ink/5 px-6 md:px-12"
+        style={{ backgroundColor: '#F8F4F2' }}
+      >
         <div className="max-w-5xl mx-auto grid md:grid-cols-12 gap-16 items-start">
           <div className="md:col-span-7 space-y-32">
             {/* Itinerary */}
@@ -1241,7 +1251,7 @@ export default function App() {
               <div className="relative bg-white p-3 shadow-sm border border-black/5">
                 {/* Tape */}
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 tape -rotate-2 z-10 opacity-80" />
-                <div className="aspect-square overflow-hidden grayscale contrast-125">
+                <div className="aspect-square overflow-hidden contrast-125">
                   <img 
                     src={siteContent.mapImageUrl} 
                     alt="Details" 
@@ -1262,25 +1272,21 @@ export default function App() {
         id="rsvp" 
         className="w-full relative py-12 sm:py-20 md:py-24 overflow-hidden bg-stone-950 min-h-[550px] sm:min-h-[650px] md:min-h-[800px] flex flex-col items-center justify-center select-none"
       >
-        {/* Background romantic wedding photo with high-contrast grayscale/dark overlay */}
-        {siteContent.collageBgUrl && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.5, ease: 'easeOut' }}
-            className="absolute inset-0 z-0"
-          >
-            <img 
-              src={siteContent.collageBgUrl} 
-              alt="Wedding Couple Silhouette" 
-              className="w-full h-full object-cover grayscale contrast-125 brightness-[0.24] pointer-events-none select-none"
-              referrerPolicy="no-referrer"
-            />
-            {/* Subtle vignette layer */}
-            <div className="absolute inset-0 bg-black/40 pointer-events-none" />
-          </motion.div>
-        )}
+        {/* Background romantic wedding photo */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.5, ease: 'easeOut' }}
+          className="absolute inset-0 z-0"
+        >
+          <img 
+            src={siteContent.collageBgUrl || "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=2000&q=80"} 
+            alt="Wedding Couple Silhouette" 
+            className="w-full h-full object-cover pointer-events-none select-none"
+            referrerPolicy="no-referrer"
+          />
+        </motion.div>
 
         {/* Outer Draggable Constraining Stage wrapper to contain draggable wax stamps */}
         <motion.div 
@@ -1291,93 +1297,109 @@ export default function App() {
           transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           className="relative z-10 w-full max-w-5xl h-[460px] sm:h-[580px] md:h-[720px] flex items-center justify-center px-4 overflow-visible"
         >
-          {/* Main Lace Doily Card Background */}
-          <div className="relative w-full max-w-md sm:max-w-xl md:max-w-2xl aspect-[1.38/1] flex items-center justify-center p-6 sm:p-12 md:p-14 rounded-[32px] sm:rounded-[44px] md:rounded-[52px] overflow-hidden bg-transparent shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/5 select-none">
-            {/* Underneath high-quality generated lace doily background image */}
-            <img 
-              src={siteContent.collageLaceBgUrl || "/src/assets/images/lace_card_bg_1781950708806.jpg"} 
-              alt="Lace Frame Decor"
-              className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none rounded-[32px] sm:rounded-[44px] md:rounded-[52px]"
-              referrerPolicy="no-referrer"
-            />
-            
-            {/* The Text & Button overlay inside the card */}
-            <div className="relative z-20 w-full h-full flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-8 pointer-events-auto">
-              {/* Elegant script display title matching the mockup */}
-              <span 
-                className="font-script text-[36px] sm:text-[48px] md:text-[56px] text-[#3a2220] block leading-tight font-medium mb-3 sm:mb-5 mt-2 select-none"
-                style={{ fontStyle: 'italic' }}
-              >
-                Together with our families,
-              </span>
+          {/* Inner Positioning Wrapper to position stamps and card relative to a 700x500 area */}
+          <div className="relative w-full max-w-[700px] h-[500px] flex items-center justify-center overflow-visible pointer-events-none">
+            {/* Main Lace Doily Card Background */}
+            <div 
+              className="relative w-full h-full flex items-center justify-center p-6 sm:p-12 md:p-14 rounded-[32px] sm:rounded-[44px] md:rounded-[52px] overflow-hidden bg-transparent border-none select-none pointer-events-auto"
+            >
+              {/* Underneath high-quality generated lace doily background image */}
+              <img 
+                src={siteContent.collageLaceBgUrl || "/src/assets/images/lace_card_bg_1781950708806.jpg"} 
+                alt="Lace Frame Decor"
+                className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none rounded-[32px] sm:rounded-[44px] md:rounded-[52px] max-sm:rotate-90 max-sm:scale-[1.45]"
+                referrerPolicy="no-referrer"
+              />
               
-              {/* Wedding details paragraph */}
-              <div className="space-y-3 sm:space-y-4 max-w-[92%] sm:max-w-[85%] mx-auto font-serif">
-                <p className="text-[11px] sm:text-[13px] md:text-[15px] italic text-[#3a2220]/80 leading-relaxed font-semibold">
-                  Thank you for being part of one of the the most meaningful moments of our lives.
-                </p>
-                <p className="text-[11px] sm:text-[13px] md:text-[15px] italic text-[#3a2220]/80 leading-relaxed font-semibold">
-                  We cannot wait to celebrate love, laughter, and unforgettable memories with you.
-                </p>
-              </div>
+              {/* The Text & Button overlay inside the card */}
+              <div 
+                className="relative z-20 w-full h-full flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-8 pointer-events-auto"
+                style={{ transform: 'translateY(10px)' }}
+              >
+                {/* Elegant script display title matching the mockup */}
+                <span 
+                  className="font-luxurious text-[#362223] block leading-tight font-medium mb-3 sm:mb-5 mt-2 select-none"
+                  style={{ 
+                    fontFamily: '"Luxurious Script", cursive',
+                    fontSize: '76px',
+                    height: '76px',
+                    width: '600px',
+                    maxWidth: '100%'
+                  }}
+                >
+                  Together with our families,
+                </span>
+                
+                {/* Wedding details paragraph */}
+                <div className="space-y-3 sm:space-y-4 max-w-[92%] sm:max-w-[85%] mx-auto font-serif">
+                  <p 
+                    className="text-[11px] sm:text-[13px] md:text-[15px] italic text-[#362223]/80 font-semibold"
+                    style={{ lineHeight: '16px', width: '360px', maxWidth: '100%', margin: '0 auto' }}
+                  >
+                    Thank you for being part of one of the most meaningful moments of our lives. We cannot wait to celebrate love, laughter, and unforgettable memories with you.
+                  </p>
+                </div>
 
-              {/* Handcrafted buttons for RSVP and Guestbook */}
-              <div className="mt-5 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
-                <button
-                  onClick={() => {
-                    setActiveModalTab('rsvp');
-                    setIsLocalModalOpen(true);
-                  }}
-                  className="px-6 sm:px-8 py-2 sm:py-2.5 rounded-full bg-[#3a2220] hover:bg-[#3a2220]/90 text-[#FAF9F5] font-serif italic text-[11px] sm:text-[13px] active:scale-95 transition-all select-none cursor-pointer duration-300 shadow-md border border-[#3a2220]"
-                >
-                  {lang === 'VIE' ? "Xác nhận tham dự (RSVP)" : "Please RSVP Here"}
-                </button>
-                <button
-                  onClick={() => {
-                    setActiveModalTab('note');
-                    setIsLocalModalOpen(true);
-                  }}
-                  className="px-6 sm:px-8 py-2 sm:py-2.5 rounded-full border border-[#3a2220]/40 text-[#3a2220]/90 font-serif italic text-[11px] sm:text-[13px] bg-transparent hover:bg-[#3a2220]/5 active:scale-95 transition-all select-none cursor-pointer duration-300 shadow-sm"
-                >
-                  {lang === 'VIE' ? "Gửi lời chúc lưu bút" : "Write us a note"}
-                </button>
+                {/* Handcrafted buttons for RSVP and Guestbook */}
+                <div className="mt-5 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
+                  <button
+                    onClick={() => {
+                      setActiveModalTab('rsvp');
+                      setIsLocalModalOpen(true);
+                    }}
+                    className="px-6 sm:px-8 py-2 sm:py-2.5 rounded-full bg-[#362223] hover:bg-[#362223]/90 text-[#FAF9F5] font-serif italic text-[11px] sm:text-[13px] active:scale-95 transition-all select-none cursor-pointer duration-300 shadow-md border border-[#362223]"
+                  >
+                    {lang === 'VIE' ? "Xác nhận tham dự (RSVP)" : "Please RSVP Here"}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setActiveModalTab('note');
+                      setIsLocalModalOpen(true);
+                    }}
+                    className="px-6 sm:px-8 py-2 sm:py-2.5 rounded-full border border-[#362223]/40 text-[#362223]/90 font-serif italic text-[11px] sm:text-[13px] bg-transparent hover:bg-[#362223]/5 active:scale-95 transition-all select-none cursor-pointer duration-300 shadow-sm"
+                    style={{ borderColor: '#ffe3e4' }}
+                  >
+                    {lang === 'VIE' ? "Gửi lời chúc lưu bút" : "Write us a note"}
+                  </button>
+                </div>
               </div>
             </div>
+
+            {/* DRAGGABLE ITEM 1: Pink Circular Wax Seal Stamp (S monogram) */}
+            <motion.div
+              drag
+              dragConstraints={constraintsRef}
+              dragElastic={0.06}
+              whileHover={{ scale: 1.08, rotate: -2, cursor: 'grab' }}
+              whileDrag={{ scale: 1.15, rotate: 6, cursor: 'grabbing', zIndex: 100 }}
+              className="absolute -left-6 sm:-left-10 md:-left-12 top-[35%] sm:top-[38%] z-30 select-none touch-none w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 rounded-full overflow-hidden border-none transition-shadow duration-300 pointer-events-auto"
+              style={{ scale: 0.9 }}
+            >
+              <img 
+                src={siteContent.collagePinkStampUrl || "/src/assets/images/pink_wax_seal_1781950725822.jpg"} 
+                alt="Draggable Pink Monogram Stamp"
+                className="w-full h-full object-cover scale-[1.08] pointer-events-none select-none rounded-full"
+                referrerPolicy="no-referrer"
+              />
+            </motion.div>
+
+            {/* DRAGGABLE ITEM 2: Sage Green Oval Wax Seal Stamp (Wildflower stem illustration) */}
+            <motion.div
+              drag
+              dragConstraints={constraintsRef}
+              dragElastic={0.06}
+              whileHover={{ scale: 1.08, rotate: 2, cursor: 'grab' }}
+              whileDrag={{ scale: 1.15, rotate: -4, cursor: 'grabbing', zIndex: 100 }}
+              className="absolute -right-6 sm:-right-10 md:-right-12 bottom-[12%] sm:bottom-[15%] z-30 select-none touch-none w-20 h-28 sm:w-28 sm:h-38 md:w-36 md:h-48 rounded-[50%/40%] overflow-hidden border-none transition-shadow duration-300 pointer-events-auto"
+            >
+              <img 
+                src={siteContent.collageSageStampUrl || "/src/assets/images/sage_wax_seal_1781950741169.jpg"} 
+                alt="Draggable Sage Green Botanical Stamp"
+                className="w-full h-full object-cover scale-[1.08] pointer-events-none select-none rounded-[50%/40%]"
+                referrerPolicy="no-referrer"
+              />
+            </motion.div>
           </div>
-
-          {/* DRAGGABLE ITEM 1: Pink Circular Wax Seal Stamp (S monogram) */}
-          <motion.div
-            drag
-            dragConstraints={constraintsRef}
-            dragElastic={0.06}
-            whileHover={{ scale: 1.08, rotate: -2, cursor: 'grab' }}
-            whileDrag={{ scale: 1.15, rotate: 6, cursor: 'grabbing', zIndex: 100 }}
-            className="absolute left-[3%] sm:left-[6%] md:left-[8%] top-[35%] sm:top-[38%] z-30 select-none touch-none w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 rounded-full overflow-hidden border border-white/5 transition-shadow duration-300"
-          >
-            <img 
-              src={siteContent.collagePinkStampUrl || "/src/assets/images/pink_wax_seal_1781950725822.jpg"} 
-              alt="Draggable Pink Monogram Stamp"
-              className="w-full h-full object-cover scale-[1.08] pointer-events-none select-none rounded-full"
-              referrerPolicy="no-referrer"
-            />
-          </motion.div>
-
-          {/* DRAGGABLE ITEM 2: Sage Green Oval Wax Seal Stamp (Wildflower stem illustration) */}
-          <motion.div
-            drag
-            dragConstraints={constraintsRef}
-            dragElastic={0.06}
-            whileHover={{ scale: 1.08, rotate: 2, cursor: 'grab' }}
-            whileDrag={{ scale: 1.15, rotate: -4, cursor: 'grabbing', zIndex: 100 }}
-            className="absolute right-[3%] sm:right-[6%] md:right-[8%] bottom-[12%] sm:bottom-[15%] z-30 select-none touch-none w-20 h-28 sm:w-28 sm:h-38 md:w-36 md:h-48 rounded-[50%/40%] overflow-hidden border border-white/5 transition-shadow duration-300"
-          >
-            <img 
-              src={siteContent.collageSageStampUrl || "/src/assets/images/sage_wax_seal_1781950741169.jpg"} 
-              alt="Draggable Sage Green Botanical Stamp"
-              className="w-full h-full object-cover scale-[1.08] pointer-events-none select-none rounded-[50%/40%]"
-              referrerPolicy="no-referrer"
-            />
-          </motion.div>
         </motion.div>
 
         {/* Elegant Stationery Note Writing Popup Modal */}
@@ -1430,7 +1452,7 @@ export default function App() {
                   </span>
                   
                   {/* Editorial elegant mix heading exactly like template image */}
-                  <h3 className="font-serif text-[#3a2220] leading-tight max-w-[90%] mx-auto">
+                  <h3 className="font-serif text-[#362223] leading-tight max-w-[90%] mx-auto">
                     {activeModalTab === 'rsvp' ? (
                       <>
                         <span className="block font-serif italic text-[22px] sm:text-[26px] text-stone-500 font-light leading-none mb-1">
@@ -1462,8 +1484,8 @@ export default function App() {
                       onClick={() => setActiveModalTab('rsvp')}
                       className={`font-mono text-[8.5px] sm:text-[10px] tracking-[0.25em] uppercase pb-2 transition-all relative cursor-pointer ${
                         activeModalTab === 'rsvp' 
-                          ? 'text-[#3a2220] font-semibold border-b border-[#3a2220]' 
-                          : 'text-stone-400 hover:text-[#3a2220]/75'
+                          ? 'text-[#362223] font-semibold border-b border-[#362223]' 
+                          : 'text-stone-400 hover:text-[#362223]/75'
                       }`}
                     >
                       {lang === 'VIE' ? "Xác nhận tham dự" : "RSVP NOW"}
@@ -1473,8 +1495,8 @@ export default function App() {
                       onClick={() => setActiveModalTab('note')}
                       className={`font-mono text-[8.5px] sm:text-[10px] tracking-[0.25em] uppercase pb-2 transition-all relative cursor-pointer ${
                         activeModalTab === 'note' 
-                          ? 'text-[#3a2220] font-semibold border-b border-[#3a2220]' 
-                          : 'text-stone-400 hover:text-[#3a2220]/75'
+                          ? 'text-[#362223] font-semibold border-b border-[#362223]' 
+                          : 'text-stone-400 hover:text-[#362223]/75'
                       }`}
                     >
                       {lang === 'VIE' ? "Gửi lời chúc" : "GUESTNOTE"}
@@ -1550,7 +1572,7 @@ export default function App() {
                       {/* Signature line & Action submit */}
                       <div className="pt-2 pb-5 z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-b border-stone-200/50">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono text-[8px] sm:text-[9px] tracking-widest text-[#3a2220]/60 uppercase whitespace-nowrap select-none">
+                          <span className="font-mono text-[8px] sm:text-[9px] tracking-widest text-[#362223]/60 uppercase whitespace-nowrap select-none">
                             {lang === 'VIE' ? "KÝ TÊN / WITH LOVE," : "SIGNATURE / WITH LOVE:"}
                           </span>
                           <input
@@ -1560,7 +1582,7 @@ export default function App() {
                             placeholder="John Smith..."
                             required
                             maxLength={40}
-                            className="bg-transparent border-b border-stone-300 hover:border-stone-400 focus:border-[#3a2220] outline-none font-script text-[18px] text-[#3a2220]/90 py-1 px-1.5 w-44 sm:w-56 transition-colors focus:ring-0 focus:outline-none"
+                            className="bg-transparent border-b border-stone-300 hover:border-stone-400 focus:border-[#362223] outline-none font-script text-[18px] text-[#362223]/90 py-1 px-1.5 w-44 sm:w-56 transition-colors focus:ring-0 focus:outline-none"
                           />
                         </div>
 

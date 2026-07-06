@@ -83,27 +83,11 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
   return (
     <section 
       id="gathering-grounds" 
-      className="w-full relative py-24 sm:py-32 md:py-36 bg-[#FAF9F5] text-[#3A2220] overflow-hidden px-6 sm:px-12 md:px-16 lg:px-24 xl:px-32 2xl:px-[240px] border-t border-black/5"
+      className="w-full relative py-24 sm:py-32 md:py-36 text-[#362223] overflow-hidden px-6 sm:px-12 md:px-16 lg:px-24 xl:px-32 2xl:px-[240px] border-t border-black/5"
+      style={{ backgroundColor: '#F8F4F2' }}
     >
       {/* Delicate paper grain overlay for textured aesthetic */}
       <div className="absolute inset-0 bg-white/[0.012] opacity-25 pointer-events-none mix-blend-overlay" />
-
-      {/* Decorative leaf sketch backgrounds on outer boundaries */}
-      <div className="absolute -left-12 top-10 w-44 h-72 opacity-[0.06] select-none pointer-events-none scale-x-[-1] rotate-12">
-        <svg viewBox="0 0 100 200" fill="none" stroke="currentColor" className="w-full h-full text-[#3A2220]">
-          <path d="M10 10 C 30 60, 10 130, 80 180 M 10 10 C 40 40, 60 90, 40 130 C 20 160, 40 180, 80 180" strokeWidth="0.8" strokeDasharray="3 3" />
-          <path d="M30 60 C 15 80, 20 110, 35 115" strokeWidth="0.6" />
-          <path d="M45 100 C 60 110, 50 130, 40 140" strokeWidth="0.6" />
-        </svg>
-      </div>
-
-      <div className="absolute -right-16 bottom-16 w-52 h-80 opacity-[0.06] select-none pointer-events-none rotate-45">
-        <svg viewBox="0 0 100 200" fill="none" stroke="currentColor" className="w-full h-full text-[#3A2220]">
-          <path d="M10 10 C 30 60, 10 130, 80 180 M 10 10 C 40 40, 60 90, 40 130 C 20 160, 40 180, 80 180" strokeWidth="0.8" strokeDasharray="3 3" />
-          <path d="M25 50 C 40 60, 35 80, 20 90" strokeWidth="0.6" />
-          <path d="M50 110 C 65 125, 55 145, 45 155" strokeWidth="0.6" />
-        </svg>
-      </div>
 
       <div className="max-w-[1024px] mx-auto grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
         {/* Left column: Text Information */}
@@ -114,16 +98,8 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="lg:col-span-5 space-y-8"
         >
-          {/* Subtitle / Numbering Label */}
-          <div className="space-y-1.5">
-            <span className="font-mono text-[9px] sm:text-[10px] tracking-[0.3em] font-semibold text-stone-500 uppercase block">
-              {subtitle}
-            </span>
-            <div className="w-8 h-[1px] bg-[#3A2220]/25 mt-1" />
-          </div>
-
           {/* Large display elegant heading */}
-          <h2 className="font-luxurious text-[100px] leading-[60px] font-light text-[#3A2220] tracking-tight">
+          <h2 className="font-luxurious text-[100px] leading-[60px] font-light text-[#362223] tracking-tight">
             {title}
           </h2>
 
@@ -135,12 +111,12 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
           {/* Location details split items */}
           <div className="space-y-6 pt-2">
             {/* The Ceremony block */}
-            <div className="flex gap-4 items-start border-l border-[#3A2220]/15 pl-5 py-0.5 group">
-              <div className="mt-1 flex items-center justify-center w-7 h-7 rounded-full bg-white border border-[#3A2220]/10 shadow-[0_1px_3px_rgba(0,0,0,0.02)] text-[#3A2220]/75 group-hover:bg-[#3A2220]/5 transition-colors">
+            <div className="flex gap-4 items-start border-l border-[#362223]/15 pl-5 py-0.5 group">
+              <div className="mt-1 flex items-center justify-center w-7 h-7 rounded-full bg-white border border-[#362223]/10 shadow-[0_1px_3px_rgba(0,0,0,0.02)] text-[#362223]/75 group-hover:bg-[#362223]/5 transition-colors">
                 <Calendar className="w-3.5 h-3.5" strokeWidth={1.5} />
               </div>
               <div className="space-y-1">
-                <h4 className="font-crimson text-[12px] font-bold tracking-[0.18em] uppercase text-[#3A2220]">
+                <h4 className="font-crimson text-[12px] font-bold tracking-[0.18em] uppercase text-[#362223]">
                   {cereTitle}
                 </h4>
                 <p className="font-mono text-[9px] text-stone-600 leading-[12px] font-normal not-italic">
@@ -150,12 +126,12 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
             </div>
 
             {/* The Feast block */}
-            <div className="flex gap-4 items-start border-l border-[#3A2220]/15 pl-5 py-0.5 group">
-              <div className="mt-1 flex items-center justify-center w-7 h-7 rounded-full bg-white border border-[#3A2220]/10 shadow-[0_1px_3px_rgba(0,0,0,0.02)] text-[#3A2220]/75 group-hover:bg-[#3A2220]/5 transition-colors">
+            <div className="flex gap-4 items-start border-l border-[#362223]/15 pl-5 py-0.5 group">
+              <div className="mt-1 flex items-center justify-center w-7 h-7 rounded-full bg-white border border-[#362223]/10 shadow-[0_1px_3px_rgba(0,0,0,0.02)] text-[#362223]/75 group-hover:bg-[#362223]/5 transition-colors">
                 <Utensils className="w-3.5 h-3.5" strokeWidth={1.5} />
               </div>
               <div className="space-y-1">
-                <h4 className="font-crimson text-[12px] font-bold tracking-[0.18em] uppercase text-[#3A2220]">
+                <h4 className="font-crimson text-[12px] font-bold tracking-[0.18em] uppercase text-[#362223]">
                   {feastTitle}
                 </h4>
                 <p className="font-mono text-[9px] text-stone-600 leading-[12px] font-normal not-italic">
@@ -176,10 +152,10 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
         >
           <div 
             onClick={() => setHoveredPin(null)}
-            className="relative rounded-[24px] border border-[#3A2220]/10 bg-[#FAF9F6] p-4 sm:p-5 shadow-sm overflow-hidden w-full aspect-[4/3] sm:aspect-auto sm:h-[430px] mx-auto flex flex-col justify-between"
+            className="relative rounded-[24px] border border-[#362223]/10 bg-[#FAF9F6] p-4 sm:p-5 shadow-sm overflow-hidden w-full aspect-[4/3] sm:aspect-auto sm:h-[430px] mx-auto flex flex-col justify-between"
           >
               {/* Fine grid/dots pattern overlay to enhance design details */}
-              <div className="absolute inset-0 opacity-[0.03] pointer-events-none select-none bg-[radial-gradient(#3a2220_1px,transparent_1px)] [background-size:16px_16px]" />
+              <div className="absolute inset-0 opacity-[0.03] pointer-events-none select-none bg-[radial-gradient(#362223_1px,transparent_1px)] [background-size:16px_16px]" />
 
               {/* Background Hand-Drawn Styled Vector Trail Map */}
               <svg 
@@ -262,8 +238,8 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
 
             {/* CARD TOP ROW: Interactive Map Badge Pill */}
             <div className="relative z-10 flex justify-between items-start">
-              <div className="bg-white/95 border border-[#3A2220]/10 rounded-full py-1.5 px-3.5 flex items-center gap-2 text-[8px] sm:text-[9px] font-mono tracking-widest uppercase text-[#3A2220] shadow-[0_1.5px_4px_rgba(0,0,0,0.02)] select-none">
-                <Compass className="w-3 h-3 text-[#3A2220]/80 animate-spin-slow" strokeWidth={1.5} />
+              <div className="bg-white/95 border border-[#362223]/10 rounded-full py-1.5 px-3.5 flex items-center gap-2 text-[8px] sm:text-[9px] font-mono tracking-widest uppercase text-[#362223] shadow-[0_1.5px_4px_rgba(0,0,0,0.02)] select-none">
+                <Compass className="w-3 h-3 text-[#362223]/80 animate-spin-slow" strokeWidth={1.5} />
                 <span>{mapPill}</span>
               </div>
             </div>
@@ -284,8 +260,8 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
               >
                 {/* Breathing Ripple Anchor dot */}
                 <div className="relative w-2.5 h-2.5 flex items-center justify-center">
-                  <span className="absolute inline-flex h-full w-full rounded-full bg-[#3A2220] opacity-75 animate-ping" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#3A2220]" />
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-[#362223] opacity-75 animate-ping" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#362223]" />
                 </div>
 
                 {/* Info Tooltip Flag */}
@@ -294,15 +270,15 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
                     ? 'translate-y-0 opacity-100 scale-100' 
                     : 'translate-y-1 opacity-0 scale-95 pointer-events-none'
                 }`}>
-                  <div className="relative bg-white/95 border border-[#3A2220]/10 py-1.5 px-2.5 rounded-[4px] shadow-[0_2px_8px_rgba(0,0,0,0.05)] text-center flex flex-col pointer-events-none min-w-[130px] whitespace-nowrap">
-                    <span className="font-mono text-[7px] font-bold tracking-[0.08em] uppercase text-[#3A2220]">
+                  <div className="relative bg-white/95 border border-[#362223]/10 py-1.5 px-2.5 rounded-[4px] shadow-[0_2px_8px_rgba(0,0,0,0.05)] text-center flex flex-col pointer-events-none min-w-[130px] whitespace-nowrap">
+                    <span className="font-mono text-[7px] font-bold tracking-[0.08em] uppercase text-[#362223]">
                       I. WEST RIDGE
                     </span>
                     <span className="font-serif italic text-[8.5px] text-stone-500 mt-0.5 leading-none">
                       {lang === 'ENG' ? "The Ceremony — 4:00 PM" : "Lễ cưới — 16:00"}
                     </span>
                     {/* Small downward triangle indicator */}
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-white border-r border-b border-[#3A2220]/10 rotate-45 -mt-[4px]" />
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-white border-r border-b border-[#362223]/10 rotate-45 -mt-[4px]" />
                   </div>
                 </div>
               </div>
@@ -320,8 +296,8 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
               >
                 {/* Breathing Ripple Anchor dot */}
                 <div className="relative w-2.5 h-2.5 flex items-center justify-center">
-                  <span className="absolute inline-flex h-full w-full rounded-full bg-[#3A2220] opacity-75 animate-ping" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#3A2220]" />
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-[#362223] opacity-75 animate-ping" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#362223]" />
                 </div>
 
                 {/* Info Tooltip Flag */}
@@ -330,15 +306,15 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
                     ? 'translate-y-0 opacity-100 scale-100' 
                     : 'translate-y-1 opacity-0 scale-95 pointer-events-none'
                 }`}>
-                  <div className="relative bg-white/95 border border-[#3A2220]/10 py-1.5 px-2.5 rounded-[4px] shadow-[0_2px_8px_rgba(0,0,0,0.05)] text-center flex flex-col pointer-events-none min-w-[130px] whitespace-nowrap">
-                    <span className="font-mono text-[7px] font-bold tracking-[0.08em] uppercase text-[#3A2220]">
+                  <div className="relative bg-white/95 border border-[#362223]/10 py-1.5 px-2.5 rounded-[4px] shadow-[0_2px_8px_rgba(0,0,0,0.05)] text-center flex flex-col pointer-events-none min-w-[130px] whitespace-nowrap">
+                    <span className="font-mono text-[7px] font-bold tracking-[0.08em] uppercase text-[#362223]">
                       II. THE GLASS BARN
                     </span>
                     <span className="font-serif italic text-[8.5px] text-stone-500 mt-0.5 leading-none">
                       {lang === 'ENG' ? "Feast & Hearth — 5:30 PM" : "Tiệc mừng — 17:30"}
                     </span>
                     {/* Small downward triangle indicator */}
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-white border-r border-b border-[#3A2220]/10 rotate-45 -mt-[4px]" />
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-white border-r border-b border-[#362223]/10 rotate-45 -mt-[4px]" />
                   </div>
                 </div>
               </div>
@@ -346,10 +322,10 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
             </div>
 
               {/* CARD BOTTOM ROW: Coordinates & Directions Button */}
-              <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-6 border-t border-[#3A2220]/5 mt-auto">
+              <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-6 border-t border-[#362223]/5 mt-auto">
                 {/* Dynamic GPS coordinate numbers label */}
-                <div className="flex items-center gap-1.5 text-[#3A2220]/65 text-[8.5px] font-mono tracking-wider">
-                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-[#3A2220]/80 shrink-0" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                <div className="flex items-center gap-1.5 text-[#362223]/65 text-[8.5px] font-mono tracking-wider">
+                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-[#362223]/80 shrink-0" fill="none" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25a7.5 7.5 0 1115 0z" />
                   </svg>
@@ -361,7 +337,7 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
                   href={directionsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-[8.5px] font-mono tracking-[0.22em] text-[#3A2220] hover:text-[#3A2220]/75 transition-colors border-b border-[#3A2220]/35 hover:border-[#3A2220]/70 pb-0.5 cursor-pointer max-w-fit select-none font-bold"
+                  className="flex items-center gap-1 text-[8.5px] font-mono tracking-[0.22em] text-[#362223] hover:text-[#362223]/75 transition-colors border-b border-[#362223]/35 hover:border-[#362223]/70 pb-0.5 cursor-pointer max-w-fit select-none font-bold"
                 >
                   <span>{directionsText}</span>
                   <ArrowRight className="w-3 h-3 translate-y-[-0.5px]" strokeWidth={2} />

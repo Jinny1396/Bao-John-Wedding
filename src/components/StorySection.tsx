@@ -101,7 +101,7 @@ export const StorySection = ({
       id="story" 
       ref={storySectionRef} 
       className="story-section w-full relative overflow-hidden transition-colors duration-500 py-12 md:py-0 md:h-[2200px]"
-      style={{ backgroundColor: '#fee3e8' }}
+      style={{ backgroundColor: '#e7cbd0' }}
     >
       <div className="story-content w-full max-w-7xl mx-auto relative px-4 sm:px-6 md:px-12">
         
@@ -117,7 +117,7 @@ export const StorySection = ({
             style={{ 
               width: '100%', 
               maxWidth: '560px',
-              color: '#3A2220',
+              color: '#362223',
               padding: '10px',
               boxSizing: 'border-box',
               transform: 'scale(0.9)'
@@ -206,7 +206,7 @@ export const StorySection = ({
                     style={{
                       zIndex: 0,
                       backgroundImage: `url("${storyTextBgUrl || 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80&w=1200'}")`,
-                      backgroundSize: '110%',
+                      backgroundSize: 'contain',
                       backgroundRepeat: 'no-repeat',
                       backgroundPosition: 'center',
                       opacity: 1,
@@ -214,75 +214,84 @@ export const StorySection = ({
                     }}
                   />
                   {/* Two Column Names Layout exactly mirroring the screenshot */}
-                  <div className="flex flex-col sm:flex-row items-center justify-center w-full select-none text-[#3A2220] relative z-10 gap-1 sm:gap-[10px]">
+                  <div className="flex flex-row items-center justify-center w-full select-none text-[#362223] relative z-10 gap-1 sm:gap-[10px] translate-y-[10px]">
                     {/* Left Column (Bride) */}
                     <div className="flex flex-col items-center justify-center text-center">
-                      <span className="font-luxurious tracking-tight text-3xl xs:text-4xl sm:text-5xl md:text-[70px] leading-tight md:leading-[52px] w-full max-w-[140px] xs:max-w-[180px] sm:max-w-[220px] md:max-w-[248px] inline-block">
+                      <span className="font-luxurious tracking-tight text-2xl xs:text-3xl sm:text-5xl md:text-[70px] leading-tight md:leading-[52px] w-full max-w-[110px] xs:max-w-[140px] sm:max-w-[220px] md:max-w-[248px] inline-block">
                         {(brideName || "Bảo Eve Huỳnh Lê").replace(/\n/g, ' ')}
                       </span>
                     </div>
                     
                     {/* Center Ampersand */}
-                    <span className="font-luxurious text-[#3A2220] px-1 select-none flex items-center justify-center h-full text-2xl sm:text-4xl md:text-[60px] md:leading-[60px]">
+                    <span className="font-luxurious text-[#362223] px-1 select-none flex items-center justify-center h-full text-xl sm:text-4xl md:text-[60px] md:leading-[60px] translate-x-[10px]">
                       &
                     </span>
                     
                     {/* Right Column (Groom) */}
                     <div className="flex flex-col items-center justify-center text-center">
-                      <span className="font-luxurious tracking-tight text-3xl xs:text-4xl sm:text-5xl md:text-[70px] leading-tight md:leading-[52px] w-full max-w-[140px] xs:max-w-[180px] sm:max-w-[220px] md:max-w-[248px] inline-block">
+                      <span className="font-luxurious tracking-tight text-2xl xs:text-3xl sm:text-5xl md:text-[70px] leading-tight md:leading-[52px] w-full max-w-[110px] xs:max-w-[140px] sm:max-w-[220px] md:max-w-[248px] inline-block">
                         {(groomName || "John Johnathan").replace(/\n/g, ' ')}
                       </span>
                     </div>
                   </div>
 
                   {/* Sub-label */}
-                  <div className="font-luxurious text-[#3A2220] lowercase leading-tight select-none relative z-10 text-xl sm:text-2xl md:text-[40px] mt-2 md:mt-[10px]">
+                  <div className="font-luxurious text-[#362223] lowercase leading-tight select-none relative z-10 text-xl sm:text-2xl md:text-[40px] mt-[-10px] md:mt-[-10px] translate-y-[10px]">
                     {lang === 'VIE' ? "sẽ về chung một nhà" : "are getting married"}
                   </div>
 
                   {/* First separator line */}
-                  <div className="h-px bg-[#3A2220]/20 mx-auto relative z-10 w-full max-w-[90%] md:max-w-[554px] my-2 md:my-[10px]" />
+                  <div 
+                    className="h-px bg-[#362223]/20 mx-auto relative z-10 w-full max-w-[90%] md:max-w-[554px] my-2 md:my-[10px]" 
+                    style={{ width: '100%', maxWidth: '530px' }}
+                  />
 
                   {/* Central paragraph with monospace uppercase letter spacing */}
-                  <p className="font-mono tracking-[0.16em] uppercase text-[#3A2220]/90 max-w-[280px] sm:max-w-sm md:max-w-md mx-auto text-center px-2 select-none relative z-10 text-[9px] sm:text-[10px] leading-relaxed">
+                  <p 
+                    className="font-mono tracking-[0.16em] uppercase text-[#362223]/90 max-w-[280px] sm:max-w-sm md:max-w-md mx-auto text-center px-2 select-none relative z-10 text-[9px] sm:text-[10px] leading-relaxed"
+                    style={{ lineHeight: '14px' }}
+                  >
                     {invitationText || (lang === 'VIE' ? (
                        "TRÂN TRỌNG KÍNH MỜI BẠN GHÉ THĂM MỘT NGÀY ẤM ÁP ĐẦY TIẾNG CƯỜI, HOA CỎ VÀ LỜI THỀ ƯỚC CHUNG ĐÔI."
                     ) : (
-                      "INVITE YOU TO SHARE IN A QUIET WEEKEND OF WOODFIRE, FOREST WALKS, AND THE COMMITMENT OF VOWS."
+                       "INVITE YOU TO SHARE IN A QUIET WEEKEND OF WOODFIRE, FOREST WALKS, AND THE COMMITMENT OF VOWS."
                     ))}
                   </p>
 
                   {/* Second separator line */}
-                  <div className="h-px bg-[#3A2220]/20 mx-auto relative z-10 w-full max-w-[90%] md:max-w-[554px] my-2 md:my-[10px]" />
+                  <div 
+                    className="h-px bg-[#362223]/20 mx-auto relative z-10 w-full max-w-[90%] md:max-w-[554px] my-2 md:my-[10px]" 
+                    style={{ width: '100%', maxWidth: '530px' }}
+                  />
 
                   {/* Three columns footer exactly like screenshot */}
-                  <div className="grid grid-cols-3 w-full items-start text-center text-[#3A2220] select-none relative z-10">
+                  <div className="grid grid-cols-3 w-full items-start text-center text-[#362223] select-none relative z-10">
                     {/* Column 1: Date */}
                     <div className="flex flex-col items-center justify-center p-0 m-0 h-10 md:h-[48px]">
-                      <span style={{ fontFamily: 'Crimson Pro, serif' }} className="italic font-light text-[#3A2220] mb-0 text-center text-xs sm:text-sm md:text-lg leading-tight inline-block w-full">
+                      <span style={{ fontFamily: 'Crimson Pro, serif', fontSize: '20px', height: '24px' }} className="italic font-light text-[#362223] mb-0 text-center text-xs sm:text-sm md:text-lg leading-tight inline-block w-full">
                         {dayPart}
                       </span>
-                      <span style={{ fontFamily: 'Crimson Pro, serif' }} className="tracking-[0.12em] text-[#3A2220]/90 uppercase font-medium text-center text-[9px] sm:text-xs md:text-[18px] leading-tight inline-block w-full">
+                      <span style={{ fontFamily: 'Crimson Pro, serif' }} className="tracking-[0.12em] text-[#362223]/90 uppercase font-medium text-center text-[9px] sm:text-xs md:text-[18px] leading-tight inline-block w-full">
                         {monthYearPart}
                       </span>
                     </div>
 
                     {/* Column 2: Location */}
-                    <div className="flex flex-col items-center justify-center border-x border-[#3A2220]/15 p-0 m-0 h-10 md:h-[48px]">
-                      <span style={{ fontFamily: 'Luxurious Script, cursive' }} className="text-[#3A2220] mb-0 text-center text-sm sm:text-xl md:text-[32px] leading-none inline-block w-full">
+                    <div className="flex flex-col items-center justify-center border-x border-[#362223]/15 p-0 m-0 h-10 md:h-[48px]">
+                      <span style={{ fontFamily: 'Luxurious Script, cursive', height: '24px' }} className="text-[#362223] mb-0 text-center text-sm sm:text-xl md:text-[32px] leading-none inline-block w-full">
                         {locTop}
                       </span>
-                      <span style={{ fontFamily: 'Crimson Pro, serif' }} className="tracking-[0.12em] text-[#3A2220]/90 uppercase font-medium text-center text-[9px] sm:text-xs md:text-[18px] leading-tight inline-block w-full">
+                      <span style={{ fontFamily: 'Crimson Pro, serif' }} className="tracking-[0.12em] text-[#362223]/90 uppercase font-medium text-center text-[9px] sm:text-xs md:text-[18px] leading-tight inline-block w-full">
                         {locBottom}
                       </span>
                     </div>
 
                     {/* Column 3: Time */}
                     <div className="flex flex-col items-center justify-center p-0 m-0 h-10 md:h-[48px]">
-                      <span style={{ fontFamily: 'Crimson Pro, serif' }} className="italic font-light text-[#3A2220] mb-0 text-center text-xs sm:text-sm md:text-lg leading-tight inline-block w-full">
+                      <span style={{ fontFamily: 'Crimson Pro, serif', height: '24px', fontSize: '20px', width: '100%', maxWidth: '181px' }} className="italic font-light text-[#362223] mb-0 text-center text-xs sm:text-sm md:text-lg leading-tight inline-block w-full">
                         {timeTop}
                       </span>
-                      <span style={{ fontFamily: 'Crimson Pro, serif' }} className="tracking-[0.12em] text-[#3A2220]/90 uppercase font-medium text-center text-[9px] sm:text-xs md:text-[18px] leading-tight inline-block w-full">
+                      <span style={{ fontFamily: 'Crimson Pro, serif' }} className="tracking-[0.12em] text-[#362223]/90 uppercase font-medium text-center text-[9px] sm:text-xs md:text-[18px] leading-tight inline-block w-full">
                         {timeBottom}
                       </span>
                     </div>

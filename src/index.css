@@ -11,7 +11,7 @@
   --font-sans: "Inter", sans-serif;
   --color-bg: #F4F3EF;
   --color-forest: #1A3015;
-  --color-ink: #1A1A1A;
+  --color-ink: #362223;
   --color-muted: #717171;
 }
 
@@ -222,14 +222,14 @@ html {
 .story-bg-layer {
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) rotate(90deg) scale(0.8);
+  transform: translate(-50%, -50%) rotate(90deg) scale(1.1);
   width: 100vw;
   height: 100vw;
 }
 
 @media (min-width: 640px) {
   .story-bg-layer {
-    transform: translate(-50%, -50%) rotate(0deg) scale(0.8);
+    transform: translate(-50%, -50%) rotate(0deg) scale(1.1);
     width: calc(100% + 220px);
     height: calc(100% + 220px);
   }
