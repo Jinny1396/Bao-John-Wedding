@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&family=Nothing+You+Could+Do&family=Pinyon+Script&family=Luxurious+Script&family=Inter:wght@300;400;500;600&display=swap');
 
 @theme {
   --font-serif: "Cormorant Garamond", serif;
@@ -300,7 +299,7 @@ html {
 
   div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div#stickyText:nth-of-type(1) > div:nth-of-type(1) {
     position: relative !important;
-    top: 100px !important;
+    top: 200px !important;
   }
 
   div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) {
@@ -313,7 +312,7 @@ html {
     padding-right: 0px !important;
     position: relative !important;
     left: -26px !important;
-    top: 260px !important;
+    top: 360px !important;
   }
 
   div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) {
@@ -323,7 +322,7 @@ html {
     justify-content: center !important;
     gap: 10px !important;
     position: relative !important;
-    top: 30px !important;
+    top: 38px !important;
   }
 
   div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div {
@@ -372,7 +371,7 @@ html {
 }
 
 div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) {
-  min-height: calc(180vh + 200px) !important;
+  min-height: calc(180vh + 44px) !important;
   padding-bottom: 320px !important;
 }
 
