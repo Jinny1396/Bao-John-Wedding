@@ -112,6 +112,12 @@ const IMAGE_FIELDS = [
     defaultUrl: 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80&w=1200'
   },
   {
+    key: 'storyTextBgMobileUrl',
+    label: 'Story Invitation Text Mobile Background',
+    description: 'The romantic texture background behind the bride & groom names and invitation details in the Story section when viewed on mobile devices.',
+    defaultUrl: ''
+  },
+  {
     key: 'collageBgUrl',
     label: 'Collage Section Background',
     description: 'The romantic background photo displayed behind the lace doily interactive section.',
@@ -362,6 +368,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
             storyFourUrl: data.storyFourUrl || '',
             storyFiveUrl: data.storyFiveUrl || '',
             storyTextBgUrl: data.storyTextBgUrl || '',
+            storyTextBgMobileUrl: data.storyTextBgMobileUrl || '',
             collageBgUrl: data.collageBgUrl || '',
             collageLaceBgUrl: data.collageLaceBgUrl || '',
             collagePinkStampUrl: data.collagePinkStampUrl || '',

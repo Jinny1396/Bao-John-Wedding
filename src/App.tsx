@@ -334,6 +334,7 @@ export default function App() {
     storyFourUrl?: string;
     storyFiveUrl?: string;
     storyTextBgUrl?: string;
+    storyTextBgMobileUrl?: string;
     collageBgUrl?: string;
     collageLaceBgUrl?: string;
     collagePinkStampUrl?: string;
@@ -429,6 +430,7 @@ export default function App() {
           storyFourUrl: data.storyFourUrl || '',
           storyFiveUrl: data.storyFiveUrl || '',
           storyTextBgUrl: data.storyTextBgUrl || '',
+          storyTextBgMobileUrl: data.storyTextBgMobileUrl || '',
           collageBgUrl: data.collageBgUrl || '',
           collageLaceBgUrl: data.collageLaceBgUrl || '',
           collagePinkStampUrl: data.collagePinkStampUrl || '',
@@ -1137,6 +1139,7 @@ export default function App() {
         storyFourUrl={siteContent.storyFourUrl}
         storyFiveUrl={siteContent.storyFiveUrl}
         storyTextBgUrl={siteContent.storyTextBgUrl}
+        storyTextBgMobileUrl={siteContent.storyTextBgMobileUrl}
         brideName={siteContent.brideName}
         groomName={siteContent.groomName}
         invitationText={lang === 'VIE' ? siteContent.invitationTextVie : siteContent.invitationTextEng}

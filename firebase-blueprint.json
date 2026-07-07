@@ -96,6 +96,14 @@
           "type": "string",
           "description": "Story Gallery Image 5 (Vertical)"
         },
+        "storyTextBgUrl": {
+          "type": "string",
+          "description": "Story Invitation Text Background"
+        },
+        "storyTextBgMobileUrl": {
+          "type": "string",
+          "description": "Story Invitation Text Mobile Background"
+        },
         "collageBgUrl": {
           "type": "string",
           "description": "Background image for the coastal-blue-collage section"

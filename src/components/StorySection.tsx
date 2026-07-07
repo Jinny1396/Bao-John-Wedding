@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface StorySectionProps {
   lang: 'ENG' | 'VIE';
@@ -8,6 +8,7 @@ interface StorySectionProps {
   storyFourUrl?: string;
   storyFiveUrl?: string;
   storyTextBgUrl?: string;
+  storyTextBgMobileUrl?: string;
   brideName?: string;
   groomName?: string;
   invitationText?: string;
@@ -23,6 +24,7 @@ export const StorySection = ({
   storyFourUrl,
   storyFiveUrl,
   storyTextBgUrl,
+  storyTextBgMobileUrl,
   brideName,
   groomName,
   invitationText,
@@ -31,6 +33,14 @@ export const StorySection = ({
 }: StorySectionProps) => {
   const storySectionRef = useRef<HTMLDivElement>(null);
   const stickyTextRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const handleStickyScroll = () => {
@@ -41,8 +51,8 @@ export const StorySection = ({
       // Match responsive breakpoint: Move it above the images on screens narrower than 768px
       if (window.innerWidth < 768) {
         const availableWidth = window.innerWidth - 40; // 20px padding on each side of the story section
-        // Calculate scale to fit a design width of 355px, capped at 1.2
-        const scaleFactor = Math.min(1.2, availableWidth / 355);
+        // Calculate scale to fit a design width of 340px, capped at 1.2
+        const scaleFactor = Math.min(1.2, availableWidth / 340);
         const widthPercent = (100 / scaleFactor).toFixed(2) + '%';
 
         textWrapper.style.position = 'relative';
@@ -135,12 +145,12 @@ export const StorySection = ({
           style={{ zIndex: 0 }} // Sits in the background
         >
           <div 
-            className="flex flex-col items-center justify-center text-center mx-auto rounded-none relative w-full max-w-full md:max-w-[560px] sticky-text-inner" 
+            className="flex flex-col items-center justify-center text-center mx-auto rounded-none relative w-full max-w-full md:max-w-[560px]" 
             style={{ 
               color: '#362223',
               padding: '10px',
               boxSizing: 'border-box',
-              transform: 'scale(0.9)'
+              transform: 'scale(var(--inner-scale, 0.9))'
             }}
           >
             {/* Helper to dynamically format names for left and right columns */}
@@ -225,7 +235,7 @@ export const StorySection = ({
                     className="absolute pointer-events-none select-none story-bg-layer"
                     style={{
                       zIndex: 0,
-                      backgroundImage: `url("${storyTextBgUrl || 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80&w=1200'}")`,
+                      backgroundImage: `url("${(isMobile && storyTextBgMobileUrl) ? storyTextBgMobileUrl : (storyTextBgUrl || 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80&w=1200')}")`,
                       backgroundSize: 'contain',
                       backgroundRepeat: 'no-repeat',
                       backgroundPosition: 'center',
