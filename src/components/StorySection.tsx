@@ -38,48 +38,70 @@ export const StorySection = ({
       const textWrapper = stickyTextRef.current;
       if (!section || !textWrapper) return;
 
-      // Match responsive breakpoint: Disable sticky on screens narrower than 768px (iPad portrait and mobile)
+      // Match responsive breakpoint: Move it above the images on screens narrower than 768px
       if (window.innerWidth < 768) {
-        textWrapper.style.position = 'static';
+        const availableWidth = window.innerWidth - 40; // 20px padding on each side of the story section
+        // Calculate scale to fit a design width of 355px, capped at 1.2
+        const scaleFactor = Math.min(1.2, availableWidth / 355);
+        const widthPercent = (100 / scaleFactor).toFixed(2) + '%';
+
+        textWrapper.style.position = 'relative';
         textWrapper.style.top = '';
         textWrapper.style.bottom = '';
         textWrapper.style.left = '';
-        textWrapper.style.transform = 'none';
+        textWrapper.style.transform = `scale(${scaleFactor})`;
+        textWrapper.style.width = widthPercent;
+        textWrapper.style.maxWidth = widthPercent;
+        textWrapper.style.opacity = '1';
+        textWrapper.style.pointerEvents = 'auto';
+        
+        textWrapper.style.setProperty('--mobile-scale', `${scaleFactor}`);
+        textWrapper.style.setProperty('--mobile-width', widthPercent);
         return;
+      } else {
+        textWrapper.style.width = '';
+        textWrapper.style.maxWidth = '';
+        textWrapper.style.removeProperty('--mobile-scale');
+        textWrapper.style.removeProperty('--mobile-width');
       }
 
       const rect = section.getBoundingClientRect();
+      const isSectionInViewport = rect.top < window.innerHeight && rect.bottom > 0;
+      
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
       const sectionStart = rect.top + scrollTop;
       const sectionHeight = rect.height;
       const sectionEnd = sectionStart + sectionHeight;
       const scrollPos = scrollTop + window.innerHeight / 2;
 
-      // Spacing buffers for top/bottom margins
-      const activeStartBuffer = sectionStart + 150;
-      const activeEndBuffer = sectionEnd - 200;
+      // Spacing buffers for active content visibility
+      const activeStartBuffer = sectionStart + 350;
+      const activeEndBuffer = sectionEnd - 400;
 
-      if (scrollPos > activeStartBuffer && scrollPos < activeEndBuffer) {
-        // User is scrolling through the middle of the section: PIN the invitation text fixed in the center
+      if (isSectionInViewport) {
         textWrapper.style.position = 'fixed';
         textWrapper.style.top = '50%';
         textWrapper.style.bottom = '';
         textWrapper.style.left = '50%';
-        textWrapper.style.transform = 'translate(-50%, -50%)';
-      } else if (scrollPos >= activeEndBuffer) {
-        // User scrolled past: lock text absolute near the bottom of section
-        textWrapper.style.position = 'absolute';
-        textWrapper.style.top = 'auto';
-        textWrapper.style.bottom = '180px'; // Matching the bottom padding
-        textWrapper.style.left = '50%';
-        textWrapper.style.transform = 'translate(-50%, 0)';
+
+        if (scrollPos > activeStartBuffer && scrollPos < activeEndBuffer) {
+          textWrapper.style.opacity = '1';
+          textWrapper.style.transform = 'translate(-50%, -50%) scale(1)';
+          textWrapper.style.pointerEvents = 'auto';
+        } else {
+          textWrapper.style.opacity = '0';
+          textWrapper.style.transform = 'translate(-50%, -50%) scale(0.95)';
+          textWrapper.style.pointerEvents = 'none';
+        }
       } else {
-        // User hasn't reached scrolling trigger zone: lock absolute at top of section
+        // Safe fallback when section is completely offscreen
         textWrapper.style.position = 'absolute';
         textWrapper.style.top = '220px';
         textWrapper.style.bottom = '';
         textWrapper.style.left = '50%';
-        textWrapper.style.transform = 'translate(-50%, 0)';
+        textWrapper.style.transform = 'translate(-50%, 0) scale(0.95)';
+        textWrapper.style.opacity = '0';
+        textWrapper.style.pointerEvents = 'none';
       }
     };
 
@@ -108,15 +130,13 @@ export const StorySection = ({
         {/* STICKY TEXT WRAPPER - JavaScript-driven fixed coordinates */}
         <div 
           ref={stickyTextRef} 
-          className="text-wrapper text-center select-none w-full max-w-lg md:max-w-xl mx-auto" 
+          className="text-wrapper text-center select-none w-full max-w-full md:max-w-xl mx-auto" 
           id="stickyText"
-          style={{ zIndex: 1 }} // Sits in the background
+          style={{ zIndex: 0 }} // Sits in the background
         >
           <div 
-            className="flex flex-col items-center justify-center text-center mx-auto rounded-none relative" 
+            className="flex flex-col items-center justify-center text-center mx-auto rounded-none relative w-full max-w-full md:max-w-[560px] sticky-text-inner" 
             style={{ 
-              width: '100%', 
-              maxWidth: '560px',
               color: '#362223',
               padding: '10px',
               boxSizing: 'border-box',
@@ -214,29 +234,47 @@ export const StorySection = ({
                     }}
                   />
                   {/* Two Column Names Layout exactly mirroring the screenshot */}
-                  <div className="flex flex-row items-center justify-center w-full select-none text-[#362223] relative z-10 gap-1 sm:gap-[10px] translate-y-[10px]">
+                  <div className="flex flex-row items-center justify-center w-full select-none text-[#362223] relative z-10 gap-1 sm:gap-[10px] translate-y-[10px] responsive-names-container">
                     {/* Left Column (Bride) */}
                     <div className="flex flex-col items-center justify-center text-center">
-                      <span className="font-luxurious tracking-tight text-2xl xs:text-3xl sm:text-5xl md:text-[70px] leading-tight md:leading-[52px] w-full max-w-[110px] xs:max-w-[140px] sm:max-w-[220px] md:max-w-[248px] inline-block">
-                        {(brideName || "Bảo Eve Huỳnh Lê").replace(/\n/g, ' ')}
+                      <span className="font-luxurious tracking-tight text-[6vw] xs:text-[5.5vw] sm:text-5xl md:text-[70px] leading-tight md:leading-[52px] w-full max-w-[42%] sm:max-w-[220px] md:max-w-[248px] inline-block responsive-name-span">
+                        {brideFormatted.line2 ? (
+                          <>
+                            {brideFormatted.line1}
+                            <br className="block sm:hidden" />
+                            <span className="hidden sm:inline"> </span>
+                            {brideFormatted.line2}
+                          </>
+                        ) : (
+                          brideFormatted.line1
+                        )}
                       </span>
                     </div>
                     
                     {/* Center Ampersand */}
-                    <span className="font-luxurious text-[#362223] px-1 select-none flex items-center justify-center h-full text-xl sm:text-4xl md:text-[60px] md:leading-[60px] translate-x-[10px]">
+                    <span className="font-luxurious text-[#362223] px-1 select-none flex items-center justify-center h-full text-[5vw] sm:text-4xl md:text-[60px] md:leading-[60px] sm:translate-x-[10px] translate-x-0">
                       &
                     </span>
                     
                     {/* Right Column (Groom) */}
                     <div className="flex flex-col items-center justify-center text-center">
-                      <span className="font-luxurious tracking-tight text-2xl xs:text-3xl sm:text-5xl md:text-[70px] leading-tight md:leading-[52px] w-full max-w-[110px] xs:max-w-[140px] sm:max-w-[220px] md:max-w-[248px] inline-block">
-                        {(groomName || "John Johnathan").replace(/\n/g, ' ')}
+                      <span className="font-luxurious tracking-tight text-[6vw] xs:text-[5.5vw] sm:text-5xl md:text-[70px] leading-tight md:leading-[52px] w-full max-w-[42%] sm:max-w-[220px] md:max-w-[248px] inline-block responsive-name-span">
+                        {groomFormatted.line2 ? (
+                          <>
+                            {groomFormatted.line1}
+                            <br className="block sm:hidden" />
+                            <span className="hidden sm:inline"> </span>
+                            {groomFormatted.line2}
+                          </>
+                        ) : (
+                          groomFormatted.line1
+                        )}
                       </span>
                     </div>
                   </div>
 
                   {/* Sub-label */}
-                  <div className="font-luxurious text-[#362223] lowercase leading-tight select-none relative z-10 text-xl sm:text-2xl md:text-[40px] mt-[-10px] md:mt-[-10px] translate-y-[10px]">
+                  <div className="font-luxurious text-[#362223] lowercase leading-tight select-none relative z-10 text-[5.5vw] sm:text-2xl md:text-[40px] mt-[-10px] md:mt-[-10px] translate-y-[10px]">
                     {lang === 'VIE' ? "sẽ về chung một nhà" : "are getting married"}
                   </div>
 
@@ -265,33 +303,33 @@ export const StorySection = ({
                   />
 
                   {/* Three columns footer exactly like screenshot */}
-                  <div className="grid grid-cols-3 w-full items-start text-center text-[#362223] select-none relative z-10">
+                  <div className="grid grid-cols-3 w-full items-start text-center text-[#362223] select-none relative z-10 gap-px">
                     {/* Column 1: Date */}
                     <div className="flex flex-col items-center justify-center p-0 m-0 h-10 md:h-[48px]">
-                      <span style={{ fontFamily: 'Crimson Pro, serif', fontSize: '20px', height: '24px' }} className="italic font-light text-[#362223] mb-0 text-center text-xs sm:text-sm md:text-lg leading-tight inline-block w-full">
+                      <span style={{ fontFamily: 'Crimson Pro, serif', height: '24px' }} className="italic font-light text-[#362223] mb-0 text-center text-[15px] sm:text-lg md:text-xl leading-tight inline-block w-full">
                         {dayPart}
                       </span>
-                      <span style={{ fontFamily: 'Crimson Pro, serif' }} className="tracking-[0.12em] text-[#362223]/90 uppercase font-medium text-center text-[9px] sm:text-xs md:text-[18px] leading-tight inline-block w-full">
+                      <span style={{ fontFamily: 'Crimson Pro, serif' }} className="tracking-[0.12em] text-[#362223]/90 uppercase font-medium text-center text-[8px] sm:text-xs md:text-[18px] leading-tight inline-block w-full">
                         {monthYearPart}
                       </span>
                     </div>
 
                     {/* Column 2: Location */}
                     <div className="flex flex-col items-center justify-center border-x border-[#362223]/15 p-0 m-0 h-10 md:h-[48px]">
-                      <span style={{ fontFamily: 'Luxurious Script, cursive', height: '24px' }} className="text-[#362223] mb-0 text-center text-sm sm:text-xl md:text-[32px] leading-none inline-block w-full">
+                      <span style={{ fontFamily: 'Luxurious Script, cursive', height: '24px' }} className="text-[#362223] mb-0 text-center text-[14px] sm:text-xl md:text-[32px] leading-none inline-block w-full">
                         {locTop}
                       </span>
-                      <span style={{ fontFamily: 'Crimson Pro, serif' }} className="tracking-[0.12em] text-[#362223]/90 uppercase font-medium text-center text-[9px] sm:text-xs md:text-[18px] leading-tight inline-block w-full">
+                      <span style={{ fontFamily: 'Crimson Pro, serif' }} className="tracking-[0.12em] text-[#362223]/90 uppercase font-medium text-center text-[8px] sm:text-xs md:text-[18px] leading-tight inline-block w-full">
                         {locBottom}
                       </span>
                     </div>
 
                     {/* Column 3: Time */}
                     <div className="flex flex-col items-center justify-center p-0 m-0 h-10 md:h-[48px]">
-                      <span style={{ fontFamily: 'Crimson Pro, serif', height: '24px', fontSize: '20px', width: '100%', maxWidth: '181px' }} className="italic font-light text-[#362223] mb-0 text-center text-xs sm:text-sm md:text-lg leading-tight inline-block w-full">
+                      <span style={{ fontFamily: 'Crimson Pro, serif', height: '24px', width: '100%' }} className="italic font-light text-[#362223] mb-0 text-center text-[15px] sm:text-lg md:text-xl leading-tight inline-block w-full">
                         {timeTop}
                       </span>
-                      <span style={{ fontFamily: 'Crimson Pro, serif' }} className="tracking-[0.12em] text-[#362223]/90 uppercase font-medium text-center text-[9px] sm:text-xs md:text-[18px] leading-tight inline-block w-full">
+                      <span style={{ fontFamily: 'Crimson Pro, serif' }} className="tracking-[0.12em] text-[#362223]/90 uppercase font-medium text-center text-[8px] sm:text-xs md:text-[18px] leading-tight inline-block w-full">
                         {timeBottom}
                       </span>
                     </div>
@@ -305,7 +343,7 @@ export const StorySection = ({
         {/* HIGH-FIDELITY ASYMMETRICAL EDITORIAL IMAGE COLLAGE (Chelsea Demo Theme matching) */}
         {/* Fully responsive proportional absolute canvas allowing easy sizing and fluid-engine style changes */}
         <div 
-          className="hidden md:block w-full relative z-0 animate-fadeIn"
+          className="hidden md:block w-full relative z-10 animate-fadeIn"
           style={{
             position: 'relative',
             width: '100%',

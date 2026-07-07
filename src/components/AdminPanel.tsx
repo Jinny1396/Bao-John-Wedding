@@ -64,6 +64,12 @@ const IMAGE_FIELDS = [
     defaultUrl: ''
   },
   {
+    key: 'loadingIconUrl',
+    label: 'Loading Screen Icon / Monogram',
+    description: 'The custom icon or monogram image displayed in the center of the loading screen when the website first loads.',
+    defaultUrl: ''
+  },
+  {
     key: 'leftPortraitUrl',
     label: 'Left Story Portrait',
     description: 'The couple portrait displayed on the left of the wedding story sticky collage details.',
@@ -348,6 +354,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
           setSiteImages({
             imageUrl: data.imageUrl || '',
             heroMonogramUrl: data.heroMonogramUrl || '',
+            loadingIconUrl: data.loadingIconUrl || '',
             leftPortraitUrl: data.leftPortraitUrl || '',
             rightPortraitUrl: data.rightPortraitUrl || '',
             mapImageUrl: data.mapImageUrl || '',

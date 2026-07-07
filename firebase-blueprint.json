@@ -60,6 +60,14 @@
           "type": "string",
           "description": "Main Hero Background image URL"
         },
+        "heroMonogramUrl": {
+          "type": "string",
+          "description": "Hero section monogram custom emblem"
+        },
+        "loadingIconUrl": {
+          "type": "string",
+          "description": "Custom loading screen monogram / icon URL"
+        },
         "leftPortraitUrl": {
           "type": "string",
           "description": "Left Story Portrait image URL"

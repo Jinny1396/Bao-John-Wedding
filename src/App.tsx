@@ -10,7 +10,19 @@ import { onSnapshot, doc, collection, addDoc, query, orderBy, serverTimestamp } 
 import { db, handleFirestoreError, OperationType } from './firebase';
 
 // Reusable elegant Oval Monogram SVG / PNG Component
-const OvalMonogram = ({ className = 'w-16 h-16', imageUrl, textClass = "text-current" }: { className?: string; imageUrl?: string; textClass?: string }) => (
+const OvalMonogram = ({ 
+  className = 'w-16 h-16', 
+  imageUrl, 
+  textClass = "text-current",
+  bInitial = "S",
+  gInitial = "A"
+}: { 
+  className?: string; 
+  imageUrl?: string; 
+  textClass?: string;
+  bInitial?: string;
+  gInitial?: string;
+}) => (
   <div className={`relative flex items-center justify-center ${className}`}>
     {imageUrl ? (
       <img 
@@ -33,8 +45,8 @@ const OvalMonogram = ({ className = 'w-16 h-16', imageUrl, textClass = "text-cur
           className="font-serif text-3xl font-light tracking-tight fill-current"
           style={{ fontFamily: '"Cormorant Garamond", serif' }}
         >
-          <tspan dx="-2" dy="-5" fontSize="26">S</tspan>
-          <tspan dx="-8" dy="8" fontSize="23" opacity="0.8">A</tspan>
+          <tspan dx="-2" dy="-5" fontSize="26">{bInitial}</tspan>
+          <tspan dx="-8" dy="8" fontSize="23" opacity="0.8">{gInitial}</tspan>
         </text>
       </svg>
     )}
@@ -286,6 +298,7 @@ class AmbientPianoSynth {
 
 export default function App() {
   const [lang, setLang] = useState<'VIE' | 'ENG'>('ENG');
+  const [isLoadingContent, setIsLoadingContent] = useState(true);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [hoveredSidebarIndex, setHoveredSidebarIndex] = useState<number | null>(null);
   const [isPastHero, setIsPastHero] = useState(false);
@@ -313,6 +326,7 @@ export default function App() {
   const [siteContent, setSiteContent] = useState<{
     imageUrl?: string;
     heroMonogramUrl?: string;
+    loadingIconUrl?: string;
     leftPortraitUrl?: string;
     rightPortraitUrl?: string;
     mapImageUrl?: string;
@@ -407,6 +421,7 @@ export default function App() {
         setSiteContent({
           imageUrl: data.imageUrl || '',
           heroMonogramUrl: data.heroMonogramUrl || '',
+          loadingIconUrl: data.loadingIconUrl || '',
           leftPortraitUrl: data.leftPortraitUrl || '',
           rightPortraitUrl: data.rightPortraitUrl || '',
           mapImageUrl: data.mapImageUrl || '',
@@ -493,6 +508,10 @@ export default function App() {
           gatherDirectionsUrl: data.gatherDirectionsUrl || '',
         });
       }
+      setIsLoadingContent(false);
+    }, (error) => {
+      console.error("Failed to load site content:", error);
+      setIsLoadingContent(false);
     });
     return () => unsubscribe();
   }, []);
@@ -825,6 +844,34 @@ export default function App() {
     }
   };
 
+  const bName = siteContent.brideName || "";
+  const gName = siteContent.groomName || "";
+  const bInitial = bName ? bName.trim().charAt(0).toUpperCase() : "S";
+  const gInitial = gName ? gName.trim().charAt(0).toUpperCase() : "A";
+
+  if (isLoadingContent) {
+    return (
+      <div 
+        className="min-h-screen flex flex-col items-center justify-center gap-6"
+        style={{ backgroundColor: '#F8F4F2' }}
+      >
+        <motion.div
+          animate={{ opacity: [0.4, 1, 0.4] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+          className="flex flex-col items-center gap-4 text-stone-400 font-mono tracking-widest text-[9px]"
+        >
+          <OvalMonogram 
+            className="w-16 h-16 text-stone-300" 
+            imageUrl={siteContent.loadingIconUrl} 
+            bInitial={bInitial}
+            gInitial={gInitial}
+          />
+          <span>LOADING CELEBRATION...</span>
+        </motion.div>
+      </div>
+    );
+  }
+
   const isAdminPath = currentPath === '/admin' || currentPath === '/admin/' || window.location.hash === '#/admin' || window.location.search.includes('admin=true');
 
   if (isAdminPath) {
@@ -957,7 +1004,12 @@ export default function App() {
             
             {/* Elegant Monogram at the bottom of mobile menu */}
             <div className="absolute bottom-12 left-1/2 -translate-x-1/2 opacity-30 scale-75">
-              <OvalMonogram className="w-20 h-20" imageUrl={siteContent.heroMonogramUrl} />
+              <OvalMonogram 
+                className="w-20 h-20" 
+                imageUrl={siteContent.heroMonogramUrl} 
+                bInitial={bInitial}
+                gInitial={gInitial}
+              />
             </div>
           </motion.div>
         )}
@@ -1026,7 +1078,7 @@ export default function App() {
 
 
       {/* Style Reference Hero Section with full-background image and darken overlay */}
-      <section id="hero" className="relative w-full h-screen flex items-end justify-center overflow-hidden bg-stone-950 px-6 pb-[30px] pt-24">
+      <section id="hero" className="relative w-full h-screen flex items-end justify-center overflow-hidden bg-stone-950 px-2 sm:px-6 pb-[30px] pt-24">
         {/* Full-background image with darken overlay */}
         {siteContent.imageUrl && (
           <div className="absolute inset-0 z-0">
@@ -1041,25 +1093,28 @@ export default function App() {
         )}
 
         {/* Center Typography & Emblem */}
-        <div className="relative z-10 max-w-4xl mx-auto text-center">
+        <div className="relative z-10 w-full max-w-4xl mx-auto text-center px-0 sm:px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2 }}
-            className="flex flex-col items-center text-center"
+            className="flex flex-col items-center text-center w-full"
           >
             <div className="flex justify-center translate-y-[20px]">
-              <OvalMonogram className="w-[100px] h-[64px] text-bg/90" imageUrl={siteContent.heroMonogramUrl} />
+              <OvalMonogram 
+                className="w-[100px] h-[64px] text-bg/90" 
+                imageUrl={siteContent.heroMonogramUrl} 
+                bInitial={bInitial}
+                gInitial={gInitial}
+              />
             </div>
             
-            <div className="mt-8">
+            <div className="mt-8 w-full">
               <h2 
-                className="font-luxurious tracking-tight"
+                className="font-luxurious tracking-tight text-[105px] leading-[75.375px] sm:text-[110px] md:text-[170px] sm:leading-[100px] md:leading-[120px] w-full block"
                 style={{
                   borderColor: '#FFE4E9',
                   fontFamily: '"Luxurious Script", cursive',
-                  fontSize: '170px',
-                  lineHeight: '120px',
                   whiteSpace: 'pre-line',
                   color: '#FFE4E9'
                 }}
@@ -1206,7 +1261,7 @@ export default function App() {
         style={{ backgroundColor: '#F8F4F2' }}
       >
         <div className="max-w-5xl mx-auto grid md:grid-cols-12 gap-16 items-start">
-          <div className="md:col-span-7 space-y-32">
+          <div className="order-2 md:order-1 md:col-span-7 space-y-32">
             {/* Itinerary */}
             <div className="grid grid-cols-3 gap-4 font-mono text-[9px] tracking-[0.2em] uppercase">
               <p className="text-muted font-crimson text-[12px]">{t.itinerary}</p>
@@ -1246,7 +1301,13 @@ export default function App() {
 
           {/* Details Photo */}
           {siteContent.mapImageUrl && (
-            <div className="md:col-span-5 relative pt-16">
+            <motion.div 
+              className="order-1 md:order-2 md:col-span-5 relative pt-16"
+              initial={{ opacity: 0, y: 45, rotate: -5, scale: 0.95 }}
+              whileInView={{ opacity: 1, y: 0, rotate: 0, scale: 1 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+            >
               <h2 className="font-luxurious text-[100px] font-light absolute top-[-14px] left-[-50px] z-20 -rotate-3 text-ink leading-none">{t.detailsTitle}</h2>
               <div className="relative bg-white p-3 shadow-sm border border-black/5">
                 {/* Tape */}
@@ -1260,7 +1321,7 @@ export default function App() {
                   />
                 </div>
               </div>
-            </div>
+            </motion.div>
           )}
         </div>
       </section>

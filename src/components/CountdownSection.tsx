@@ -137,7 +137,7 @@ export default function CountdownSection({
         {/* Calligraphic Script Title */}
         <h2 
           className="font-luxurious text-[#362223] font-light leading-none capitalize tracking-normal text-center select-none pt-4 whitespace-nowrap w-full"
-          style={{ fontSize: 'clamp(36px, 12.5vw, 240px)', width: '100%', maxWidth: '100%' }}
+          style={{ fontSize: 'clamp(36px, 15.6vw, 300px)', width: '100%', maxWidth: '100%' }}
         >
           {lang === 'VIE' ? (titleVie || "Cùng đếm ngược") : (titleEng || "Let's the countdown")}
         </h2>
@@ -213,7 +213,7 @@ export default function CountdownSection({
         {/* Calligraphic Script Bottom Line */}
         <h2 
           className="font-luxurious text-[#362223] font-light leading-none lowercase tracking-normal text-center select-none -mt-4 whitespace-nowrap w-full"
-          style={{ fontSize: 'clamp(36px, 12.5vw, 240px)', width: '100%', maxWidth: '100%' }}
+          style={{ fontSize: 'clamp(36px, 15.6vw, 300px)', width: '100%', maxWidth: '100%' }}
         >
           {lang === 'VIE' ? (endTitleVie || "bắt đầu") : (endTitleEng || "begin")}
         </h2>
