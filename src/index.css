@@ -375,6 +375,28 @@ div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) {
   padding-bottom: 320px !important;
 }
 
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div#stickyText:nth-of-type(1) > div:nth-of-type(1) .h-px,
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div#stickyText:nth-of-type(1) > div:nth-of-type(1) [class*="h-px"] {
+  background-color: #d7b0b0 !important;
+}
+
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div#stickyText:nth-of-type(1) > div:nth-of-type(1) .border-x,
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div#stickyText:nth-of-type(1) > div:nth-of-type(1) [class*="border-x"] {
+  border-color: #d7b0b0 !important;
+}
+
+@media (max-width: 767px) {
+  div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div#stickyText:nth-of-type(1) > div:nth-of-type(1) .story-bg-layer,
+  section#story .story-bg-layer,
+  .story-bg-layer {
+    transform: translate(-50%, -50%) rotate(-90deg) scale(1.3) !important;
+    width: calc(100% + 140px) !important;
+    height: calc(100% + 140px) !important;
+    max-width: none !important;
+    max-height: none !important;
+  }
+}
+
 @media (min-width: 640px) {
   .story-bg-layer {
     transform: translate(-50%, -50%) rotate(0deg) scale(1.1);
