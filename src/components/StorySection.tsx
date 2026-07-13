@@ -48,6 +48,27 @@ export const StorySection = ({
       const textWrapper = stickyTextRef.current;
       if (!section || !textWrapper) return;
 
+      const rect = section.getBoundingClientRect();
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const sectionStart = rect.top + scrollTop;
+      const sectionHeight = rect.height;
+      const sectionEnd = sectionStart + sectionHeight;
+      const scrollPos = scrollTop + window.innerHeight / 2;
+
+      // Spacing buffers for active content visibility
+      const activeStartBuffer = sectionStart + 350;
+      const activeEndBuffer = sectionEnd - 400;
+
+      const isDesktopActive = scrollPos > activeStartBuffer && scrollPos < activeEndBuffer;
+      const isMobileActive = rect.top < window.innerHeight * 0.85 && rect.bottom > 0;
+      const isCurrentlyActive = window.innerWidth < 768 ? isMobileActive : isDesktopActive;
+
+      if (isCurrentlyActive) {
+        textWrapper.classList.add('is-visible');
+      } else {
+        textWrapper.classList.remove('is-visible');
+      }
+
       // Match responsive breakpoint: Move it above the images on screens narrower than 768px
       if (window.innerWidth < 768) {
         const availableWidth = window.innerWidth - 40; // 20px padding on each side of the story section
@@ -75,18 +96,7 @@ export const StorySection = ({
         textWrapper.style.removeProperty('--mobile-width');
       }
 
-      const rect = section.getBoundingClientRect();
       const isSectionInViewport = rect.top < window.innerHeight && rect.bottom > 0;
-      
-      const scrollTop = window.scrollY || document.documentElement.scrollTop;
-      const sectionStart = rect.top + scrollTop;
-      const sectionHeight = rect.height;
-      const sectionEnd = sectionStart + sectionHeight;
-      const scrollPos = scrollTop + window.innerHeight / 2;
-
-      // Spacing buffers for active content visibility
-      const activeStartBuffer = sectionStart + 350;
-      const activeEndBuffer = sectionEnd - 400;
 
       if (isSectionInViewport) {
         textWrapper.style.position = 'fixed';
@@ -132,7 +142,7 @@ export const StorySection = ({
     <section 
       id="story" 
       ref={storySectionRef} 
-      className="story-section w-full relative overflow-hidden transition-colors duration-500 py-12 md:py-0 md:h-[2200px]"
+      className="story-section w-full relative overflow-hidden transition-colors duration-500 py-12 md:py-0 md:h-[2300px]"
       style={{ backgroundColor: '#e7cbd0' }}
     >
       <div className="story-content w-full max-w-7xl mx-auto relative px-4 sm:px-6 md:px-12">
@@ -149,8 +159,7 @@ export const StorySection = ({
             style={{ 
               color: '#362223',
               padding: '10px',
-              boxSizing: 'border-box',
-              transform: 'scale(var(--inner-scale, 0.9))'
+              boxSizing: 'border-box'
             }}
           >
             {/* Helper to dynamically format names for left and right columns */}
@@ -284,7 +293,7 @@ export const StorySection = ({
                   </div>
 
                   {/* Sub-label */}
-                  <div className="font-luxurious text-[#362223] lowercase leading-tight select-none relative z-10 text-[5.5vw] sm:text-2xl md:text-[40px] mt-[-10px] md:mt-[-10px] translate-y-[10px]">
+                  <div className="font-luxurious text-[#362223] lowercase leading-tight select-none relative z-10 text-[5.5vw] sm:text-2xl md:text-[40px] mt-[-10px] md:mt-[-10px] translate-y-[10px] story-sublabel">
                     {lang === 'VIE' ? "sẽ về chung một nhà" : "are getting married"}
                   </div>
 
@@ -296,7 +305,7 @@ export const StorySection = ({
 
                   {/* Central paragraph with monospace uppercase letter spacing */}
                   <p 
-                    className="font-mono tracking-[0.16em] uppercase text-[#362223]/90 max-w-[280px] sm:max-w-sm md:max-w-md mx-auto text-center px-2 select-none relative z-10 text-[9px] sm:text-[10px] leading-relaxed"
+                    className="font-mono tracking-[0.16em] uppercase text-[#362223]/90 max-w-[280px] sm:max-w-sm md:max-w-md mx-auto text-center px-2 select-none relative z-10 text-[9px] sm:text-[10px] leading-relaxed story-invitation-text"
                     style={{ lineHeight: '14px' }}
                   >
                     {invitationText || (lang === 'VIE' ? (
@@ -313,7 +322,7 @@ export const StorySection = ({
                   />
 
                   {/* Three columns footer exactly like screenshot */}
-                  <div className="grid grid-cols-3 w-full items-start text-center text-[#362223] select-none relative z-10 gap-px">
+                  <div className="grid grid-cols-3 w-full items-start text-center text-[#362223] select-none relative z-10 gap-px story-footer-grid">
                     {/* Column 1: Date */}
                     <div className="flex flex-col items-center justify-center p-0 m-0 h-10 md:h-[48px]">
                       <span style={{ fontFamily: 'Crimson Pro, serif', height: '24px' }} className="italic font-light text-[#362223] mb-0 text-center text-[15px] sm:text-lg md:text-xl leading-tight inline-block w-full">

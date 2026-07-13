@@ -110,10 +110,10 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onSubmit={handleSubmit}
-            className="space-y-12"
+            className="space-y-6"
           >
             {/* Attendance Toggle */}
-            <div className="space-y-4">
+            <div className="space-y-2">
               <p className="text-muted">{t.promptStatus}</p>
               <div className="flex flex-wrap gap-4">
                 {[
@@ -137,7 +137,7 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
             </div>
 
             {/* Guest Name Field */}
-            <div className="space-y-4">
+            <div className="space-y-2">
               <p className="text-muted">{t.nameLabel} <span className="lowercase opacity-50">({t.requiredLabel})</span></p>
               <input
                 required
@@ -150,7 +150,7 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
             </div>
 
             {/* Dietary Restrictions */}
-            <div className="space-y-4">
+            <div className="space-y-2">
               <p className="text-muted">{t.dietLabel}</p>
               <textarea
                 rows={2}
@@ -169,15 +169,16 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
               </div>
             )}
 
-            <div className="pt-8 text-center">
+            <div className="pt-4 text-center">
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`px-12 py-4 border uppercase tracking-[0.3em] font-medium transition-all duration-500 text-ink backdrop-blur-md ${
+                className={`px-6 sm:px-8 py-2 sm:py-2.5 rounded-full bg-white/40 hover:bg-white/70 backdrop-blur-md border hover:border-black/25 text-[#362223] font-serif italic active:scale-95 transition-all select-none cursor-pointer duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.04)] ${
                   isLoading 
-                    ? 'opacity-55 bg-black/5 border-black/10 cursor-not-allowed' 
-                    : 'bg-white/40 border-black/15 hover:bg-[#362223] hover:text-white hover:border-[#362223] cursor-pointer shadow-md'
+                    ? 'opacity-55 cursor-not-allowed border-black/10' 
+                    : 'border-black/10'
                 }`}
+                style={{ fontSize: '12px', fontWeight: 'bold' }}
               >
                 {isLoading ? t.btnSending : t.btnSend}
               </button>

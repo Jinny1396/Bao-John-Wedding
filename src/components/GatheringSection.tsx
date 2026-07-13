@@ -28,6 +28,7 @@ interface GatheringSectionProps {
     gatherDirectionsTextEng?: string;
     gatherDirectionsTextVie?: string;
     gatherDirectionsUrl?: string;
+    gatherPinUrl?: string;
   };
 }
 
@@ -112,7 +113,7 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
           <div className="space-y-6 pt-2">
             {/* The Ceremony block */}
             <div className="flex gap-4 items-start border-l border-[#362223]/15 pl-5 py-0.5 group">
-              <div className="mt-1 flex items-center justify-center w-7 h-7 rounded-full bg-white border border-[#362223]/10 shadow-[0_1px_3px_rgba(0,0,0,0.02)] text-[#362223]/75 group-hover:bg-[#362223]/5 transition-colors">
+              <div className="mt-1 flex items-center justify-center w-7 h-7 flex-shrink-0 rounded-full bg-white border border-[#362223]/10 shadow-[0_1px_3px_rgba(0,0,0,0.02)] text-[#362223]/75 group-hover:bg-[#362223]/5 transition-colors">
                 <Calendar className="w-3.5 h-3.5" strokeWidth={1.5} />
               </div>
               <div className="space-y-1">
@@ -127,7 +128,7 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
 
             {/* The Feast block */}
             <div className="flex gap-4 items-start border-l border-[#362223]/15 pl-5 py-0.5 group">
-              <div className="mt-1 flex items-center justify-center w-7 h-7 rounded-full bg-white border border-[#362223]/10 shadow-[0_1px_3px_rgba(0,0,0,0.02)] text-[#362223]/75 group-hover:bg-[#362223]/5 transition-colors">
+              <div className="mt-1 flex items-center justify-center w-7 h-7 flex-shrink-0 rounded-full bg-white border border-[#362223]/10 shadow-[0_1px_3px_rgba(0,0,0,0.02)] text-[#362223]/75 group-hover:bg-[#362223]/5 transition-colors">
                 <Utensils className="w-3.5 h-3.5" strokeWidth={1.5} />
               </div>
               <div className="space-y-1">
@@ -152,7 +153,7 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
         >
           <div 
             onClick={() => setHoveredPin(null)}
-            className="relative rounded-[24px] border border-[#362223]/10 bg-[#FAF9F6] p-4 sm:p-5 shadow-sm overflow-hidden w-full aspect-[4/3] sm:aspect-auto sm:h-[430px] mx-auto flex flex-col justify-between"
+            className="relative rounded-[24px] border border-[#362223]/10 bg-[#f4e5e6] p-4 sm:p-5 shadow-sm overflow-hidden w-full aspect-[4/3] sm:aspect-auto sm:h-[430px] mx-auto flex flex-col justify-between"
           >
               {/* Fine grid/dots pattern overlay to enhance design details */}
               <div className="absolute inset-0 opacity-[0.03] pointer-events-none select-none bg-[radial-gradient(#362223_1px,transparent_1px)] [background-size:16px_16px]" />
@@ -251,12 +252,6 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
               <div 
                 className="absolute pointer-events-auto cursor-pointer flex items-center justify-center w-10 h-10 -ml-5 -mt-5 z-20"
                 style={{ left: '46%', top: '48%' }}
-                onMouseEnter={() => setHoveredPin('ceremony')}
-                onMouseLeave={() => setHoveredPin(null)}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setHoveredPin(hoveredPin === 'ceremony' ? null : 'ceremony');
-                }}
               >
                 {/* Breathing Ripple Anchor dot */}
                 <div className="relative w-2.5 h-2.5 flex items-center justify-center">
@@ -264,15 +259,16 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-[#362223]" />
                 </div>
 
-                {/* Info Tooltip Flag */}
-                <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 transition-all duration-300 transform select-none ${
-                  hoveredPin === 'ceremony' 
-                    ? 'translate-y-0 opacity-100 scale-100' 
-                    : 'translate-y-1 opacity-0 scale-95 pointer-events-none'
-                }`}>
-                  <div className="relative bg-white/95 border border-[#362223]/10 py-1.5 px-2.5 rounded-[4px] shadow-[0_2px_8px_rgba(0,0,0,0.05)] text-center flex flex-col pointer-events-none min-w-[130px] whitespace-nowrap">
+                {/* Info Tooltip Flag - Permanently Visible & Clickable */}
+                <a 
+                  href={siteContent.gatherPinUrl || "https://maps.google.com/?q=45.4192,-122.1824"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 select-none translate-y-0 opacity-100 scale-100 transition-all block cursor-pointer"
+                >
+                  <div className="relative bg-white/95 border border-[#362223]/10 py-1.5 px-2.5 rounded-[4px] shadow-[0_2px_8px_rgba(0,0,0,0.05)] text-center flex flex-col min-w-[130px] whitespace-nowrap hover:bg-[#362223]/5 transition-colors">
                     <span className="font-mono text-[7px] font-bold tracking-[0.08em] uppercase text-[#362223]">
-                      I. WEST RIDGE
+                      WEST RIDGE
                     </span>
                     <span className="font-serif italic text-[8.5px] text-stone-500 mt-0.5 leading-none">
                       {lang === 'ENG' ? "The Ceremony — 4:00 PM" : "Lễ cưới — 16:00"}
@@ -280,43 +276,7 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
                     {/* Small downward triangle indicator */}
                     <div className="absolute top-full left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-white border-r border-b border-[#362223]/10 rotate-45 -mt-[4px]" />
                   </div>
-                </div>
-              </div>
-
-              {/* Pin II: The Glass Barn (The Feast) */}
-              <div 
-                className="absolute pointer-events-auto cursor-pointer flex items-center justify-center w-10 h-10 -ml-5 -mt-5 z-20"
-                style={{ left: '55%', top: '28%' }}
-                onMouseEnter={() => setHoveredPin('feast')}
-                onMouseLeave={() => setHoveredPin(null)}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setHoveredPin(hoveredPin === 'feast' ? null : 'feast');
-                }}
-              >
-                {/* Breathing Ripple Anchor dot */}
-                <div className="relative w-2.5 h-2.5 flex items-center justify-center">
-                  <span className="absolute inline-flex h-full w-full rounded-full bg-[#362223] opacity-75 animate-ping" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#362223]" />
-                </div>
-
-                {/* Info Tooltip Flag */}
-                <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 transition-all duration-300 transform select-none ${
-                  hoveredPin === 'feast' 
-                    ? 'translate-y-0 opacity-100 scale-100' 
-                    : 'translate-y-1 opacity-0 scale-95 pointer-events-none'
-                }`}>
-                  <div className="relative bg-white/95 border border-[#362223]/10 py-1.5 px-2.5 rounded-[4px] shadow-[0_2px_8px_rgba(0,0,0,0.05)] text-center flex flex-col pointer-events-none min-w-[130px] whitespace-nowrap">
-                    <span className="font-mono text-[7px] font-bold tracking-[0.08em] uppercase text-[#362223]">
-                      II. THE GLASS BARN
-                    </span>
-                    <span className="font-serif italic text-[8.5px] text-stone-500 mt-0.5 leading-none">
-                      {lang === 'ENG' ? "Feast & Hearth — 5:30 PM" : "Tiệc mừng — 17:30"}
-                    </span>
-                    {/* Small downward triangle indicator */}
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-white border-r border-b border-[#362223]/10 rotate-45 -mt-[4px]" />
-                  </div>
-                </div>
+                </a>
               </div>
 
             </div>

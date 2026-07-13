@@ -424,8 +424,102 @@ div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > di
 }
 
 div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div#stickyText:nth-of-type(1) > div:nth-of-type(1) {
-  animation: elegantAppear 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  opacity: 0;
+  transform: scale(var(--inner-scale, 0.9)) translateY(20px);
+  will-change: opacity, transform;
+  transition: opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1), transform 1.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div#stickyText:nth-of-type(1).is-visible > div:nth-of-type(1) {
+  opacity: 1 !important;
+  transform: scale(var(--inner-scale, 0.9)) translateY(0) !important;
+}
+
+/* Elegant staggered fade-in for individual text elements inside */
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div#stickyText:nth-of-type(1) .responsive-names-container,
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div#stickyText:nth-of-type(1) .story-sublabel,
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div#stickyText:nth-of-type(1) .story-invitation-text,
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div#stickyText:nth-of-type(1) .story-footer-grid {
+  opacity: 0;
+  filter: blur(4px);
+  transform: translateY(12px);
+  transition: opacity 1.6s cubic-bezier(0.16, 1, 0.3, 1), filter 1.6s cubic-bezier(0.16, 1, 0.3, 1), transform 1.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, filter, transform;
+}
+
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div#stickyText:nth-of-type(1).is-visible .responsive-names-container {
+  opacity: 1 !important;
+  filter: blur(0) !important;
+  transform: translateY(0) !important;
+  transition-delay: 0.1s !important;
+}
+
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div#stickyText:nth-of-type(1).is-visible .story-sublabel {
+  opacity: 1 !important;
+  filter: blur(0) !important;
+  transform: translateY(0) !important;
+  transition-delay: 0.25s !important;
+}
+
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div#stickyText:nth-of-type(1).is-visible .story-invitation-text {
+  opacity: 0.9 !important;
+  filter: blur(0) !important;
+  transform: translateY(0) !important;
+  transition-delay: 0.4s !important;
+}
+
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div#stickyText:nth-of-type(1).is-visible .story-footer-grid {
+  opacity: 1 !important;
+  filter: blur(0) !important;
+  transform: translateY(0) !important;
+  transition-delay: 0.55s !important;
+}
+
+/* User selected elements - custom styles */
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#events:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > span:nth-of-type(3),
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#events:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > span:nth-of-type(3),
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#events:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > span:nth-of-type(3),
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#events:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(4) > span:nth-of-type(3),
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#events:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(5) > span:nth-of-type(3),
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#events:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(6) > span:nth-of-type(3),
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#events:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(7) > span:nth-of-type(3),
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#events:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(8) > span:nth-of-type(3) {
+  text-align: right;
+  display: inline-block;
+}
+
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#events:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > span:nth-of-type(1),
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#events:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > span:nth-of-type(1),
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#events:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > span:nth-of-type(1),
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#events:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(4) > span:nth-of-type(1),
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#events:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(6) > span:nth-of-type(1),
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#events:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(7) > span:nth-of-type(1),
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#events:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(8) > span:nth-of-type(1) {
+  width: 36px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#events:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(5) > span:nth-of-type(1) {
+  width: 36px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#gathering-grounds:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(1) > p:nth-of-type(1) {
+  font-style: italic;
+  line-height: 16px;
+}
+
+/* Allow inline React styles to control RSVP card responsive typography and transforms */
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#rsvp:nth-of-type(5) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > span:nth-of-type(1) {
+  /* removed static !important overrides to enable responsive sizes */
+}
+
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#rsvp:nth-of-type(5) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > p:nth-of-type(1) {
+  /* removed static !important overrides to enable responsive sizes */
+}
+
 
 
 

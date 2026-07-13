@@ -124,10 +124,22 @@ const IMAGE_FIELDS = [
     defaultUrl: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=2000&q=80'
   },
   {
+    key: 'collageBgMobileUrl',
+    label: 'Collage Section Mobile Background',
+    description: 'The romantic background photo displayed behind the lace doily interactive section on mobile devices.',
+    defaultUrl: 'https://images.unsplash.com/photo-1519225495810-7512c696505a?auto=format&fit=crop&q=80&w=1000'
+  },
+  {
     key: 'collageLaceBgUrl',
     label: 'Lace Doily Card Background',
     description: 'The elegant rectangular lace doily graphic overlay background card.',
     defaultUrl: '/src/assets/images/lace_card_bg_1781950708806.jpg'
+  },
+  {
+    key: 'collageLaceBgMobileUrl',
+    label: 'Lace Doily Card Mobile Background',
+    description: 'The elegant rectangular lace doily graphic overlay background card for mobile devices.',
+    defaultUrl: ''
   },
   {
     key: 'collagePinkStampUrl',
@@ -140,6 +152,18 @@ const IMAGE_FIELDS = [
     label: 'Sage Green Wildflower Wax Seal Stamp',
     description: 'Draggable oval wax seal stamp illustration featuring a sage green color with wildflowers.',
     defaultUrl: '/src/assets/images/sage_wax_seal_1781950741169.jpg'
+  },
+  {
+    key: 'eventsStampUrl',
+    label: 'Events Section Bottom Stamp',
+    description: 'Postage stamp or wax seal displayed at the bottom-right of the Events/Story section collage with a tilt.',
+    defaultUrl: '/src/assets/images/sage_wax_seal_1781950741169.jpg'
+  },
+  {
+    key: 'countdownBgUrl',
+    label: 'Countdown Section Background Image',
+    description: 'The background photo or pattern overlay displayed behind the live Countdown section.',
+    defaultUrl: ''
   }
 ] as const;
 
@@ -237,6 +261,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
   const [gatherDirectionsTextEng, setGatherDirectionsTextEng] = useState('');
   const [gatherDirectionsTextVie, setGatherDirectionsTextVie] = useState('');
   const [gatherDirectionsUrl, setGatherDirectionsUrl] = useState('');
+  const [gatherPinUrl, setGatherPinUrl] = useState('');
 
   // Primary buttons and details helper phrases
   const [heroBtnEng, setHeroBtnEng] = useState('');
@@ -249,6 +274,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
   const [writeNoteTitleVie, setWriteNoteTitleVie] = useState('');
   const [writeNoteSubtitleEng, setWriteNoteSubtitleEng] = useState('');
   const [writeNoteSubtitleVie, setWriteNoteSubtitleVie] = useState('');
+  const [collageLaceBgRotate, setCollageLaceBgRotate] = useState('0');
 
   const [textSubTab, setTextSubTab] = useState<'identity' | 'story' | 'timeline' | 'registry' | 'navigation' | 'venue'>('identity');
 
@@ -370,9 +396,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
             storyTextBgUrl: data.storyTextBgUrl || '',
             storyTextBgMobileUrl: data.storyTextBgMobileUrl || '',
             collageBgUrl: data.collageBgUrl || '',
+            collageBgMobileUrl: data.collageBgMobileUrl || '',
             collageLaceBgUrl: data.collageLaceBgUrl || '',
+            collageLaceBgMobileUrl: data.collageLaceBgMobileUrl || '',
             collagePinkStampUrl: data.collagePinkStampUrl || '',
             collageSageStampUrl: data.collageSageStampUrl || '',
+            eventsStampUrl: data.eventsStampUrl || '',
+            countdownBgUrl: data.countdownBgUrl || '',
           });
 
           // Only initialize local input states once on load to prevent jumping cursors while editing
@@ -454,6 +484,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
             setGatherDirectionsTextEng(data.gatherDirectionsTextEng || '');
             setGatherDirectionsTextVie(data.gatherDirectionsTextVie || '');
             setGatherDirectionsUrl(data.gatherDirectionsUrl || '');
+            setGatherPinUrl(data.gatherPinUrl || '');
+            setCollageLaceBgRotate(data.collageLaceBgRotate || '0');
             
             setHasInitializedTexts(true);
           }
@@ -640,6 +672,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
         gatherDirectionsTextEng,
         gatherDirectionsTextVie,
         gatherDirectionsUrl,
+        gatherPinUrl,
+        collageLaceBgRotate,
       }, { merge: true });
 
       setSaveTextsSuccess(true);
@@ -1797,6 +1831,32 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                   </div>
                   )}
 
+                  {/* Phase 7.5: Interactive RSVP Card Customization */}
+                  {textSubTab === 'story' && (
+                  <div className="bg-white border border-black/5 rounded-sm p-6 md:p-8 shadow-sm space-y-6">
+                    <h4 className="font-serif text-base tracking-normal uppercase border-b border-black/5 pb-3 font-semibold">8. Interactive RSVP Card Settings</h4>
+                    
+                    <div className="space-y-4">
+                      <div className="space-y-1.5">
+                        <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Card Image Rotation (Degrees)</label>
+                        <select 
+                          value={collageLaceBgRotate}
+                          onChange={(e) => setCollageLaceBgRotate(e.target.value)}
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-mono text-xs outline-none transition-colors"
+                        >
+                          <option value="0">0° (No rotation - default)</option>
+                          <option value="90">90° (Quarter turn right)</option>
+                          <option value="180">180° (Half turn)</option>
+                          <option value="270">270° (Quarter turn left)</option>
+                        </select>
+                        <p className="font-mono text-[8.5px] uppercase tracking-wide text-neutral-400 mt-1.5 leading-normal">
+                          Useful if your custom lace card background image uploads sideways or if you need to manually orient it.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  )}
+
                   {/* Phase 8: Sidebar Floating Labels */}
                   {textSubTab === 'navigation' && (
                   <div className="bg-white border border-black/5 rounded-sm p-6 md:p-8 shadow-sm space-y-6">
@@ -2272,6 +2332,17 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           type="text" 
                           value={gatherDirectionsUrl}
                           onChange={(e) => setGatherDirectionsUrl(e.target.value)}
+                          placeholder="https://maps.google.com/?q=45.4192,-122.1824"
+                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-xs outline-none transition-colors"
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Interactive Ceremony Pin URL (West Ridge Link)</label>
+                        <input 
+                          type="text" 
+                          value={gatherPinUrl}
+                          onChange={(e) => setGatherPinUrl(e.target.value)}
                           placeholder="https://maps.google.com/?q=45.4192,-122.1824"
                           className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-xs outline-none transition-colors"
                         />

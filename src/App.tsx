@@ -321,6 +321,14 @@ export default function App() {
   });
   const [isLocalSubmitted, setIsLocalSubmitted] = useState(false);
   const [dbNotes, setDbNotes] = useState<Array<{name: string, text: string, id: string}>>([]);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // States for live dynamic Cloudinary images and CMS text content
   const [siteContent, setSiteContent] = useState<{
@@ -336,9 +344,13 @@ export default function App() {
     storyTextBgUrl?: string;
     storyTextBgMobileUrl?: string;
     collageBgUrl?: string;
+    collageBgMobileUrl?: string;
     collageLaceBgUrl?: string;
+    collageLaceBgMobileUrl?: string;
+    collageLaceBgRotate?: string;
     collagePinkStampUrl?: string;
     collageSageStampUrl?: string;
+    eventsStampUrl?: string;
     brideName?: string;
     groomName?: string;
     heroTitle?: string;
@@ -357,6 +369,7 @@ export default function App() {
     registryTextEng?: string;
     registryTextVie?: string;
     countdownTargetDate?: string;
+    countdownBgUrl?: string;
     countdownHeight?: string;
     countdownTitleEng?: string;
     countdownTitleVie?: string;
@@ -412,6 +425,7 @@ export default function App() {
     gatherDirectionsTextEng?: string;
     gatherDirectionsTextVie?: string;
     gatherDirectionsUrl?: string;
+    gatherPinUrl?: string;
   }>({});
 
   // Real-time synchronization of custom website images and text content
@@ -432,9 +446,12 @@ export default function App() {
           storyTextBgUrl: data.storyTextBgUrl || '',
           storyTextBgMobileUrl: data.storyTextBgMobileUrl || '',
           collageBgUrl: data.collageBgUrl || '',
+          collageBgMobileUrl: data.collageBgMobileUrl || '',
           collageLaceBgUrl: data.collageLaceBgUrl || '',
+          collageLaceBgMobileUrl: data.collageLaceBgMobileUrl || '',
           collagePinkStampUrl: data.collagePinkStampUrl || '',
           collageSageStampUrl: data.collageSageStampUrl || '',
+          eventsStampUrl: data.eventsStampUrl || '',
           brideName: data.brideName || '',
           groomName: data.groomName || '',
           heroTitle: data.heroTitle || '',
@@ -453,6 +470,7 @@ export default function App() {
           registryTextEng: data.registryTextEng || '',
           registryTextVie: data.registryTextVie || '',
           countdownTargetDate: data.countdownTargetDate || '',
+          countdownBgUrl: data.countdownBgUrl || '',
           countdownHeight: data.countdownHeight || '',
           countdownTitleEng: data.countdownTitleEng || '',
           countdownTitleVie: data.countdownTitleVie || '',
@@ -508,6 +526,8 @@ export default function App() {
           gatherDirectionsTextEng: data.gatherDirectionsTextEng || '',
           gatherDirectionsTextVie: data.gatherDirectionsTextVie || '',
           gatherDirectionsUrl: data.gatherDirectionsUrl || '',
+          gatherPinUrl: data.gatherPinUrl || '',
+          collageLaceBgRotate: data.collageLaceBgRotate || '0',
         });
       }
       setIsLoadingContent(false);
@@ -1270,10 +1290,10 @@ export default function App() {
               <p className="text-muted font-crimson text-[12px]">{t.itinerary}</p>
               <div className="col-span-2 space-y-3">
                 {t.itineraryItems.map(([time, event]) => (
-                  <div key={time} className="flex justify-between border-b border-black/5 pb-1">
-                    <span>{time}</span>
-                    <span className="text-muted opacity-30">........</span>
-                    <span>{event}</span>
+                  <div key={time} className="flex items-baseline justify-between border-b border-black/5 pb-1 w-full">
+                    <span className="md:w-[60px] md:inline-block shrink-0 text-[10px] sm:text-[12px]">{time}</span>
+                    <span className="text-muted opacity-30 flex-1 mx-2 overflow-hidden whitespace-nowrap text-center">............................................................................................................................................................................................................................................................</span>
+                    <span className="shrink-0 text-[10px] sm:text-[12px]">{event}</span>
                   </div>
                 ))}
               </div>
@@ -1311,10 +1331,8 @@ export default function App() {
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
             >
-              <h2 className="font-luxurious text-[100px] font-light absolute top-[-14px] left-[-50px] z-20 -rotate-3 text-ink leading-none">{t.detailsTitle}</h2>
+              <h2 className="font-luxurious text-[100px] font-light absolute top-[-14px] left-[-30px] z-20 -rotate-3 text-ink leading-none">{t.detailsTitle}</h2>
               <div className="relative bg-white p-3 shadow-sm border border-black/5">
-                {/* Tape */}
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 tape -rotate-2 z-10 opacity-80" />
                 <div className="aspect-square overflow-hidden contrast-125">
                   <img 
                     src={siteContent.mapImageUrl} 
@@ -1323,6 +1341,26 @@ export default function App() {
                     referrerPolicy="no-referrer"
                   />
                 </div>
+                {/* Elegant Postage Stamp / Wax Seal Stamp */}
+                <motion.div
+                  className="absolute bottom-[-60px] md:bottom-[-140px] right-[-60px] w-[200px] h-[200px] z-20 cursor-pointer"
+                  initial={{ opacity: 0, scale: 0.3, rotate: -20 }}
+                  whileInView={{ opacity: 1, scale: 1, rotate: 10 }}
+                  viewport={{ once: true }}
+                  transition={{ 
+                    type: "spring",
+                    damping: 20,
+                    stiffness: 90,
+                    delay: 0.5
+                  }}
+                >
+                  <img 
+                    src={siteContent.eventsStampUrl || "/src/assets/images/sage_wax_seal_1781950741169.jpg"} 
+                    alt="Sage Stamp" 
+                    className="w-full h-full object-contain"
+                    referrerPolicy="no-referrer"
+                  />
+                </motion.div>
               </div>
             </motion.div>
           )}
@@ -1334,7 +1372,7 @@ export default function App() {
       {/* Coastal Blue Elegant Visual Collage Section (with RSVP) */}
       <section 
         id="rsvp" 
-        className="w-full relative py-12 sm:py-20 md:py-24 overflow-hidden bg-stone-950 min-h-[550px] sm:min-h-[650px] md:min-h-[800px] flex flex-col items-center justify-center select-none"
+        className="w-full relative overflow-hidden bg-stone-950 h-screen min-h-[550px] sm:min-h-[650px] md:min-h-[800px] flex flex-col items-center justify-center select-none"
       >
         {/* Background romantic wedding photo */}
         <motion.div 
@@ -1345,7 +1383,10 @@ export default function App() {
           className="absolute inset-0 z-0"
         >
           <img 
-            src={siteContent.collageBgUrl || "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=2000&q=80"} 
+            src={isMobile 
+              ? (siteContent.collageBgMobileUrl || "https://images.unsplash.com/photo-1519225495810-7512c696505a?auto=format&fit=crop&q=80&w=1000") 
+              : (siteContent.collageBgUrl || "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=2000&q=80")
+            } 
             alt="Wedding Couple Silhouette" 
             className="w-full h-full object-cover pointer-events-none select-none"
             referrerPolicy="no-referrer"
@@ -1369,26 +1410,39 @@ export default function App() {
             >
               {/* Underneath high-quality generated lace doily background image */}
               <img 
-                src={siteContent.collageLaceBgUrl || "/src/assets/images/lace_card_bg_1781950708806.jpg"} 
+                src={isMobile 
+                  ? (siteContent.collageLaceBgMobileUrl || siteContent.collageLaceBgUrl || "/src/assets/images/lace_card_bg_1781950708806.jpg") 
+                  : (siteContent.collageLaceBgUrl || "/src/assets/images/lace_card_bg_1781950708806.jpg")
+                } 
                 alt="Lace Frame Decor"
-                className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none rounded-[32px] sm:rounded-[44px] md:rounded-[52px] max-sm:rotate-90 max-sm:scale-[1.45]"
+                className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none rounded-[32px] sm:rounded-[44px] md:rounded-[52px]"
+                style={{
+                  transform: `rotate(${siteContent.collageLaceBgRotate || (isMobile && !siteContent.collageLaceBgMobileUrl ? '90' : '0')}deg)${
+                    (siteContent.collageLaceBgRotate === '90' || siteContent.collageLaceBgRotate === '270' || (isMobile && !siteContent.collageLaceBgMobileUrl && !siteContent.collageLaceBgRotate)) 
+                      ? ' scale(1.45)' 
+                      : ''
+                  }`
+                }}
                 referrerPolicy="no-referrer"
               />
               
               {/* The Text & Button overlay inside the card */}
               <div 
                 className="relative z-20 w-full h-full flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-8 pointer-events-auto"
-                style={{ transform: 'translateY(10px)' }}
+                style={{ transform: isMobile ? 'translateY(20px)' : 'translateY(10px)' }}
               >
                 {/* Elegant script display title matching the mockup */}
                 <span 
                   className="font-luxurious text-[#362223] block leading-tight font-medium mb-3 sm:mb-5 mt-2 select-none"
                   style={{ 
                     fontFamily: '"Luxurious Script", cursive',
-                    fontSize: '76px',
-                    height: '76px',
-                    width: '600px',
-                    maxWidth: '100%'
+                    fontSize: isMobile ? '68px' : '78px',
+                    lineHeight: isMobile ? '44px' : '58px',
+                    height: isMobile ? 'auto' : '81px',
+                    width: '700px',
+                    maxWidth: '100%',
+                    position: 'relative',
+                    top: isMobile ? '-20px' : '20px'
                   }}
                 >
                   Together with our families,
@@ -1397,8 +1451,13 @@ export default function App() {
                 {/* Wedding details paragraph */}
                 <div className="space-y-3 sm:space-y-4 max-w-[92%] sm:max-w-[85%] mx-auto font-serif">
                   <p 
-                    className="text-[11px] sm:text-[13px] md:text-[15px] italic text-[#362223]/80 font-semibold"
-                    style={{ lineHeight: '16px', width: '360px', maxWidth: '100%', margin: '0 auto' }}
+                    className="italic text-[#362223]/80 font-normal text-[12px] sm:text-[13px] md:text-[15px]"
+                    style={{ 
+                      lineHeight: isMobile ? '14px' : '16px', 
+                      width: isMobile ? '190px' : '360px', 
+                      maxWidth: '100%', 
+                      margin: '0 auto' 
+                    }}
                   >
                     Thank you for being part of one of the most meaningful moments of our lives. We cannot wait to celebrate love, laughter, and unforgettable memories with you.
                   </p>
@@ -1411,7 +1470,8 @@ export default function App() {
                       setActiveModalTab('rsvp');
                       setIsLocalModalOpen(true);
                     }}
-                    className="px-6 sm:px-8 py-2 sm:py-2.5 rounded-full bg-[#362223] hover:bg-[#362223]/90 text-[#FAF9F5] font-serif italic text-[11px] sm:text-[13px] active:scale-95 transition-all select-none cursor-pointer duration-300 shadow-md border border-[#362223]"
+                    className="px-6 sm:px-8 py-2 sm:py-2.5 rounded-full bg-[#362223] hover:bg-[#362223]/90 text-[#FAF9F5] font-serif italic active:scale-95 transition-all select-none cursor-pointer duration-300 shadow-md border border-[#362223]"
+                    style={{ fontSize: '12px', fontWeight: 'bold' }}
                   >
                     {lang === 'VIE' ? "Xác nhận tham dự (RSVP)" : "Please RSVP Here"}
                   </button>
@@ -1420,8 +1480,8 @@ export default function App() {
                       setActiveModalTab('note');
                       setIsLocalModalOpen(true);
                     }}
-                    className="px-6 sm:px-8 py-2 sm:py-2.5 rounded-full border border-[#362223]/40 text-[#362223]/90 font-serif italic text-[11px] sm:text-[13px] bg-transparent hover:bg-[#362223]/5 active:scale-95 transition-all select-none cursor-pointer duration-300 shadow-sm"
-                    style={{ borderColor: '#ffe3e4' }}
+                    className="px-6 sm:px-8 py-2 sm:py-2.5 rounded-full border border-[#362223]/40 text-[#362223]/90 font-serif italic bg-transparent hover:bg-[#362223]/5 active:scale-95 transition-all select-none cursor-pointer duration-300 shadow-sm"
+                    style={{ borderColor: '#ffe3e4', width: isMobile ? '127.469px' : '143.469px', fontSize: '12px', fontWeight: 'bold' }}
                   >
                     {lang === 'VIE' ? "Gửi lời chúc lưu bút" : "Write us a note"}
                   </button>
@@ -1485,7 +1545,7 @@ export default function App() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.94, y: 35 }}
                 transition={{ type: 'spring', damping: 28, stiffness: 200 }}
-                className="relative bg-[#FAF9F5] border border-stone-250/70 shadow-[0_32px_80px_-12px_rgba(0,0,0,0.4)] w-full max-w-2xl mx-auto rounded-none p-5 sm:p-8 md:p-10 z-10 flex flex-col justify-between overflow-hidden max-h-[90vh]"
+                className="relative bg-[#FAF9F5] border border-stone-250/70 shadow-[0_32px_80px_-12px_rgba(0,0,0,0.4)] w-full max-w-2xl mx-auto rounded-3xl p-5 sm:p-8 md:p-10 z-10 flex flex-col justify-between overflow-y-auto max-h-[90vh]"
               >
                 {/* Vintage Postmark Stamp Top-Right Graphic Decoration */}
                 <div className="absolute top-6 right-8 opacity-[0.12] pointer-events-none select-none">
@@ -1507,31 +1567,58 @@ export default function App() {
                   </svg>
                 </button>
 
-                <div className="text-center w-full mb-4 relative z-10 select-none">
-                  {/* Small upper caps branding line */}
-                  <span className="font-mono text-[7.5px] sm:text-[9px] tracking-[0.3em] font-medium text-stone-400 uppercase block mb-2">
-                    {activeModalTab === 'rsvp' 
-                      ? (lang === 'VIE' ? "XÁC NHẬN SỰ HIỆN DIỆN • CELEBRATION RSVP" : "CONFIRM PRESENCE • CELEBRATION RSVP") 
-                      : (lang === 'VIE' ? "LƯU BÚT ĐÁM CƯỚI • KỶ NIỆM NGỌT NGÀO" : "GUESTBOOK MEMORIES • THE INK COLLECTION")}
-                  </span>
-                  
+                <div className="text-center w-full mb-4 relative z-10 select-none flex-shrink-0">
                   {/* Editorial elegant mix heading exactly like template image */}
                   <h3 className="font-serif text-[#362223] leading-tight max-w-[90%] mx-auto">
                     {activeModalTab === 'rsvp' ? (
                       <>
-                        <span className="block font-serif italic text-[22px] sm:text-[26px] text-stone-500 font-light leading-none mb-1">
+                        <span 
+                          className="block text-stone-500 leading-none mb-1 select-none text-center"
+                          style={{
+                            fontFamily: '"Luxurious Script", cursive',
+                            fontSize: '78px',
+                            height: '70px',
+                            lineHeight: '70px'
+                          }}
+                        >
                           {lang === 'VIE' ? "Chung vui cùng tụi mình," : "Celebrate with us,"}
                         </span>
-                        <span className="block font-serif tracking-[0.08em] font-normal text-[20px] sm:text-[24px] uppercase leading-none mt-1">
+                        <span 
+                          className="block uppercase leading-none mt-1 text-center"
+                          style={{
+                            fontFamily: '"Crimson Pro", serif',
+                            fontSize: '10px',
+                            fontWeight: 'normal',
+                            fontStyle: 'normal',
+                            letterSpacing: '0.08em'
+                          }}
+                        >
                           {lang === 'VIE' ? "XÁC NHẬN SỰ HIỆN DIỆN CỦA BẠN." : "KINDLY RESPOND TO OUR INVITATION."}
                         </span>
                       </>
                     ) : (
                       <>
-                        <span className="block font-serif italic text-[22px] sm:text-[26px] text-stone-500 font-light leading-none mb-1">
+                        <span 
+                          className="block text-stone-500 leading-none mb-1 select-none text-center"
+                          style={{
+                            fontFamily: '"Luxurious Script", cursive',
+                            fontSize: '78px',
+                            height: '70px',
+                            lineHeight: '70px'
+                          }}
+                        >
                           {lang === 'VIE' ? "Gửi trao nguyện ước," : "Leaving us a message,"}
                         </span>
-                        <span className="block font-serif tracking-[0.08em] font-normal text-[20px] sm:text-[24px] uppercase leading-none mt-1">
+                        <span 
+                          className="block uppercase leading-none mt-1 text-center"
+                          style={{
+                            fontFamily: '"Crimson Pro", serif',
+                            fontSize: '10px',
+                            fontWeight: 'normal',
+                            fontStyle: 'normal',
+                            letterSpacing: '0.08em'
+                          }}
+                        >
                           {lang === 'VIE' ? "ĐỂ KỶ NIỆM CÒN MÃI VỚI THỜI GIAN." : "TO CHERISH YOUR LOVE FOREVER."}
                         </span>
                       </>
@@ -1546,22 +1633,30 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => setActiveModalTab('rsvp')}
-                      className={`font-mono text-[8.5px] sm:text-[10px] tracking-[0.25em] uppercase pb-2 transition-all relative cursor-pointer ${
+                      className={`text-[8.5px] sm:text-[10px] tracking-[0.25em] uppercase pb-2 transition-all relative cursor-pointer ${
                         activeModalTab === 'rsvp' 
                           ? 'text-[#362223] font-semibold border-b border-[#362223]' 
                           : 'text-stone-400 hover:text-[#362223]/75'
                       }`}
+                      style={{
+                        fontFamily: '"Crimson Pro", serif',
+                        fontStyle: 'italic'
+                      }}
                     >
                       {lang === 'VIE' ? "Xác nhận tham dự" : "RSVP NOW"}
                     </button>
                     <button
                       type="button"
                       onClick={() => setActiveModalTab('note')}
-                      className={`font-mono text-[8.5px] sm:text-[10px] tracking-[0.25em] uppercase pb-2 transition-all relative cursor-pointer ${
+                      className={`text-[8.5px] sm:text-[10px] tracking-[0.25em] uppercase pb-2 transition-all relative cursor-pointer ${
                         activeModalTab === 'note' 
                           ? 'text-[#362223] font-semibold border-b border-[#362223]' 
                           : 'text-stone-400 hover:text-[#362223]/75'
                       }`}
+                      style={{
+                        fontFamily: '"Crimson Pro", serif',
+                        fontStyle: 'normal'
+                      }}
                     >
                       {lang === 'VIE' ? "Gửi lời chúc" : "GUESTNOTE"}
                     </button>
@@ -1623,12 +1718,13 @@ export default function App() {
                           required
                           maxLength={300}
                           rows={5}
-                          className="w-full bg-transparent p-3 sm:px-4 font-script text-rose-900 text-[18px] sm:text-[21px] leading-[32px] placeholder-stone-400/80 outline-none resize-none border-none focus:ring-0 active:ring-0"
+                          className="w-full bg-transparent p-3 sm:px-4 text-rose-900 text-[18px] sm:text-[21px] leading-[32px] placeholder-stone-400/80 outline-none resize-none border-none focus:ring-0 active:ring-0"
                           style={{
                             backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 31px, rgba(168, 162, 158, 0.15) 31px, rgba(168, 162, 158, 0.15) 32px)',
                             backgroundSize: '100% 32px',
                             lineHeight: '32px',
-                            paddingTop: '6px'
+                            paddingTop: '6px',
+                            fontFamily: '"Crimson Pro", serif'
                           }}
                         />
                       </div>
@@ -1646,18 +1742,22 @@ export default function App() {
                             placeholder="John Smith..."
                             required
                             maxLength={40}
-                            className="bg-transparent border-b border-stone-300 hover:border-stone-400 focus:border-[#362223] outline-none font-script text-[18px] text-[#362223]/90 py-1 px-1.5 w-44 sm:w-56 transition-colors focus:ring-0 focus:outline-none"
+                            className="bg-transparent border-b border-stone-300 hover:border-stone-400 focus:border-[#362223] outline-none text-[18px] text-[#362223]/90 py-1 px-1.5 w-44 sm:w-56 transition-colors focus:ring-0 focus:outline-none"
+                            style={{
+                              fontFamily: '"Crimson Pro", serif'
+                            }}
                           />
                         </div>
 
                         <button
                           type="submit"
                           disabled={!localNoteText.trim() || !localGuestName.trim() || isLocalSubmitted}
-                          className={`py-2 px-6 sm:px-8 font-mono text-[8.5px] tracking-[0.25em] uppercase rounded-full transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm select-none border whitespace-nowrap ${
+                          className={`px-6 sm:px-8 py-2 sm:py-2.5 rounded-full backdrop-blur-md border transition-all select-none cursor-pointer duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.04)] flex items-center justify-center gap-1.5 whitespace-nowrap active:scale-95 ${
                             isLocalSubmitted
                               ? 'bg-emerald-800 border-emerald-800 text-[#FAF9F5]'
-                              : 'bg-stone-900 border-stone-900 text-[#FAF9F5] hover:bg-stone-800 active:scale-95'
+                              : 'bg-white/40 hover:bg-white/70 border-black/10 hover:border-black/25 text-[#362223] font-serif italic'
                           } disabled:opacity-40`}
+                          style={{ fontSize: '12px', fontWeight: 'bold' }}
                         >
                           {isLocalSubmitted ? (
                             <span>✓ {lang === 'VIE' ? "ĐÃ GỬI!" : "SENT!"}</span>
@@ -1679,6 +1779,7 @@ export default function App() {
       <CountdownSection 
         lang={lang} 
         targetDate={siteContent.countdownTargetDate} 
+        bgUrl={siteContent.countdownBgUrl}
         brideName={siteContent.brideName} 
         groomName={siteContent.groomName} 
         titleEng={siteContent.countdownTitleEng}
@@ -1696,16 +1797,18 @@ export default function App() {
       />
 
       {/* Footer */}
-      <footer className="max-w-6xl mx-auto py-24 border-t border-black/5 text-center font-mono text-[8px] tracking-[0.4em] uppercase text-muted px-6 space-y-4">
-        <p>&copy; 2026 {siteContent.brideName || "Bảo Eve"} & {siteContent.groomName || "Johnathan"}. All rights reserved.</p>
-        <div className="flex justify-center pt-2">
-          <button 
-            onClick={() => navigateTo('/admin')}
-            className="opacity-20 hover:opacity-100 transition-all duration-300 text-[7px] tracking-[0.5em] focus:outline-none cursor-pointer bg-black/5 hover:bg-black/10 backdrop-blur-sm border border-black/5 hover:border-black/10 px-3 py-1.5 rounded-full"
-            id="secret-admin-btn"
-          >
-            • ADMIN SUITE •
-          </button>
+      <footer className="w-full bg-[#171111] border-t border-white/5">
+        <div className="max-w-6xl mx-auto h-[50px] flex items-center justify-between font-mono text-[8px] tracking-[0.4em] uppercase px-6">
+          <p className="text-left text-[#a67676]">&copy; 2026 {siteContent.brideName || "Bảo Eve"} & {siteContent.groomName || "Johnathan"}. All rights reserved.</p>
+          <div className="flex justify-center">
+            <button 
+              onClick={() => navigateTo('/admin')}
+              className="opacity-40 hover:opacity-100 transition-all duration-300 text-[7px] tracking-[0.5em] focus:outline-none cursor-pointer bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/10 hover:border-white/20 px-3 py-1 rounded-full text-white"
+              id="secret-admin-btn"
+            >
+              • ADMIN SUITE •
+            </button>
+          </div>
         </div>
       </footer>
 

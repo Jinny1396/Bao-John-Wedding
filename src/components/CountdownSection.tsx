@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 interface CountdownSectionProps {
   lang: 'VIE' | 'ENG';
   targetDate?: string;
+  bgUrl?: string;
   brideName?: string;
   groomName?: string;
   titleEng?: string;
@@ -22,6 +23,7 @@ interface CountdownSectionProps {
 export default function CountdownSection({ 
   lang, 
   targetDate, 
+  bgUrl,
   brideName, 
   groomName,
   titleEng,
@@ -117,9 +119,24 @@ export default function CountdownSection({
   return (
     <section 
       id="countdown"
-      className="w-full relative overflow-hidden flex flex-col items-center justify-center py-20 sm:py-28 md:py-32 px-6 sm:px-12 text-[#362223] transition-all duration-500 bg-[radial-gradient(circle_at_center,_#FCFBFA_10%,_#EAE4E5_42%,_#C6B2B5_72%,_#9B8084_100%)] select-none"
-      style={{ height: heightVal, paddingLeft: '20px', paddingRight: '20px' }}
+      className="w-full relative overflow-hidden flex flex-col items-center justify-center py-12 sm:py-28 md:py-32 px-6 sm:px-12 text-[#362223] transition-all duration-500 bg-[radial-gradient(circle_at_center,_#FCFBFA_10%,_#EAE4E5_42%,_#C6B2B5_72%,_#9B8084_100%)] select-none h-auto min-h-[100dvh] sm:h-[var(--countdown-height)]"
+      style={{ 
+        '--countdown-height': heightVal, 
+        paddingLeft: '20px', 
+        paddingRight: '20px' 
+      } as React.CSSProperties}
     >
+      {bgUrl && (
+        <div className="absolute inset-0 z-0">
+          <img 
+            src={bgUrl} 
+            alt="Countdown Background" 
+            className="w-full h-full object-cover pointer-events-none select-none"
+            referrerPolicy="no-referrer"
+          />
+        </div>
+      )}
+
       {/* 4. Fine Organic Paper Texture overlay */}
       <div className="absolute inset-0 bg-white/[0.015] opacity-35 pointer-events-none mix-blend-overlay" />
 
@@ -132,88 +149,82 @@ export default function CountdownSection({
       </div>
 
       {/* Main Content Layout */}
-      <div className="relative z-10 w-full max-w-full mx-auto flex flex-col items-center space-y-8 sm:space-y-12 md:space-y-14">
+      <div className="relative z-10 w-full flex-1 max-w-full mx-auto flex flex-col items-center justify-between py-6 sm:py-0">
         
         {/* Calligraphic Script Title */}
         <h2 
-          className="font-luxurious text-[#362223] font-light leading-none capitalize tracking-normal text-center select-none pt-4 whitespace-nowrap w-full"
-          style={{ fontSize: 'clamp(36px, 15.6vw, 300px)', width: '100%', maxWidth: '100%' }}
+          className="font-luxurious text-[#362223] font-light leading-[80px] sm:leading-none capitalize tracking-normal text-center select-none mt-0 mb-10 pt-0 whitespace-normal break-words px-4 w-full text-[103px] sm:text-[clamp(100px,_15.6vw,_300px)]"
+          style={{ width: '100%', maxWidth: '100%', height: '200px' }}
         >
           {lang === 'VIE' ? (titleVie || "Cùng đếm ngược") : (titleEng || "Let's the countdown")}
         </h2>
 
-        {/* Timer Block */}
-        <div className="flex items-center justify-center gap-3 sm:gap-6 md:gap-10 lg:gap-14 max-w-2xl mx-auto w-full">
-          {/* DAYS */}
-          <div className="flex flex-col items-center min-w-[55px] sm:min-w-[80px] md:min-w-[100px]">
-            <span className="font-serif italic font-light text-4xl sm:text-6xl md:text-7xl lg:text-[85px] leading-none text-[#362223] tracking-tight">
-              {isMounted ? days : "00"}
-            </span>
-            <span className="font-crimson text-[14px] tracking-[0.2em] text-[#362223]/65 uppercase mt-3">
-              {t.days}
-            </span>
+        {/* Center Group: Timer & Location */}
+        <div className="flex flex-col items-center gap-6 sm:gap-9 md:gap-12 w-full">
+          {/* Timer Block */}
+          <div className="flex items-center justify-center gap-[4.8px] sm:gap-[7.2px] md:gap-3 lg:gap-[16.8px] max-w-2xl mx-auto w-full mb-[10px]">
+            {/* DAYS */}
+            <div className="flex flex-col items-center min-w-[28px] sm:min-w-[40px] md:min-w-[50px] mr-0 sm:ml-0 sm:mr-[10px]">
+              <span className="font-serif italic font-light text-[40px] sm:text-[70px] md:text-[70px] lg:text-[70px] leading-none text-[#362223] tracking-tight">
+                {isMounted ? days : "00"}
+              </span>
+              <span className="font-crimson text-[10px] sm:text-[12px] tracking-[0.2em] text-[#362223]/65 uppercase mt-0.5">
+                {t.days}
+              </span>
+            </div>
+
+            {/* HOURS */}
+            <div className="flex flex-col items-center min-w-[28px] sm:min-w-[40px] md:min-w-[50px] mr-0 sm:mr-[10px]">
+              <span className="font-serif italic font-light text-[40px] sm:text-[70px] md:text-[70px] lg:text-[70px] leading-none text-[#362223] tracking-tight">
+                {isMounted ? String(hours).padStart(2, '0') : "00"}
+              </span>
+              <span className="font-crimson text-[10px] sm:text-[12px] tracking-[0.2em] text-[#362223]/65 uppercase mt-0.5">
+                {t.hours}
+              </span>
+            </div>
+
+            {/* MINUTES */}
+            <div className="flex flex-col items-center min-w-[28px] sm:min-w-[40px] md:min-w-[50px] mr-0 sm:mr-[10px] pl-[1px] sm:pl-0">
+              <span className="font-serif italic font-light text-[40px] sm:text-[70px] md:text-[70px] lg:text-[70px] leading-none text-[#362223] tracking-tight">
+                {isMounted ? String(minutes).padStart(2, '0') : "00"}
+              </span>
+              <span className="font-crimson text-[10px] sm:text-[12px] tracking-[0.2em] text-[#362223]/65 uppercase mt-0.5">
+                {t.minutes}
+              </span>
+            </div>
+
+            {/* SECONDS */}
+            <div className="flex flex-col items-center min-w-[28px] sm:min-w-[40px] md:min-w-[50px]">
+              <span className="font-serif italic font-light text-[40px] sm:text-[70px] md:text-[70px] lg:text-[70px] leading-none text-[#362223] tracking-tight">
+                {isMounted ? String(seconds).padStart(2, '0') : "00"}
+              </span>
+              <span className="font-crimson text-[10px] sm:text-[12px] tracking-[0.2em] text-[#362223]/65 uppercase mt-0.5">
+                {t.seconds}
+              </span>
+            </div>
           </div>
 
-          {/* DIVIDER 1 */}
-          <div className="h-10 sm:h-16 md:h-20 w-[1px] bg-[#362223]/15 self-center -translate-y-3" />
-
-          {/* HOURS */}
-          <div className="flex flex-col items-center min-w-[55px] sm:min-w-[80px] md:min-w-[100px]">
-            <span className="font-serif italic font-light text-4xl sm:text-6xl md:text-7xl lg:text-[85px] leading-none text-[#362223] tracking-tight">
-              {isMounted ? String(hours).padStart(2, '0') : "00"}
-            </span>
-            <span className="font-crimson text-[14px] tracking-[0.2em] text-[#362223]/65 uppercase mt-3">
-              {t.hours}
-            </span>
-          </div>
-
-          {/* DIVIDER 2 */}
-          <div className="h-10 sm:h-16 md:h-20 w-[1px] bg-[#362223]/15 self-center -translate-y-3" />
-
-          {/* MINUTES */}
-          <div className="flex flex-col items-center min-w-[55px] sm:min-w-[80px] md:min-w-[100px]">
-            <span className="font-serif italic font-light text-4xl sm:text-6xl md:text-7xl lg:text-[85px] leading-none text-[#362223] tracking-tight">
-              {isMounted ? String(minutes).padStart(2, '0') : "00"}
-            </span>
-            <span className="font-crimson text-[14px] tracking-[0.2em] text-[#362223]/65 uppercase mt-3">
-              {t.minutes}
-            </span>
-          </div>
-
-          {/* DIVIDER 3 */}
-          <div className="h-10 sm:h-16 md:h-20 w-[1px] bg-[#362223]/15 self-center -translate-y-3" />
-
-          {/* SECONDS */}
-          <div className="flex flex-col items-center min-w-[55px] sm:min-w-[80px] md:min-w-[100px]">
-            <span className="font-serif italic font-light text-4xl sm:text-6xl md:text-7xl lg:text-[85px] leading-none text-[#362223] tracking-tight">
-              {isMounted ? String(seconds).padStart(2, '0') : "00"}
-            </span>
-            <span className="font-crimson text-[14px] tracking-[0.2em] text-[#362223]/65 uppercase mt-3">
-              {t.seconds}
-            </span>
-          </div>
-        </div>
-
-        {/* Location Columns */}
-        <div className="w-full max-w-3xl mx-auto grid grid-cols-3 gap-2 sm:gap-4 text-center text-[#362223]/75 font-mono text-[8px] sm:text-[9.5px] tracking-[0.22em] uppercase leading-relaxed pt-6 sm:pt-10">
-          <div className="space-y-0.5 sm:space-y-1">
-            <p className="font-crimson font-normal text-[14px] text-[#362223]">{loc1City || "DANANG"}</p>
-            <p className="font-crimson text-[14px] text-[#362223]/50">{loc1Country || "VIETNAM"}</p>
-          </div>
-          <div className="space-y-0.5 sm:space-y-1">
-            <p className="font-crimson font-normal text-[14px] text-[#362223]">{loc2City || "TOKYO"}</p>
-            <p className="font-crimson text-[14px] text-[#362223]/50">{loc2Country || "JAPAN"}</p>
-          </div>
-          <div className="space-y-0.5 sm:space-y-1">
-            <p className="font-crimson font-normal text-[14px] text-[#362223]">{loc3City || "CITY"}</p>
-            <p className="font-crimson text-[14px] text-[#362223]/50">{loc3Country || "ENGLAND"}</p>
+          {/* Location Columns */}
+          <div className="w-full max-w-3xl mx-auto grid grid-cols-3 gap-1 sm:gap-2 text-center text-[#362223]/75 font-mono text-[8px] sm:text-[9.5px] tracking-[0.22em] uppercase leading-relaxed pt-0">
+            <div className="space-y-0 sm:space-y-0.5">
+              <p className="font-crimson font-normal text-[10px] sm:text-[12px] text-[#362223] leading-none">{loc1City || "DANANG"}</p>
+              <p className="font-crimson text-[10px] sm:text-[12px] text-[#362223]/50 leading-none">{loc1Country || "VIETNAM"}</p>
+            </div>
+            <div className="space-y-0 sm:space-y-0.5">
+              <p className="font-crimson font-normal text-[10px] sm:text-[12px] text-[#362223] leading-none">{loc2City || "TOKYO"}</p>
+              <p className="font-crimson text-[10px] sm:text-[12px] text-[#362223]/50 leading-none">{loc2Country || "JAPAN"}</p>
+            </div>
+            <div className="space-y-0 sm:space-y-0.5">
+              <p className="font-crimson font-normal text-[10px] sm:text-[12px] text-[#362223] leading-none">{loc3City || "CITY"}</p>
+              <p className="font-crimson text-[10px] sm:text-[12px] text-[#362223]/50 leading-none">{loc3Country || "ENGLAND"}</p>
+            </div>
           </div>
         </div>
 
         {/* Calligraphic Script Bottom Line */}
         <h2 
-          className="font-luxurious text-[#362223] font-light leading-none lowercase tracking-normal text-center select-none -mt-4 whitespace-nowrap w-full"
-          style={{ fontSize: 'clamp(36px, 15.6vw, 300px)', width: '100%', maxWidth: '100%' }}
+          className="font-luxurious text-[#362223] font-light leading-none lowercase tracking-normal text-center select-none mt-10 mb-0 pb-0 whitespace-normal break-words px-4 w-full text-[103px] sm:text-[clamp(100px,_15.6vw,_300px)]"
+          style={{ width: '100%', maxWidth: '100%', height: '200px' }}
         >
           {lang === 'VIE' ? (endTitleVie || "bắt đầu") : (endTitleEng || "begin")}
         </h2>
@@ -221,7 +232,7 @@ export default function CountdownSection({
       </div>
 
       {/* Corners - Bottom Left & Bottom Right */}
-      <div className="absolute bottom-8 left-8 sm:bottom-12 sm:left-12 font-mono text-[8px] sm:text-[9.5px] tracking-[0.25em] text-[#362223]/75 uppercase">
+      <div className="absolute bottom-8 left-8 sm:bottom-12 sm:left-12 font-mono text-[8px] sm:text-[9.5px] tracking-[0.25em] text-[#362223]/75 uppercase w-[120px] sm:w-auto">
         {coupleNames}
       </div>
       <div className="absolute bottom-8 right-8 sm:bottom-12 sm:right-12 font-mono text-[8px] sm:text-[9.5px] tracking-[0.25em] text-[#362223]/75 uppercase">

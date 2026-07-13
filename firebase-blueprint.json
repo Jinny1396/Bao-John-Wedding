@@ -108,9 +108,21 @@
           "type": "string",
           "description": "Background image for the coastal-blue-collage section"
         },
+        "collageBgMobileUrl": {
+          "type": "string",
+          "description": "Mobile background image for the coastal-blue-collage section"
+        },
         "collageLaceBgUrl": {
           "type": "string",
           "description": "Rectangular ivory lace doily background image"
+        },
+        "collageLaceBgMobileUrl": {
+          "type": "string",
+          "description": "Rectangular ivory lace doily background image for mobile"
+        },
+        "collageLaceBgRotate": {
+          "type": "string",
+          "description": "Rotation of the lace doily background card image (0, 90, 180, 270)"
         },
         "collagePinkStampUrl": {
           "type": "string",
