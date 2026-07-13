@@ -14,8 +14,8 @@ const OvalMonogram = ({
   className = 'w-16 h-16', 
   imageUrl, 
   textClass = "text-current",
-  bInitial = "S",
-  gInitial = "A"
+  bInitial = "B",
+  gInitial = "J"
 }: { 
   className?: string; 
   imageUrl?: string; 
@@ -299,6 +299,7 @@ class AmbientPianoSynth {
 export default function App() {
   const [lang, setLang] = useState<'VIE' | 'ENG'>('ENG');
   const [isLoadingContent, setIsLoadingContent] = useState(true);
+  const isInitialSnapshot = useRef(true);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [hoveredSidebarIndex, setHoveredSidebarIndex] = useState<number | null>(null);
   const [isPastHero, setIsPastHero] = useState(false);
@@ -530,7 +531,14 @@ export default function App() {
           collageLaceBgRotate: data.collageLaceBgRotate || '0',
         });
       }
-      setIsLoadingContent(false);
+      if (isInitialSnapshot.current) {
+        isInitialSnapshot.current = false;
+        setTimeout(() => {
+          setIsLoadingContent(false);
+        }, 1200);
+      } else {
+        setIsLoadingContent(false);
+      }
     }, (error) => {
       console.error("Failed to load site content:", error);
       setIsLoadingContent(false);
@@ -868,8 +876,8 @@ export default function App() {
 
   const bName = siteContent.brideName || "";
   const gName = siteContent.groomName || "";
-  const bInitial = bName ? bName.trim().charAt(0).toUpperCase() : "S";
-  const gInitial = gName ? gName.trim().charAt(0).toUpperCase() : "A";
+  const bInitial = bName ? bName.trim().charAt(0).toUpperCase() : "B";
+  const gInitial = gName ? gName.trim().charAt(0).toUpperCase() : "J";
 
   if (isLoadingContent) {
     return (
