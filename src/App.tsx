@@ -367,6 +367,21 @@ export default function App() {
     photoQuoteVie?: string;
     attireDescEng?: string;
     attireDescVie?: string;
+    swatchColor1?: string;
+    swatchColor2?: string;
+    swatchColor3?: string;
+    swatchColor4?: string;
+    swatchColor5?: string;
+    swatchNameEng1?: string;
+    swatchNameEng2?: string;
+    swatchNameEng3?: string;
+    swatchNameEng4?: string;
+    swatchNameEng5?: string;
+    swatchNameVie1?: string;
+    swatchNameVie2?: string;
+    swatchNameVie3?: string;
+    swatchNameVie4?: string;
+    swatchNameVie5?: string;
     registryTextEng?: string;
     registryTextVie?: string;
     countdownTargetDate?: string;
@@ -427,6 +442,16 @@ export default function App() {
     gatherDirectionsTextVie?: string;
     gatherDirectionsUrl?: string;
     gatherPinUrl?: string;
+    gatherPinTitleEng?: string;
+    gatherPinTitleVie?: string;
+    gatherPinSubtitleEng?: string;
+    gatherPinSubtitleVie?: string;
+    storyMeetingTextEng?: string;
+    storyMeetingTextVie?: string;
+    storyAdventuresTextEng?: string;
+    storyAdventuresTextVie?: string;
+    storyChapterTextEng?: string;
+    storyChapterTextVie?: string;
   }>({});
 
   // Real-time synchronization of custom website images and text content
@@ -468,6 +493,21 @@ export default function App() {
           photoQuoteVie: data.photoQuoteVie || '',
           attireDescEng: data.attireDescEng || '',
           attireDescVie: data.attireDescVie || '',
+          swatchColor1: data.swatchColor1 || '',
+          swatchColor2: data.swatchColor2 || '',
+          swatchColor3: data.swatchColor3 || '',
+          swatchColor4: data.swatchColor4 || '',
+          swatchColor5: data.swatchColor5 || '',
+          swatchNameEng1: data.swatchNameEng1 || '',
+          swatchNameEng2: data.swatchNameEng2 || '',
+          swatchNameEng3: data.swatchNameEng3 || '',
+          swatchNameEng4: data.swatchNameEng4 || '',
+          swatchNameEng5: data.swatchNameEng5 || '',
+          swatchNameVie1: data.swatchNameVie1 || '',
+          swatchNameVie2: data.swatchNameVie2 || '',
+          swatchNameVie3: data.swatchNameVie3 || '',
+          swatchNameVie4: data.swatchNameVie4 || '',
+          swatchNameVie5: data.swatchNameVie5 || '',
           registryTextEng: data.registryTextEng || '',
           registryTextVie: data.registryTextVie || '',
           countdownTargetDate: data.countdownTargetDate || '',
@@ -528,6 +568,16 @@ export default function App() {
           gatherDirectionsTextVie: data.gatherDirectionsTextVie || '',
           gatherDirectionsUrl: data.gatherDirectionsUrl || '',
           gatherPinUrl: data.gatherPinUrl || '',
+          gatherPinTitleEng: data.gatherPinTitleEng || '',
+          gatherPinTitleVie: data.gatherPinTitleVie || '',
+          gatherPinSubtitleEng: data.gatherPinSubtitleEng || '',
+          gatherPinSubtitleVie: data.gatherPinSubtitleVie || '',
+          storyMeetingTextEng: data.storyMeetingTextEng || '',
+          storyMeetingTextVie: data.storyMeetingTextVie || '',
+          storyAdventuresTextEng: data.storyAdventuresTextEng || '',
+          storyAdventuresTextVie: data.storyAdventuresTextVie || '',
+          storyChapterTextEng: data.storyChapterTextEng || '',
+          storyChapterTextVie: data.storyChapterTextVie || '',
           collageLaceBgRotate: data.collageLaceBgRotate || '0',
         });
       }
@@ -1171,6 +1221,9 @@ export default function App() {
         brideName={siteContent.brideName}
         groomName={siteContent.groomName}
         invitationText={lang === 'VIE' ? siteContent.invitationTextVie : siteContent.invitationTextEng}
+        storyMeetingText={lang === 'VIE' ? siteContent.storyMeetingTextVie : siteContent.storyMeetingTextEng}
+        storyAdventuresText={lang === 'VIE' ? siteContent.storyAdventuresTextVie : siteContent.storyAdventuresTextEng}
+        storyChapterText={lang === 'VIE' ? siteContent.storyChapterTextVie : siteContent.storyChapterTextEng}
         venueName={lang === 'VIE' ? siteContent.venueNameVie : siteContent.venueNameEng}
         weddingDateShort={lang === 'VIE' ? siteContent.weddingDateShortVie : siteContent.weddingDateShortEng}
       />
@@ -1312,19 +1365,40 @@ export default function App() {
               <p className="text-muted font-crimson text-[12px]">{t.attire}</p>
               <div className="col-span-2 space-y-2 leading-relaxed">
                 <p>{t.attireDesc}</p>
-                <div className="flex gap-4 pt-3 items-center">
-                  <div className="flex flex-col items-center gap-1.5">
-                    <span className="w-8 h-8 rounded-full border border-[#1A1A1A]/10 shadow-[inner_0_2px_4px_rgba(0,0,0,0.06)] bg-[#7D8E73] transition-transform hover:scale-110 duration-300" title={t.sage} />
-                    <span className="text-[7px] text-muted leading-none tracking-normal regular">{t.sage}</span>
-                  </div>
-                  <div className="flex flex-col items-center gap-1.5">
-                    <span className="w-8 h-8 rounded-full border border-[#1A1A1A]/10 shadow-[inner_0_2px_4px_rgba(0,0,0,0.06)] bg-[#E3D5C3] transition-transform hover:scale-110 duration-300" title={t.sand} />
-                    <span className="text-[7px] text-muted leading-none tracking-normal regular">{t.sand}</span>
-                  </div>
-                  <div className="flex flex-col items-center gap-1.5">
-                    <span className="w-8 h-8 rounded-full border border-[#1A1A1A]/10 shadow-[inner_0_2px_4px_rgba(0,0,0,0.06)] bg-[#B67E65] transition-transform hover:scale-110 duration-300" title={t.clay} />
-                    <span className="text-[7px] text-muted leading-none tracking-normal regular">{t.clay}</span>
-                  </div>
+                <div className="flex flex-wrap gap-4 pt-3 items-center">
+                  {[
+                    {
+                      color: siteContent.swatchColor1 || '#7D8E73',
+                      name: lang === 'VIE' ? (siteContent.swatchNameVie1 || 'Màu Xanh') : (siteContent.swatchNameEng1 || 'Sage')
+                    },
+                    {
+                      color: siteContent.swatchColor2 || '#E3D5C3',
+                      name: lang === 'VIE' ? (siteContent.swatchNameVie2 || 'Màu Cát') : (siteContent.swatchNameEng2 || 'Sand')
+                    },
+                    {
+                      color: siteContent.swatchColor3 || '#B67E65',
+                      name: lang === 'VIE' ? (siteContent.swatchNameVie3 || 'Màu Đất sét') : (siteContent.swatchNameEng3 || 'Clay')
+                    },
+                    {
+                      color: siteContent.swatchColor4 || '#8C9DA1',
+                      name: lang === 'VIE' ? (siteContent.swatchNameVie4 || 'Xanh Khói') : (siteContent.swatchNameEng4 || 'Dusty Blue')
+                    },
+                    {
+                      color: siteContent.swatchColor5 || '#C5A880',
+                      name: lang === 'VIE' ? (siteContent.swatchNameVie5 || 'Màu Nâu Ấm') : (siteContent.swatchNameEng5 || 'Warm Taupe')
+                    }
+                  ].map((swatch, idx) => (
+                    <div key={idx} className="flex flex-col items-center gap-1.5">
+                      <span 
+                        className="w-8 h-8 rounded-full border border-[#1A1A1A]/10 shadow-[inner_0_2px_4px_rgba(0,0,0,0.06)] transition-transform hover:scale-110 duration-300" 
+                        style={{ backgroundColor: swatch.color }}
+                        title={swatch.name} 
+                      />
+                      {swatch.name && (
+                        <span className="text-[7px] text-muted leading-none tracking-normal regular">{swatch.name}</span>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -1581,10 +1655,11 @@ export default function App() {
                     {activeModalTab === 'rsvp' ? (
                       <>
                         <span 
-                          className="block text-stone-500 leading-none mb-1 select-none text-center"
+                          className="block text-stone-500 leading-none mb-1 select-none text-center mx-auto"
                           style={{
                             fontFamily: '"Luxurious Script", cursive',
-                            fontSize: '78px',
+                            fontSize: '59px',
+                            width: '270.898px',
                             height: '70px',
                             lineHeight: '70px'
                           }}
@@ -1598,19 +1673,33 @@ export default function App() {
                             fontSize: '10px',
                             fontWeight: 'normal',
                             fontStyle: 'normal',
-                            letterSpacing: '0.08em'
+                            letterSpacing: '0.08em',
+                            borderColor: '#717171'
                           }}
                         >
                           {lang === 'VIE' ? "XÁC NHẬN SỰ HIỆN DIỆN CỦA BẠN." : "KINDLY RESPOND TO OUR INVITATION."}
+                        </span>
+                        <span 
+                          className="block text-[#362223]/70 text-center mt-1.5"
+                          style={{
+                            fontFamily: '"Crimson Pro", serif',
+                            fontSize: '14px',
+                            fontWeight: 'normal',
+                            fontStyle: 'normal',
+                            letterSpacing: '0.04em'
+                          }}
+                        >
+                          {lang === 'VIE' ? "Vui lòng phản hồi trước 2026/01/12" : "Please reply before 2026/01/12"}
                         </span>
                       </>
                     ) : (
                       <>
                         <span 
-                          className="block text-stone-500 leading-none mb-1 select-none text-center"
+                          className="block text-stone-500 leading-none mb-1 select-none text-center mx-auto"
                           style={{
                             fontFamily: '"Luxurious Script", cursive',
-                            fontSize: '78px',
+                            fontSize: '59px',
+                            width: '270.898px',
                             height: '70px',
                             lineHeight: '70px'
                           }}
@@ -1747,7 +1836,7 @@ export default function App() {
                             type="text"
                             value={localGuestName}
                             onChange={(e) => setLocalGuestName(e.target.value)}
-                            placeholder="John Smith..."
+                            placeholder="Jon Smith..."
                             required
                             maxLength={40}
                             className="bg-transparent border-b border-stone-300 hover:border-stone-400 focus:border-[#362223] outline-none text-[18px] text-[#362223]/90 py-1 px-1.5 w-44 sm:w-56 transition-colors focus:ring-0 focus:outline-none"
@@ -1807,7 +1896,7 @@ export default function App() {
       {/* Footer */}
       <footer className="w-full bg-[#171111] border-t border-white/5">
         <div className="max-w-6xl mx-auto h-[50px] flex items-center justify-between font-mono text-[8px] tracking-[0.4em] uppercase px-6">
-          <p className="text-left text-[#a67676]">&copy; 2026 {siteContent.brideName || "Bảo Eve"} & {siteContent.groomName || "Johnathan"}. All rights reserved.</p>
+          <p className="text-left text-[#a67676]">&copy; 2026 {siteContent.brideName || "Bảo Eve"} & {siteContent.groomName || "Jonathan"}. All rights reserved.</p>
           <div className="flex justify-center">
             <button 
               onClick={() => navigateTo('/admin')}

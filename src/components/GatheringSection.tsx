@@ -29,6 +29,10 @@ interface GatheringSectionProps {
     gatherDirectionsTextVie?: string;
     gatherDirectionsUrl?: string;
     gatherPinUrl?: string;
+    gatherPinTitleEng?: string;
+    gatherPinTitleVie?: string;
+    gatherPinSubtitleEng?: string;
+    gatherPinSubtitleVie?: string;
   };
 }
 
@@ -43,6 +47,14 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
   const subtitle = lang === 'ENG'
     ? siteContent.gatherSubtitleEng || "02 // The Gathering Grounds"
     : siteContent.gatherSubtitleVie || "02 // Địa Điểm Hội Tụ";
+
+  const pinTitle = lang === 'ENG'
+    ? siteContent.gatherPinTitleEng || "WEST RIDGE"
+    : siteContent.gatherPinTitleVie || siteContent.gatherPinTitleEng || "WEST RIDGE";
+
+  const pinSubtitle = lang === 'ENG'
+    ? siteContent.gatherPinSubtitleEng || "The Ceremony — 4:00 PM"
+    : siteContent.gatherPinSubtitleVie || "Lễ cưới — 16:00";
 
   const description = lang === 'ENG'
     ? siteContent.gatherDescEng || "The ceremony and celebratory feast will both be hosted at the Whispering Meadow Ranch. An isolated oasis wrapped in centuries-old fir pines, located thirty miles east of the Portland Gorge."
@@ -237,14 +249,6 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
               </text>
             </svg>
 
-            {/* CARD TOP ROW: Interactive Map Badge Pill */}
-            <div className="relative z-10 flex justify-between items-start">
-              <div className="bg-white/95 border border-[#362223]/10 rounded-full py-1.5 px-3.5 flex items-center gap-2 text-[8px] sm:text-[9px] font-mono tracking-widest uppercase text-[#362223] shadow-[0_1.5px_4px_rgba(0,0,0,0.02)] select-none">
-                <Compass className="w-3 h-3 text-[#362223]/80 animate-spin-slow" strokeWidth={1.5} />
-                <span>{mapPill}</span>
-              </div>
-            </div>
-
             {/* CARD CENTRAL REGION: Floating Interactive Pin Nodes */}
             <div className="absolute inset-0 pointer-events-none">
               
@@ -267,11 +271,11 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
                   className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 select-none translate-y-0 opacity-100 scale-100 transition-all block cursor-pointer"
                 >
                   <div className="relative bg-white/95 border border-[#362223]/10 py-1.5 px-2.5 rounded-[4px] shadow-[0_2px_8px_rgba(0,0,0,0.05)] text-center flex flex-col min-w-[130px] whitespace-nowrap hover:bg-[#362223]/5 transition-colors">
-                    <span className="font-mono text-[7px] font-bold tracking-[0.08em] uppercase text-[#362223]">
-                      WEST RIDGE
+                    <span className="font-mono text-[10px] font-bold tracking-[0.08em] uppercase text-[#362223]">
+                      {pinTitle}
                     </span>
-                    <span className="font-serif italic text-[8.5px] text-stone-500 mt-0.5 leading-none">
-                      {lang === 'ENG' ? "The Ceremony — 4:00 PM" : "Lễ cưới — 16:00"}
+                    <span className="font-serif italic text-[12.5px] text-stone-500 mt-0.5 leading-none">
+                      {pinSubtitle}
                     </span>
                     {/* Small downward triangle indicator */}
                     <div className="absolute top-full left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-white border-r border-b border-[#362223]/10 rotate-45 -mt-[4px]" />

@@ -14,6 +14,8 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
   const [formData, setFormData] = useState({
     guestName: '',
     attendingStatus: '',
+    guestSide: 'bride',
+    bringingGuest: '0',
     dietaryRestrictions: '',
     coupleNote: '',
   });
@@ -26,6 +28,15 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
       promptStatus: 'Are you able to join us?',
       yesLabel: 'Accept with pleasure',
       noLabel: 'Decline with regret',
+      sideLabel: "Whose guest are you?",
+      brideSideLabel: "Bride's Side",
+      groomSideLabel: "Groom's Side",
+      bothSideLabel: "Both / Mutual",
+      bringingGuestLabel: 'Bringing a guest?',
+      guestOption0: 'No (Just me — 1 person)',
+      guestOption1: 'Yes, bringing 1 guest (+1)',
+      guestOption2: 'Yes, bringing 2 guests (+2)',
+      guestOption3: 'Yes, bringing 3 guests (+3)',
       nameLabel: 'Guest Name',
       requiredLabel: 'required',
       namePlaceholder: 'YOUR FULL NAME',
@@ -45,12 +56,21 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
       promptStatus: 'Bạn sẽ đến chung vui cùng chúng mình chứ?',
       yesLabel: 'Đồng ý tham dự',
       noLabel: 'Tiếc không thể đến',
+      sideLabel: 'Bạn là khách của bên nào?',
+      brideSideLabel: 'Nhà Gái',
+      groomSideLabel: 'Nhà Trai',
+      bothSideLabel: 'Cả Hai Nhà',
+      bringingGuestLabel: 'Bạn có đi cùng người đi kèm (khách) không?',
+      guestOption0: 'Không (Chỉ mình tôi — 1 người)',
+      guestOption1: 'Có, đi cùng 1 người (+1)',
+      guestOption2: 'Có, đi cùng 2 người (+2)',
+      guestOption3: 'Có, đi cùng 3 người (+3)',
       nameLabel: 'Họ và Tên',
       requiredLabel: 'bắt buộc',
       namePlaceholder: 'HỌ VÀ TÊN CỦA BẠN',
       dietLabel: 'Bạn có yêu cầu đặc biệt nào về đồ ăn không?',
       dietPlaceholder: 'KHÔNG CÓ HOẶC GHI RÕ VD: ĂN CHAY, DỊ ỨNG HẢI SẢN...',
-      noteLabel: 'Nhời nhắn gửi tới cô dâu chú rể',
+      noteLabel: 'Lời nhắn gửi tới cô dâu chú rể',
       notePlaceholder: 'LỜI CHÚC MỪNG HOẶC TIN NHẮN THÂN THƯƠNG',
       btnSending: 'Đang gửi...',
       btnSend: 'Gửi Phản Hồi',
@@ -78,6 +98,8 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
     const rsvpData = {
       guestName: formData.guestName.trim(),
       attendingStatus: formData.attendingStatus,
+      guestSide: formData.guestSide || 'bride',
+      bringingGuest: formData.bringingGuest || '0',
       dietaryRestrictions: formData.dietaryRestrictions.trim(),
       coupleNote: formData.coupleNote.trim(),
       createdAt: serverTimestamp(),
@@ -136,6 +158,31 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
               </div>
             </div>
 
+            {/* Side Selection (Bride's Side / Groom's Side) */}
+            <div className="space-y-2">
+              <p className="text-muted">{t.sideLabel}</p>
+              <div className="flex flex-wrap gap-3">
+                {[
+                  { id: 'bride', label: t.brideSideLabel },
+                  { id: 'groom', label: t.groomSideLabel },
+                  { id: 'both', label: t.bothSideLabel }
+                ].map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, guestSide: option.id })}
+                    className={`px-5 py-2 border rounded-full transition-all backdrop-blur-md shadow-sm text-[9.5px] ${
+                      formData.guestSide === option.id 
+                        ? 'bg-[#362223]/90 text-white border-ink/40 hover:bg-ink font-semibold' 
+                        : 'border-black/15 bg-white/30 text-ink/75 hover:bg-white/60 hover:border-black/30'
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Guest Name Field */}
             <div className="space-y-2">
               <p className="text-muted">{t.nameLabel} <span className="lowercase opacity-50">({t.requiredLabel})</span></p>
@@ -149,6 +196,28 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
               />
             </div>
 
+            {/* Bringing a guest? Dropdown */}
+            <div className="space-y-2">
+              <p className="text-muted">{t.bringingGuestLabel}</p>
+              <div className="relative">
+                <select
+                  value={formData.bringingGuest}
+                  onChange={(e) => setFormData({ ...formData, bringingGuest: e.target.value })}
+                  className="w-full bg-transparent border-b border-black/10 py-2.5 focus:border-ink outline-none transition-colors appearance-none cursor-pointer pr-8 font-mono text-[10px] tracking-widest uppercase text-[#362223]"
+                >
+                  <option value="0" className="bg-[#fcfaf7] text-[#362223]">{t.guestOption0}</option>
+                  <option value="1" className="bg-[#fcfaf7] text-[#362223]">{t.guestOption1}</option>
+                  <option value="2" className="bg-[#fcfaf7] text-[#362223]">{t.guestOption2}</option>
+                  <option value="3" className="bg-[#fcfaf7] text-[#362223]">{t.guestOption3}</option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-1 text-neutral-500">
+                  <svg className="w-3.5 h-3.5 fill-current opacity-70" viewBox="0 0 20 20">
+                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
             {/* Dietary Restrictions */}
             <div className="space-y-2">
               <p className="text-muted">{t.dietLabel}</p>
@@ -160,8 +229,6 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
                 onChange={(e) => setFormData({ ...formData, dietaryRestrictions: e.target.value })}
               />
             </div>
-
-
 
             {submitError && (
               <div className="text-red-500 font-sans normal-case text-xs text-center border border-red-200/50 bg-red-50/50 p-3 rounded-md">

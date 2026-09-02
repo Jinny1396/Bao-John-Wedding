@@ -38,6 +38,8 @@ interface RSVPEntity {
   id: string;
   guestName: string;
   attendingStatus: 'yes' | 'no' | string;
+  guestSide?: 'bride' | 'groom' | 'both' | string;
+  bringingGuest?: string;
   dietaryRestrictions: string;
   coupleNote: string;
   createdAt?: any;
@@ -199,6 +201,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
   const [heroDateVie, setHeroDateVie] = useState('');
   const [invitationTextEng, setInvitationTextEng] = useState('');
   const [invitationTextVie, setInvitationTextVie] = useState('');
+  const [storyMeetingTextEng, setStoryMeetingTextEng] = useState('');
+  const [storyMeetingTextVie, setStoryMeetingTextVie] = useState('');
+  const [storyAdventuresTextEng, setStoryAdventuresTextEng] = useState('');
+  const [storyAdventuresTextVie, setStoryAdventuresTextVie] = useState('');
+  const [storyChapterTextEng, setStoryChapterTextEng] = useState('');
+  const [storyChapterTextVie, setStoryChapterTextVie] = useState('');
   const [venueNameEng, setVenueNameEng] = useState('');
   const [venueNameVie, setVenueNameVie] = useState('');
   const [weddingDateShortEng, setWeddingDateShortEng] = useState('');
@@ -207,6 +215,21 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
   const [photoQuoteVie, setPhotoQuoteVie] = useState('');
   const [attireDescEng, setAttireDescEng] = useState('');
   const [attireDescVie, setAttireDescVie] = useState('');
+  const [swatchColor1, setSwatchColor1] = useState('');
+  const [swatchColor2, setSwatchColor2] = useState('');
+  const [swatchColor3, setSwatchColor3] = useState('');
+  const [swatchColor4, setSwatchColor4] = useState('');
+  const [swatchColor5, setSwatchColor5] = useState('');
+  const [swatchNameEng1, setSwatchNameEng1] = useState('');
+  const [swatchNameEng2, setSwatchNameEng2] = useState('');
+  const [swatchNameEng3, setSwatchNameEng3] = useState('');
+  const [swatchNameEng4, setSwatchNameEng4] = useState('');
+  const [swatchNameEng5, setSwatchNameEng5] = useState('');
+  const [swatchNameVie1, setSwatchNameVie1] = useState('');
+  const [swatchNameVie2, setSwatchNameVie2] = useState('');
+  const [swatchNameVie3, setSwatchNameVie3] = useState('');
+  const [swatchNameVie4, setSwatchNameVie4] = useState('');
+  const [swatchNameVie5, setSwatchNameVie5] = useState('');
   const [registryTextEng, setRegistryTextEng] = useState('');
   const [registryTextVie, setRegistryTextVie] = useState('');
   const [countdownTargetDate, setCountdownTargetDate] = useState('');
@@ -262,6 +285,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
   const [gatherDirectionsTextVie, setGatherDirectionsTextVie] = useState('');
   const [gatherDirectionsUrl, setGatherDirectionsUrl] = useState('');
   const [gatherPinUrl, setGatherPinUrl] = useState('');
+  const [gatherPinTitleEng, setGatherPinTitleEng] = useState('');
+  const [gatherPinTitleVie, setGatherPinTitleVie] = useState('');
+  const [gatherPinSubtitleEng, setGatherPinSubtitleEng] = useState('');
+  const [gatherPinSubtitleVie, setGatherPinSubtitleVie] = useState('');
 
   // Primary buttons and details helper phrases
   const [heroBtnEng, setHeroBtnEng] = useState('');
@@ -318,6 +345,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
           id: docSnap.id,
           guestName: docData.guestName || '',
           attendingStatus: docData.attendingStatus || 'no',
+          guestSide: docData.guestSide || 'bride',
+          bringingGuest: docData.bringingGuest || '0',
           dietaryRestrictions: docData.dietaryRestrictions || '',
           coupleNote: docData.coupleNote || '',
           createdAt: docData.createdAt
@@ -414,6 +443,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
             setHeroDateVie(data.heroDateVie || '');
             setInvitationTextEng(data.invitationTextEng || '');
             setInvitationTextVie(data.invitationTextVie || '');
+            setStoryMeetingTextEng(data.storyMeetingTextEng || '');
+            setStoryMeetingTextVie(data.storyMeetingTextVie || '');
+            setStoryAdventuresTextEng(data.storyAdventuresTextEng || '');
+            setStoryAdventuresTextVie(data.storyAdventuresTextVie || '');
+            setStoryChapterTextEng(data.storyChapterTextEng || '');
+            setStoryChapterTextVie(data.storyChapterTextVie || '');
             setVenueNameEng(data.venueNameEng || '');
             setVenueNameVie(data.venueNameVie || '');
             setWeddingDateShortEng(data.weddingDateShortEng || '');
@@ -422,6 +457,21 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
             setPhotoQuoteVie(data.photoQuoteVie || '');
             setAttireDescEng(data.attireDescEng || '');
             setAttireDescVie(data.attireDescVie || '');
+            setSwatchColor1(data.swatchColor1 || '');
+            setSwatchColor2(data.swatchColor2 || '');
+            setSwatchColor3(data.swatchColor3 || '');
+            setSwatchColor4(data.swatchColor4 || '');
+            setSwatchColor5(data.swatchColor5 || '');
+            setSwatchNameEng1(data.swatchNameEng1 || '');
+            setSwatchNameEng2(data.swatchNameEng2 || '');
+            setSwatchNameEng3(data.swatchNameEng3 || '');
+            setSwatchNameEng4(data.swatchNameEng4 || '');
+            setSwatchNameEng5(data.swatchNameEng5 || '');
+            setSwatchNameVie1(data.swatchNameVie1 || '');
+            setSwatchNameVie2(data.swatchNameVie2 || '');
+            setSwatchNameVie3(data.swatchNameVie3 || '');
+            setSwatchNameVie4(data.swatchNameVie4 || '');
+            setSwatchNameVie5(data.swatchNameVie5 || '');
             setRegistryTextEng(data.registryTextEng || '');
             setRegistryTextVie(data.registryTextVie || '');
             setCountdownTargetDate(data.countdownTargetDate || '');
@@ -485,6 +535,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
             setGatherDirectionsTextVie(data.gatherDirectionsTextVie || '');
             setGatherDirectionsUrl(data.gatherDirectionsUrl || '');
             setGatherPinUrl(data.gatherPinUrl || '');
+            setGatherPinTitleEng(data.gatherPinTitleEng || '');
+            setGatherPinTitleVie(data.gatherPinTitleVie || '');
+            setGatherPinSubtitleEng(data.gatherPinSubtitleEng || '');
+            setGatherPinSubtitleVie(data.gatherPinSubtitleVie || '');
             setCollageLaceBgRotate(data.collageLaceBgRotate || '0');
             
             setHasInitializedTexts(true);
@@ -606,6 +660,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
         heroDateVie,
         invitationTextEng,
         invitationTextVie,
+        storyMeetingTextEng,
+        storyMeetingTextVie,
+        storyAdventuresTextEng,
+        storyAdventuresTextVie,
+        storyChapterTextEng,
+        storyChapterTextVie,
         venueNameEng,
         venueNameVie,
         weddingDateShortEng,
@@ -614,6 +674,21 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
         photoQuoteVie,
         attireDescEng,
         attireDescVie,
+        swatchColor1,
+        swatchColor2,
+        swatchColor3,
+        swatchColor4,
+        swatchColor5,
+        swatchNameEng1,
+        swatchNameEng2,
+        swatchNameEng3,
+        swatchNameEng4,
+        swatchNameEng5,
+        swatchNameVie1,
+        swatchNameVie2,
+        swatchNameVie3,
+        swatchNameVie4,
+        swatchNameVie5,
         registryTextEng,
         registryTextVie,
         countdownTargetDate,
@@ -673,6 +748,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
         gatherDirectionsTextVie,
         gatherDirectionsUrl,
         gatherPinUrl,
+        gatherPinTitleEng,
+        gatherPinTitleVie,
+        gatherPinSubtitleEng,
+        gatherPinSubtitleVie,
         collageLaceBgRotate,
       }, { merge: true });
 
@@ -714,6 +793,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
   // Filtered RSVPs by search text
   const filteredRSVPs = rsvps.filter(rsvp => 
     rsvp.guestName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (rsvp.guestSide && rsvp.guestSide.toLowerCase().includes(searchQuery.toLowerCase())) ||
     rsvp.dietaryRestrictions.toLowerCase().includes(searchQuery.toLowerCase()) ||
     rsvp.coupleNote.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -728,6 +808,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
   const totalSubmissions = rsvps.length;
   const attendingCount = rsvps.filter(r => r.attendingStatus === 'yes').length;
   const decliningCount = rsvps.filter(r => r.attendingStatus === 'no').length;
+  const totalAttendingGuests = rsvps
+    .filter(r => r.attendingStatus === 'yes')
+    .reduce((sum, r) => sum + 1 + (parseInt(r.bringingGuest || '0', 10) || 0), 0);
 
   // Format timestamp helper
   const formatDate = (timestamp: any) => {
@@ -867,35 +950,45 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
             </div>
 
             {/* Analytics Stats bar */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               
-              <div className="bg-white p-6 border border-black/5 shadow-sm rounded-sm flex items-center gap-5">
-                <div className="w-12 h-12 rounded-full bg-[#362223]/5 flex items-center justify-center text-[#362223]">
-                  <Users size={20} />
+              <div className="bg-white p-5 border border-black/5 shadow-sm rounded-sm flex items-center gap-4">
+                <div className="w-11 h-11 rounded-full bg-[#362223]/5 flex items-center justify-center text-[#362223] shrink-0">
+                  <Users size={18} />
                 </div>
-                <div className="space-y-1">
-                  <p className="font-mono text-[8px] tracking-widest uppercase text-neutral-400 font-semibold">Total Submissions</p>
-                  <p className="font-serif text-3xl font-light leading-none">{totalSubmissions}</p>
-                </div>
-              </div>
-
-              <div className="bg-white p-6 border border-black/5 shadow-sm rounded-sm flex items-center gap-5">
-                <div className="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-100/50 flex items-center justify-center text-emerald-700">
-                  <CheckCircle size={20} />
-                </div>
-                <div className="space-y-1">
-                  <p className="font-mono text-[8px] tracking-widest uppercase text-neutral-400 font-semibold">Attending (Accepts)</p>
-                  <p className="font-serif text-3xl font-light leading-none text-emerald-800">{attendingCount}</p>
+                <div className="space-y-1 min-w-0">
+                  <p className="font-mono text-[8px] tracking-widest uppercase text-neutral-400 font-semibold truncate">Submissions</p>
+                  <p className="font-serif text-2xl font-light leading-none">{totalSubmissions}</p>
                 </div>
               </div>
 
-              <div className="bg-white p-6 border border-black/5 shadow-sm rounded-sm flex items-center gap-5">
-                <div className="w-12 h-12 rounded-full bg-neutral-50 border border-neutral-100 flex items-center justify-center text-neutral-400">
-                  <XCircle size={20} />
+              <div className="bg-white p-5 border border-black/5 shadow-sm rounded-sm flex items-center gap-4">
+                <div className="w-11 h-11 rounded-full bg-emerald-50 border border-emerald-100/50 flex items-center justify-center text-emerald-700 shrink-0">
+                  <CheckCircle size={18} />
                 </div>
-                <div className="space-y-1">
-                  <p className="font-mono text-[8px] tracking-widest uppercase text-neutral-400 font-semibold">Declined (Regrets)</p>
-                  <p className="font-serif text-3xl font-light leading-none text-neutral-500">{decliningCount}</p>
+                <div className="space-y-1 min-w-0">
+                  <p className="font-mono text-[8px] tracking-widest uppercase text-neutral-400 font-semibold truncate">Attending RSVPs</p>
+                  <p className="font-serif text-2xl font-light leading-none text-emerald-800">{attendingCount}</p>
+                </div>
+              </div>
+
+              <div className="bg-white p-5 border border-black/5 shadow-sm rounded-sm flex items-center gap-4">
+                <div className="w-11 h-11 rounded-full bg-amber-50 border border-amber-100/50 flex items-center justify-center text-amber-700 shrink-0">
+                  <Users size={18} />
+                </div>
+                <div className="space-y-1 min-w-0">
+                  <p className="font-mono text-[8px] tracking-widest uppercase text-neutral-400 font-semibold truncate">Total Headcount</p>
+                  <p className="font-serif text-2xl font-light leading-none text-amber-800">{totalAttendingGuests} <span className="text-[10px] font-mono text-neutral-400 font-normal">guests</span></p>
+                </div>
+              </div>
+
+              <div className="bg-white p-5 border border-black/5 shadow-sm rounded-sm flex items-center gap-4">
+                <div className="w-11 h-11 rounded-full bg-neutral-50 border border-neutral-100 flex items-center justify-center text-neutral-400 shrink-0">
+                  <XCircle size={18} />
+                </div>
+                <div className="space-y-1 min-w-0">
+                  <p className="font-mono text-[8px] tracking-widest uppercase text-neutral-400 font-semibold truncate">Declined</p>
+                  <p className="font-serif text-2xl font-light leading-none text-neutral-500">{decliningCount}</p>
                 </div>
               </div>
 
@@ -1019,7 +1112,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                       <thead>
                         <tr className="bg-neutral-50 border-b border-black/5 font-mono text-[8.5px] tracking-widest text-neutral-500 uppercase">
                           <th className="py-4 px-6 font-semibold">Guest Name</th>
+                          <th className="py-4 px-6 font-semibold">Party / Side</th>
                           <th className="py-4 px-6 font-semibold">Attendance Status</th>
+                          <th className="py-4 px-6 font-semibold">Accompanying Guests</th>
                           <th className="py-4 px-6 font-semibold">Dietary Restrictions</th>
                           <th className="py-4 px-6 font-semibold">Song Requests / Note</th>
                           <th className="py-4 px-6 font-semibold">Submitted At</th>
@@ -1034,6 +1129,24 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                             <td className="py-5 px-6 font-serif text-base italic leading-none font-medium text-[#362223]">
                               {rsvp.guestName}
                             </td>
+                            <td className="py-5 px-6 uppercase text-[9px] tracking-widest whitespace-nowrap">
+                              {rsvp.guestSide === 'groom' ? (
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 font-semibold rounded-full bg-blue-50 text-blue-800 border border-blue-100/60">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-blue-600 block"></span>
+                                  Groom's Side
+                                </span>
+                              ) : rsvp.guestSide === 'both' ? (
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 font-semibold rounded-full bg-amber-50 text-amber-800 border border-amber-100/60">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-600 block"></span>
+                                  Both Sides
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 font-semibold rounded-full bg-rose-50 text-rose-800 border border-rose-100/60">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-rose-600 block"></span>
+                                  Bride's Side
+                                </span>
+                              )}
+                            </td>
                             <td className="py-5 px-6 uppercase text-[9px] tracking-widest">
                               {rsvp.attendingStatus === 'yes' ? (
                                 <span className="inline-flex items-center gap-1.5 px-3 py-1 font-semibold rounded-full bg-emerald-50 text-emerald-800 border border-emerald-100/40">
@@ -1045,6 +1158,15 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                                   <span className="w-1.5 h-1.5 rounded-full bg-neutral-400 block"></span>
                                   Decline
                                 </span>
+                              )}
+                            </td>
+                            <td className="py-5 px-6 uppercase text-[9px] tracking-widest whitespace-nowrap">
+                              {rsvp.bringingGuest && rsvp.bringingGuest !== '0' ? (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 font-semibold rounded-full bg-stone-100 text-stone-800 border border-stone-200">
+                                  +{rsvp.bringingGuest} ({1 + (parseInt(rsvp.bringingGuest, 10) || 0)} total)
+                                </span>
+                              ) : (
+                                <span className="text-neutral-400">Just 1 person</span>
                               )}
                             </td>
                             <td className="py-5 px-6 text-neutral-600 uppercase text-[9px] leading-relaxed max-w-xs truncate" title={rsvp.dietaryRestrictions}>
@@ -1432,7 +1554,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           type="text" 
                           value={groomName}
                           onChange={(e) => setGroomName(e.target.value)}
-                          placeholder="Johnathan"
+                          placeholder="Jonathan"
                           className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors"
                         />
                       </div>
@@ -1629,32 +1751,121 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                   </div>
                   )}
 
-                  {/* Phase 3: Invitation Texts */}
+                  {/* Phase 3: Invitation Texts & Editorial Narrative */}
                   {textSubTab === 'story' && (
                   <div className="bg-white border border-black/5 rounded-sm p-6 md:p-8 shadow-sm space-y-6">
-                    <h4 className="font-serif text-base tracking-normal uppercase border-b border-black/5 pb-3 font-semibold">3. Welcome Story Invitation</h4>
+                    <h4 className="font-serif text-base tracking-normal uppercase border-b border-black/5 pb-3 font-semibold">3. Welcome Story Invitation & Editorial Narrative</h4>
                     
-                    <div className="space-y-4">
-                      <div className="space-y-1.5">
-                        <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Invitation Body Text (ENGLISH)</label>
-                        <textarea 
-                          rows={3}
-                          value={invitationTextEng}
-                          onChange={(e) => setInvitationTextEng(e.target.value)}
-                          placeholder="Invite you to share in a quiet weekend of woodfire, forest walks..."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
-                        />
+                    <div className="space-y-6">
+                      <div className="space-y-4">
+                        <div className="space-y-1.5">
+                          <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Invitation Body Text (ENGLISH)</label>
+                          <textarea 
+                            rows={3}
+                            value={invitationTextEng}
+                            onChange={(e) => setInvitationTextEng(e.target.value)}
+                            placeholder="Invite you to share in a quiet weekend of woodfire, forest walks..."
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          />
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Invitation Body Text (VIETNAMESE)</label>
+                          <textarea 
+                            rows={3}
+                            value={invitationTextVie}
+                            onChange={(e) => setInvitationTextVie(e.target.value)}
+                            placeholder="Trân trọng kính mời bạn ghé thăm một ngày ấm áp đầy tiếng cười..."
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          />
+                        </div>
                       </div>
 
-                      <div className="space-y-1.5">
-                        <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Invitation Body Text (VIETNAMESE)</label>
-                        <textarea 
-                          rows={3}
-                          value={invitationTextVie}
-                          onChange={(e) => setInvitationTextVie(e.target.value)}
-                          placeholder="Trân trọng kính mời bạn ghé thăm một ngày ấm áp đầy tiếng cười..."
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
-                        />
+                      <div className="pt-4 border-t border-black/5 space-y-4">
+                        <div className="space-y-1">
+                          <h5 className="font-serif text-sm font-semibold uppercase tracking-wider text-[#362223]">Left Photo Narrative / Chance Meeting Text</h5>
+                          <p className="font-mono text-[9px] text-neutral-400 uppercase tracking-widest">Displayed underneath the left portrait in the wedding story collage.</p>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Story Narrative Paragraph (ENGLISH)</label>
+                          <textarea 
+                            rows={3}
+                            value={storyMeetingTextEng}
+                            onChange={(e) => setStoryMeetingTextEng(e.target.value)}
+                            placeholder="In 2022, a chance meeting at a Hands On Tokyo charity dinner brought together Jon, from the United Kingdom, and Eve, from Vietnam."
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          />
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Story Narrative Paragraph (VIETNAMESE)</label>
+                          <textarea 
+                            rows={3}
+                            value={storyMeetingTextVie}
+                            onChange={(e) => setStoryMeetingTextVie(e.target.value)}
+                            placeholder="Năm 2022, một cuộc gặp gỡ tình cờ tại bữa tối từ thiện Hands On Tokyo đã gắn kết Jon, đến từ Vương quốc Anh, và Eve, đến từ Việt Nam."
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="pt-4 border-t border-black/5 space-y-4">
+                        <div className="space-y-1">
+                          <h5 className="font-serif text-sm font-semibold uppercase tracking-wider text-[#362223]">Middle Photo Narrative / Adventures & Love Text</h5>
+                          <p className="font-mono text-[9px] text-neutral-400 uppercase tracking-widest">Displayed underneath the middle horizontal photo in the wedding story collage.</p>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Story Narrative Paragraph (ENGLISH)</label>
+                          <textarea 
+                            rows={3}
+                            value={storyAdventuresTextEng}
+                            onChange={(e) => setStoryAdventuresTextEng(e.target.value)}
+                            placeholder="What began as a simple introduction soon grew into a beautiful friendship, countless adventures, and a love that crossed cultures and continents."
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          />
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Story Narrative Paragraph (VIETNAMESE)</label>
+                          <textarea 
+                            rows={3}
+                            value={storyAdventuresTextVie}
+                            onChange={(e) => setStoryAdventuresTextVie(e.target.value)}
+                            placeholder="Những gì bắt đầu bằng một lời chào giản dị đã sớm phát triển thành một tình bạn tuyệt đẹp, vô số chuyến phiêu lưu và một tình yêu vượt qua mọi biên giới văn hóa và châu lục."
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="pt-4 border-t border-black/5 space-y-4">
+                        <div className="space-y-1">
+                          <h5 className="font-serif text-sm font-semibold uppercase tracking-wider text-[#362223]">Lower Left Photo Narrative / Next Chapter & Celebration Text</h5>
+                          <p className="font-mono text-[9px] text-neutral-400 uppercase tracking-widest">Displayed underneath the lower left photo in the wedding story collage.</p>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Story Narrative Paragraph (ENGLISH)</label>
+                          <textarea 
+                            rows={3}
+                            value={storyChapterTextEng}
+                            onChange={(e) => setStoryChapterTextEng(e.target.value)}
+                            placeholder="Today, they are excited to begin the next chapter of their journey together and are delighted to celebrate this special day with their family and friends."
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          />
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Story Narrative Paragraph (VIETNAMESE)</label>
+                          <textarea 
+                            rows={3}
+                            value={storyChapterTextVie}
+                            onChange={(e) => setStoryChapterTextVie(e.target.value)}
+                            placeholder="Hôm nay, họ vô cùng háo hức bắt đầu chương tiếp theo của hành trình cùng nhau và rất vui mừng được kỷ niệm ngày đặc biệt này cùng gia đình và bạn bè."
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1764,6 +1975,252 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                           placeholder="Trang phục bán trang trọng (Cocktail). Nam có thể thắt nơ."
                           className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
                         />
+                      </div>
+                    </div>
+
+                    {/* Attire Color Palette Swatches (5 Colors) */}
+                    <div className="pt-4 border-t border-black/5 space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h5 className="font-serif text-sm uppercase tracking-wider font-semibold text-[#362223]">Attire Color Swatches (5 Colors)</h5>
+                          <p className="font-mono text-[9px] text-neutral-400 uppercase tracking-widest mt-0.5">
+                            Set custom hex colors (e.g. #7D8E73) and labels for the 5 swatches displayed in the Timeline & Attire section.
+                          </p>
+                        </div>
+                        {/* Live visual preview of the 5 swatches */}
+                        <div className="flex items-center gap-2 bg-stone-100 px-3 py-2 rounded-full border border-black/5">
+                          {[
+                            swatchColor1 || '#7D8E73',
+                            swatchColor2 || '#E3D5C3',
+                            swatchColor3 || '#B67E65',
+                            swatchColor4 || '#8C9DA1',
+                            swatchColor5 || '#C5A880',
+                          ].map((hex, i) => (
+                            <span 
+                              key={i} 
+                              className="w-5 h-5 rounded-full border border-black/15 shadow-inner" 
+                              style={{ backgroundColor: hex }}
+                              title={`Swatch ${i+1}: ${hex}`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-5 gap-3 pt-2">
+                        {/* Swatch 1 */}
+                        <div className="bg-stone-50/70 border border-black/10 rounded p-3 space-y-2.5">
+                          <div className="flex items-center justify-between">
+                            <span className="font-mono text-[9px] font-bold uppercase text-neutral-600">Swatch 1</span>
+                            <span className="w-4 h-4 rounded-full border border-black/15 shadow-inner" style={{ backgroundColor: swatchColor1 || '#7D8E73' }} />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[8px] uppercase tracking-wider text-neutral-400">Hex Code</label>
+                            <div className="flex items-center gap-1.5">
+                              <input 
+                                type="color" 
+                                value={swatchColor1 && swatchColor1.startsWith('#') ? swatchColor1 : '#7D8E73'} 
+                                onChange={(e) => setSwatchColor1(e.target.value.toUpperCase())}
+                                className="w-7 h-7 p-0 border border-black/15 rounded cursor-pointer bg-transparent"
+                              />
+                              <input 
+                                type="text"
+                                value={swatchColor1}
+                                onChange={(e) => setSwatchColor1(e.target.value)}
+                                placeholder="#7D8E73"
+                                className="w-full bg-white border border-black/10 focus:border-[#362223] py-1 px-1.5 font-mono text-[10px] uppercase outline-none"
+                              />
+                            </div>
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[8px] uppercase tracking-wider text-neutral-400">Name (ENG / VIE)</label>
+                            <input 
+                              type="text"
+                              value={swatchNameEng1}
+                              onChange={(e) => setSwatchNameEng1(e.target.value)}
+                              placeholder="Sage"
+                              className="w-full bg-white border border-black/10 focus:border-[#362223] py-1 px-1.5 font-serif text-[11px] outline-none mb-1"
+                            />
+                            <input 
+                              type="text"
+                              value={swatchNameVie1}
+                              onChange={(e) => setSwatchNameVie1(e.target.value)}
+                              placeholder="Màu Xanh"
+                              className="w-full bg-white border border-black/10 focus:border-[#362223] py-1 px-1.5 font-serif text-[11px] outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Swatch 2 */}
+                        <div className="bg-stone-50/70 border border-black/10 rounded p-3 space-y-2.5">
+                          <div className="flex items-center justify-between">
+                            <span className="font-mono text-[9px] font-bold uppercase text-neutral-600">Swatch 2</span>
+                            <span className="w-4 h-4 rounded-full border border-black/15 shadow-inner" style={{ backgroundColor: swatchColor2 || '#E3D5C3' }} />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[8px] uppercase tracking-wider text-neutral-400">Hex Code</label>
+                            <div className="flex items-center gap-1.5">
+                              <input 
+                                type="color" 
+                                value={swatchColor2 && swatchColor2.startsWith('#') ? swatchColor2 : '#E3D5C3'} 
+                                onChange={(e) => setSwatchColor2(e.target.value.toUpperCase())}
+                                className="w-7 h-7 p-0 border border-black/15 rounded cursor-pointer bg-transparent"
+                              />
+                              <input 
+                                type="text"
+                                value={swatchColor2}
+                                onChange={(e) => setSwatchColor2(e.target.value)}
+                                placeholder="#E3D5C3"
+                                className="w-full bg-white border border-black/10 focus:border-[#362223] py-1 px-1.5 font-mono text-[10px] uppercase outline-none"
+                              />
+                            </div>
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[8px] uppercase tracking-wider text-neutral-400">Name (ENG / VIE)</label>
+                            <input 
+                              type="text"
+                              value={swatchNameEng2}
+                              onChange={(e) => setSwatchNameEng2(e.target.value)}
+                              placeholder="Sand"
+                              className="w-full bg-white border border-black/10 focus:border-[#362223] py-1 px-1.5 font-serif text-[11px] outline-none mb-1"
+                            />
+                            <input 
+                              type="text"
+                              value={swatchNameVie2}
+                              onChange={(e) => setSwatchNameVie2(e.target.value)}
+                              placeholder="Màu Cát"
+                              className="w-full bg-white border border-black/10 focus:border-[#362223] py-1 px-1.5 font-serif text-[11px] outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Swatch 3 */}
+                        <div className="bg-stone-50/70 border border-black/10 rounded p-3 space-y-2.5">
+                          <div className="flex items-center justify-between">
+                            <span className="font-mono text-[9px] font-bold uppercase text-neutral-600">Swatch 3</span>
+                            <span className="w-4 h-4 rounded-full border border-black/15 shadow-inner" style={{ backgroundColor: swatchColor3 || '#B67E65' }} />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[8px] uppercase tracking-wider text-neutral-400">Hex Code</label>
+                            <div className="flex items-center gap-1.5">
+                              <input 
+                                type="color" 
+                                value={swatchColor3 && swatchColor3.startsWith('#') ? swatchColor3 : '#B67E65'} 
+                                onChange={(e) => setSwatchColor3(e.target.value.toUpperCase())}
+                                className="w-7 h-7 p-0 border border-black/15 rounded cursor-pointer bg-transparent"
+                              />
+                              <input 
+                                type="text"
+                                value={swatchColor3}
+                                onChange={(e) => setSwatchColor3(e.target.value)}
+                                placeholder="#B67E65"
+                                className="w-full bg-white border border-black/10 focus:border-[#362223] py-1 px-1.5 font-mono text-[10px] uppercase outline-none"
+                              />
+                            </div>
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[8px] uppercase tracking-wider text-neutral-400">Name (ENG / VIE)</label>
+                            <input 
+                              type="text"
+                              value={swatchNameEng3}
+                              onChange={(e) => setSwatchNameEng3(e.target.value)}
+                              placeholder="Clay"
+                              className="w-full bg-white border border-black/10 focus:border-[#362223] py-1 px-1.5 font-serif text-[11px] outline-none mb-1"
+                            />
+                            <input 
+                              type="text"
+                              value={swatchNameVie3}
+                              onChange={(e) => setSwatchNameVie3(e.target.value)}
+                              placeholder="Màu Đất sét"
+                              className="w-full bg-white border border-black/10 focus:border-[#362223] py-1 px-1.5 font-serif text-[11px] outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Swatch 4 */}
+                        <div className="bg-stone-50/70 border border-black/10 rounded p-3 space-y-2.5">
+                          <div className="flex items-center justify-between">
+                            <span className="font-mono text-[9px] font-bold uppercase text-neutral-600">Swatch 4</span>
+                            <span className="w-4 h-4 rounded-full border border-black/15 shadow-inner" style={{ backgroundColor: swatchColor4 || '#8C9DA1' }} />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[8px] uppercase tracking-wider text-neutral-400">Hex Code</label>
+                            <div className="flex items-center gap-1.5">
+                              <input 
+                                type="color" 
+                                value={swatchColor4 && swatchColor4.startsWith('#') ? swatchColor4 : '#8C9DA1'} 
+                                onChange={(e) => setSwatchColor4(e.target.value.toUpperCase())}
+                                className="w-7 h-7 p-0 border border-black/15 rounded cursor-pointer bg-transparent"
+                              />
+                              <input 
+                                type="text"
+                                value={swatchColor4}
+                                onChange={(e) => setSwatchColor4(e.target.value)}
+                                placeholder="#8C9DA1"
+                                className="w-full bg-white border border-black/10 focus:border-[#362223] py-1 px-1.5 font-mono text-[10px] uppercase outline-none"
+                              />
+                            </div>
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[8px] uppercase tracking-wider text-neutral-400">Name (ENG / VIE)</label>
+                            <input 
+                              type="text"
+                              value={swatchNameEng4}
+                              onChange={(e) => setSwatchNameEng4(e.target.value)}
+                              placeholder="Dusty Blue"
+                              className="w-full bg-white border border-black/10 focus:border-[#362223] py-1 px-1.5 font-serif text-[11px] outline-none mb-1"
+                            />
+                            <input 
+                              type="text"
+                              value={swatchNameVie4}
+                              onChange={(e) => setSwatchNameVie4(e.target.value)}
+                              placeholder="Xanh Khói"
+                              className="w-full bg-white border border-black/10 focus:border-[#362223] py-1 px-1.5 font-serif text-[11px] outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Swatch 5 */}
+                        <div className="bg-stone-50/70 border border-black/10 rounded p-3 space-y-2.5">
+                          <div className="flex items-center justify-between">
+                            <span className="font-mono text-[9px] font-bold uppercase text-neutral-600">Swatch 5</span>
+                            <span className="w-4 h-4 rounded-full border border-black/15 shadow-inner" style={{ backgroundColor: swatchColor5 || '#C5A880' }} />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[8px] uppercase tracking-wider text-neutral-400">Hex Code</label>
+                            <div className="flex items-center gap-1.5">
+                              <input 
+                                type="color" 
+                                value={swatchColor5 && swatchColor5.startsWith('#') ? swatchColor5 : '#C5A880'} 
+                                onChange={(e) => setSwatchColor5(e.target.value.toUpperCase())}
+                                className="w-7 h-7 p-0 border border-black/15 rounded cursor-pointer bg-transparent"
+                              />
+                              <input 
+                                type="text"
+                                value={swatchColor5}
+                                onChange={(e) => setSwatchColor5(e.target.value)}
+                                placeholder="#C5A880"
+                                className="w-full bg-white border border-black/10 focus:border-[#362223] py-1 px-1.5 font-mono text-[10px] uppercase outline-none"
+                              />
+                            </div>
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[8px] uppercase tracking-wider text-neutral-400">Name (ENG / VIE)</label>
+                            <input 
+                              type="text"
+                              value={swatchNameEng5}
+                              onChange={(e) => setSwatchNameEng5(e.target.value)}
+                              placeholder="Warm Taupe"
+                              className="w-full bg-white border border-black/10 focus:border-[#362223] py-1 px-1.5 font-serif text-[11px] outline-none mb-1"
+                            />
+                            <input 
+                              type="text"
+                              value={swatchNameVie5}
+                              onChange={(e) => setSwatchNameVie5(e.target.value)}
+                              placeholder="Màu Nâu Ấm"
+                              className="w-full bg-white border border-black/10 focus:border-[#362223] py-1 px-1.5 font-serif text-[11px] outline-none"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -2337,15 +2794,68 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                         />
                       </div>
 
-                      <div className="space-y-1.5">
-                        <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Interactive Ceremony Pin URL (West Ridge Link)</label>
-                        <input 
-                          type="text" 
-                          value={gatherPinUrl}
-                          onChange={(e) => setGatherPinUrl(e.target.value)}
-                          placeholder="https://maps.google.com/?q=45.4192,-122.1824"
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-xs outline-none transition-colors"
-                        />
+                      <div className="pt-3 border-t border-black/5 space-y-3">
+                        <h5 className="font-serif text-sm uppercase tracking-wider font-semibold text-[#362223]">Interactive Map Pin Tooltip & Badge</h5>
+                        <p className="font-mono text-[9px] text-neutral-400 uppercase tracking-widest">
+                          Configure the title and event/time subtitle displayed inside the floating map pin flag.
+                        </p>
+                        
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-1.5">
+                            <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Pin Title (ENG)</label>
+                            <input 
+                              type="text" 
+                              value={gatherPinTitleEng}
+                              onChange={(e) => setGatherPinTitleEng(e.target.value)}
+                              placeholder="WEST RIDGE"
+                              className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Pin Title (VIE)</label>
+                            <input 
+                              type="text" 
+                              value={gatherPinTitleVie}
+                              onChange={(e) => setGatherPinTitleVie(e.target.value)}
+                              placeholder="WEST RIDGE"
+                              className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-1.5">
+                            <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Pin Subtitle / Event (ENG)</label>
+                            <input 
+                              type="text" 
+                              value={gatherPinSubtitleEng}
+                              onChange={(e) => setGatherPinSubtitleEng(e.target.value)}
+                              placeholder="The Ceremony — 4:00 PM"
+                              className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Pin Subtitle / Event (VIE)</label>
+                            <input 
+                              type="text" 
+                              value={gatherPinSubtitleVie}
+                              onChange={(e) => setGatherPinSubtitleVie(e.target.value)}
+                              placeholder="Lễ cưới — 16:00"
+                              className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Interactive Map Pin Click URL</label>
+                          <input 
+                            type="text" 
+                            value={gatherPinUrl}
+                            onChange={(e) => setGatherPinUrl(e.target.value)}
+                            placeholder="https://maps.google.com/?q=45.4192,-122.1824"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-xs outline-none transition-colors"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>

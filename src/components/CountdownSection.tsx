@@ -95,7 +95,7 @@ export default function CountdownSection({
 
   const coupleNames = (brideName && groomName) 
     ? `${brideName} & ${groomName}` 
-    : (lang === 'VIE' ? "BẢO & JOHN" : "BAO & JOHN");
+    : (lang === 'VIE' ? "BẢO & JON" : "BAO & JON");
 
   const t = {
     ENG: {

@@ -297,46 +297,6 @@ html {
     height: 18px !important;
   }
 
-  div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div#stickyText:nth-of-type(1) > div:nth-of-type(1) {
-    position: relative !important;
-    top: 200px !important;
-  }
-
-  div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) {
-    width: 355px !important;
-    margin-left: auto !important;
-    margin-right: 0px !important;
-    margin-top: 0px !important;
-    padding-left: 0px !important;
-    padding-bottom: 0px !important;
-    padding-right: 0px !important;
-    position: relative !important;
-    left: -26px !important;
-    top: 360px !important;
-  }
-
-  div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) {
-    margin-left: auto !important;
-    margin-right: auto !important;
-    align-items: flex-end !important;
-    justify-content: center !important;
-    gap: 10px !important;
-    position: relative !important;
-    top: 38px !important;
-  }
-
-  div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div {
-    width: calc((100% - 10px) / 2) !important;
-  }
-
-  div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) {
-    margin-top: 0px !important;
-  }
-
-  div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(3) {
-    display: none !important;
-  }
-  
   .image-gallery {
     grid-template-columns: 1fr;
     margin-top: 0;
@@ -373,6 +333,11 @@ html {
 div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) {
   min-height: calc(180vh + 44px) !important;
   padding-bottom: 320px !important;
+}
+
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div#stickyText:nth-of-type(1) > div:nth-of-type(1) {
+  position: relative !important;
+  top: 190px !important;
 }
 
 div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div#stickyText:nth-of-type(1) > div:nth-of-type(1) .h-px,
@@ -511,13 +476,66 @@ div#root:nth-of-type(1) > div:nth-of-type(1) > section#gathering-grounds:nth-of-
   line-height: 16px;
 }
 
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story-mobile-narrative:nth-of-type(3) > div:nth-of-type(1) {
+  width: 375px;
+  position: relative;
+  left: -16px;
+}
+
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story-mobile-narrative:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > p:nth-of-type(1) {
+  margin-top: 120px;
+  font-size: 16px;
+  line-height: 22px;
+  width: 250px;
+}
+
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story-mobile-narrative:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) {
+  margin-bottom: 140px;
+  margin-top: 60px;
+}
+
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story-mobile-narrative:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > img:nth-of-type(1) {
+  width: 250px;
+  max-width: 250px;
+}
+
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story-mobile-narrative:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > p:nth-of-type(1) {
+  font-size: 16px;
+  line-height: 20px;
+  width: 250px;
+}
+
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story-mobile-narrative:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(3) > p:nth-of-type(1) {
+  font-size: 16px;
+  line-height: 20px;
+  width: 250px;
+  margin-bottom: 30px;
+  height: 100px;
+}
+
 /* Allow inline React styles to control RSVP card responsive typography and transforms */
 div#root:nth-of-type(1) > div:nth-of-type(1) > section#rsvp:nth-of-type(5) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > span:nth-of-type(1) {
   /* removed static !important overrides to enable responsive sizes */
 }
 
-div#root:nth-of-type(1) > div:nth-of-type(1) > section#rsvp:nth-of-type(5) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > p:nth-of-type(1) {
-  /* removed static !important overrides to enable responsive sizes */
+/* Story Section: Remove drop shadows and box shadows across desktop and mobile */
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2),
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) div,
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#story:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) img,
+section#story .gallery-image,
+section#story [class*="shadow"],
+section#story-mobile-narrative,
+section#story-mobile-narrative div,
+section#story-mobile-narrative img,
+section#story-mobile-narrative [class*="shadow"] {
+  box-shadow: none !important;
+  filter: none !important;
+  drop-shadow: none !important;
+}
+
+div#root:nth-of-type(1) > div:nth-of-type(1) > section#rsvp:nth-of-type(6) > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > h3:nth-of-type(1) > span:nth-of-type(1) {
+  font-size: 59px;
+  width: 270.898px;
 }
 
 
