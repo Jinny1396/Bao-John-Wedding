@@ -924,8 +924,17 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
               <div className="space-y-2">
                 <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-neutral-400 block font-semibold">Wedding Suite Control Deck</span>
                 <h1 className="font-serif text-4xl md:text-5xl uppercase tracking-tight text-[#362223]">RSVP LEDGER BOARD</h1>
-                <p className="font-mono text-[9.5px] uppercase tracking-widest text-neutral-500/85">
-                  Real-time database stream active
+                <p className="font-mono text-[9.5px] uppercase tracking-widest text-neutral-500/85 flex flex-wrap items-center gap-2">
+                  <span>Real-time database stream active</span>
+                  <span>•</span>
+                  <a 
+                    href="https://bao-jon-wedding-2027.vercel.app" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="text-[#362223] font-bold underline hover:opacity-75 lowercase tracking-normal font-mono"
+                  >
+                    https://bao-jon-wedding-2027.vercel.app
+                  </a>
                 </p>
               </div>
 

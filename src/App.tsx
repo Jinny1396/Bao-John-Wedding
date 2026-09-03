@@ -1894,9 +1894,17 @@ export default function App() {
       />
 
       {/* Footer */}
-      <footer className="w-full bg-[#171111] border-t border-white/5">
-        <div className="max-w-6xl mx-auto h-[50px] flex items-center justify-between font-mono text-[8px] tracking-[0.4em] uppercase px-6">
+      <footer className="w-full bg-[#171111] border-t border-white/5 py-4">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-[8px] tracking-[0.25em] uppercase px-6">
           <p className="text-left text-[#a67676]">&copy; 2026 {siteContent.brideName || "Bảo Eve"} & {siteContent.groomName || "Jonathan"}. All rights reserved.</p>
+          <a 
+            href="https://bao-jon-wedding-2027.vercel.app" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-[#a67676]/80 hover:text-[#FFE4E9] transition-colors normal-case tracking-widest text-[9px] font-mono select-all cursor-pointer underline underline-offset-4 decoration-white/20 hover:decoration-white/60"
+          >
+            bao-jon-wedding-2027.vercel.app
+          </a>
           <div className="flex justify-center">
             <button 
               onClick={() => navigateTo('/admin')}
