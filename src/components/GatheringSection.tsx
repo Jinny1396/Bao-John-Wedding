@@ -240,13 +240,7 @@ export const GatheringSection = ({ lang, siteContent }: GatheringSectionProps) =
                 <line x1="10" y1="0" x2="10" y2="24" stroke="currentColor" strokeWidth="0.8" />
               </g>
 
-              {/* Text markings/landmarks */}
-              <text x="510" y="160" textAnchor="middle" transform="rotate(32, 510, 160)" className="font-serif italic text-[7.5px] tracking-widest fill-stone-400 select-none">
-                Whispering Forest Pass
-              </text>
-              <text x="495" y="115" textAnchor="middle" className="font-serif italic text-[7px] tracking-wide fill-stone-400 select-none">
-                Siletz River Fork
-              </text>
+              {/* Trail and river vector details */}
             </svg>
 
             {/* CARD CENTRAL REGION: Floating Interactive Pin Nodes */}

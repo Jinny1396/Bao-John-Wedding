@@ -5,6 +5,7 @@ import { AdminPanel } from './components/AdminPanel';
 import { StorySection } from './components/StorySection';
 import CountdownSection from './components/CountdownSection';
 import { GatheringSection } from './components/GatheringSection';
+import { GiftSection } from './components/GiftSection';
 import { VolumeX, Volume2, Music, Menu, X } from 'lucide-react';
 import { onSnapshot, doc, collection, addDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from './firebase';
@@ -311,7 +312,7 @@ export default function App() {
   const [localNoteText, setLocalNoteText] = useState('');
   const [localGuestName, setLocalGuestName] = useState('');
   const [isLocalModalOpen, setIsLocalModalOpen] = useState(false);
-  const [activeModalTab, setActiveModalTab] = useState<'rsvp' | 'note'>('rsvp');
+  const [activeModalTab, setActiveModalTab] = useState<'rsvp' | 'note' | 'gift'>('rsvp');
   const [localNotes, setLocalNotes] = useState<Array<{name: string, text: string, id: number}>>(() => {
     try {
       const saved = localStorage.getItem('wedding_local_notes');
@@ -452,6 +453,24 @@ export default function App() {
     storyAdventuresTextVie?: string;
     storyChapterTextEng?: string;
     storyChapterTextVie?: string;
+    brideGiftQrUrl?: string;
+    groomGiftQrUrl?: string;
+    giftSectionTitleVie?: string;
+    giftSectionTitleEng?: string;
+    giftSectionSubtitleVie?: string;
+    giftSectionSubtitleEng?: string;
+    giftBrideTitle?: string;
+    giftBrideBank?: string;
+    giftBrideAccount?: string;
+    giftBrideName?: string;
+    giftBrideBtnTextVie?: string;
+    giftGroomTitle?: string;
+    giftGroomBank?: string;
+    giftGroomAccount?: string;
+    giftGroomName?: string;
+    giftGroomBtnTextVie?: string;
+    sidebarGiftEng?: string;
+    sidebarGiftVie?: string;
   }>({});
 
   // Real-time synchronization of custom website images and text content
@@ -579,6 +598,24 @@ export default function App() {
           storyChapterTextEng: data.storyChapterTextEng || '',
           storyChapterTextVie: data.storyChapterTextVie || '',
           collageLaceBgRotate: data.collageLaceBgRotate || '0',
+          brideGiftQrUrl: data.brideGiftQrUrl || '',
+          groomGiftQrUrl: data.groomGiftQrUrl || '',
+          giftSectionTitleVie: data.giftSectionTitleVie || '',
+          giftSectionTitleEng: data.giftSectionTitleEng || '',
+          giftSectionSubtitleVie: data.giftSectionSubtitleVie || '',
+          giftSectionSubtitleEng: data.giftSectionSubtitleEng || '',
+          giftBrideTitle: data.giftBrideTitle || '',
+          giftBrideBank: data.giftBrideBank || '',
+          giftBrideAccount: data.giftBrideAccount || '',
+          giftBrideName: data.giftBrideName || '',
+          giftBrideBtnTextVie: data.giftBrideBtnTextVie || '',
+          giftGroomTitle: data.giftGroomTitle || '',
+          giftGroomBank: data.giftGroomBank || '',
+          giftGroomAccount: data.giftGroomAccount || '',
+          giftGroomName: data.giftGroomName || '',
+          giftGroomBtnTextVie: data.giftGroomBtnTextVie || '',
+          sidebarGiftEng: data.sidebarGiftEng || '',
+          sidebarGiftVie: data.sidebarGiftVie || '',
         });
       }
       if (isInitialSnapshot.current) {
@@ -652,6 +689,7 @@ export default function App() {
       registry: "REGISTRY",
       registryParagraph: siteContent.registryTextEng || "We are so grateful to have you as a part of our lives, and your presence at our wedding is the greatest gift of all. If you would like to celebrate this joyous occasion with a gift, we have created a wedding registry to make it easier for you.",
       registryBtn: siteContent.registryBtnEng || "View Our Wedding Registry",
+      gift: siteContent.sidebarGiftEng || "GIFT",
       respondBy: siteContent.respondByEng || "Kindly respond by March 23, 2026.",
       writeNoteTitle: siteContent.writeNoteTitleEng || "WRITE US A NOTE",
       writeNoteSubtitle: siteContent.writeNoteSubtitleEng || "Leave a memory, wish, or guidance on our wedding board.",
@@ -701,6 +739,7 @@ export default function App() {
       registry: "HỘP QUÀ",
       registryParagraph: siteContent.registryTextVie || "Sự hiện diện của bạn là niềm hạnh phúc lớn nhất của chúng mình. Nếu bạn muốn gửi chúc mừng, chúng mình đã chuẩn bị danh sách quà cưới nhỏ xinh dưới đây để bạn dễ dàng lựa chọn.",
       registryBtn: siteContent.registryBtnVie || "Xem Hộp Quà Chúc Mừng",
+      gift: siteContent.sidebarGiftVie || "MỪNG CƯỚI",
       respondBy: siteContent.respondByVie || "Vui lòng cho tụi mình biết phản hồi trước ngày 23 tháng 3, 2026.",
       writeNoteTitle: siteContent.writeNoteTitleVie || "GỬI LỜI CHÚC MỪNG",
       writeNoteSubtitle: siteContent.writeNoteSubtitleVie || "Ghi lại kỷ niệm hoặc lời nhắn nhủ dành cho ngày hạnh phúc của chúng mình.",
@@ -1545,14 +1584,14 @@ export default function App() {
                   </p>
                 </div>
 
-                {/* Handcrafted buttons for RSVP and Guestbook */}
-                <div className="mt-5 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
+                {/* Handcrafted buttons for RSVP, Guestbook, and Gift */}
+                <div className="mt-5 sm:mt-8 flex flex-wrap gap-2.5 sm:gap-3.5 justify-center items-center">
                   <button
                     onClick={() => {
                       setActiveModalTab('rsvp');
                       setIsLocalModalOpen(true);
                     }}
-                    className="px-6 sm:px-8 py-2 sm:py-2.5 rounded-full bg-[#362223] hover:bg-[#362223]/90 text-[#FAF9F5] font-serif italic active:scale-95 transition-all select-none cursor-pointer duration-300 shadow-md border border-[#362223]"
+                    className="px-5 sm:px-7 py-2 sm:py-2.5 rounded-full bg-[#362223] hover:bg-[#362223]/90 text-[#FAF9F5] font-serif italic active:scale-95 transition-all select-none cursor-pointer duration-300 shadow-md border border-[#362223]"
                     style={{ fontSize: '12px', fontWeight: 'bold' }}
                   >
                     {lang === 'VIE' ? "Xác nhận tham dự (RSVP)" : "Please RSVP Here"}
@@ -1562,10 +1601,20 @@ export default function App() {
                       setActiveModalTab('note');
                       setIsLocalModalOpen(true);
                     }}
-                    className="px-6 sm:px-8 py-2 sm:py-2.5 rounded-full border border-[#362223]/40 text-[#362223]/90 font-serif italic bg-transparent hover:bg-[#362223]/5 active:scale-95 transition-all select-none cursor-pointer duration-300 shadow-sm"
-                    style={{ borderColor: '#ffe3e4', width: isMobile ? '127.469px' : '143.469px', fontSize: '12px', fontWeight: 'bold' }}
+                    className="px-5 sm:px-6 py-2 sm:py-2.5 rounded-full border border-[#362223]/40 text-[#362223]/90 font-serif italic bg-transparent hover:bg-[#362223]/5 active:scale-95 transition-all select-none cursor-pointer duration-300 shadow-sm"
+                    style={{ borderColor: '#ffe3e4', fontSize: '12px', fontWeight: 'bold' }}
                   >
                     {lang === 'VIE' ? "Gửi lời chúc lưu bút" : "Write us a note"}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setActiveModalTab('gift');
+                      setIsLocalModalOpen(true);
+                    }}
+                    className="px-5 sm:px-6 py-2 sm:py-2.5 rounded-full border border-[#362223]/40 text-[#362223]/90 font-serif italic bg-transparent hover:bg-[#362223]/5 active:scale-95 transition-all select-none cursor-pointer duration-300 shadow-sm"
+                    style={{ borderColor: '#ffe3e4', fontSize: '12px', fontWeight: 'bold' }}
+                  >
+                    {lang === 'VIE' ? "Hộp mừng cưới" : "Wedding Gift"}
                   </button>
                 </div>
               </div>
@@ -1659,9 +1708,11 @@ export default function App() {
                           style={{
                             fontFamily: '"Luxurious Script", cursive',
                             fontSize: '59px',
-                            width: '270.898px',
+                            width: '360px',
+                            maxWidth: '100%',
                             height: '70px',
-                            lineHeight: '70px'
+                            lineHeight: '70px',
+                            borderColor: '#362223'
                           }}
                         >
                           {lang === 'VIE' ? "Chung vui cùng tụi mình," : "Celebrate with us,"}
@@ -1692,6 +1743,35 @@ export default function App() {
                           {lang === 'VIE' ? "Vui lòng phản hồi trước 2026/01/12" : "Please reply before 2026/01/12"}
                         </span>
                       </>
+                    ) : activeModalTab === 'gift' ? (
+                      <>
+                        <span 
+                          className="block text-[#B86B77] leading-none mb-1 select-none text-center mx-auto"
+                          style={{
+                            fontFamily: '"Luxurious Script", cursive',
+                            fontSize: '59px',
+                            width: '360px',
+                            maxWidth: '100%',
+                            height: '70px',
+                            lineHeight: '70px',
+                            borderColor: '#362223'
+                          }}
+                        >
+                          {lang === 'VIE' ? "Gửi trao yêu thương," : "Warmest wishes,"}
+                        </span>
+                        <span 
+                          className="block uppercase leading-none mt-1 text-center"
+                          style={{
+                            fontFamily: '"Crimson Pro", serif',
+                            fontSize: '10px',
+                            fontWeight: 'normal',
+                            fontStyle: 'normal',
+                            letterSpacing: '0.08em'
+                          }}
+                        >
+                          {lang === 'VIE' ? "HỘP MỪNG CƯỚI CHÚC PHÚC ĐÔI UYÊN ƯƠNG." : "WEDDING GIFT BOX FOR THE BRIDE & GROOM."}
+                        </span>
+                      </>
                     ) : (
                       <>
                         <span 
@@ -1699,9 +1779,11 @@ export default function App() {
                           style={{
                             fontFamily: '"Luxurious Script", cursive',
                             fontSize: '59px',
-                            width: '270.898px',
+                            width: '360px',
+                            maxWidth: '100%',
                             height: '70px',
-                            lineHeight: '70px'
+                            lineHeight: '70px',
+                            borderColor: '#362223'
                           }}
                         >
                           {lang === 'VIE' ? "Gửi trao nguyện ước," : "Leaving us a message,"}
@@ -1726,11 +1808,11 @@ export default function App() {
                   <div className="w-[1px] h-8 bg-stone-300 mx-auto my-3" />
 
                   {/* Elegant Tabs Selection */}
-                  <div className="flex justify-center border-b border-stone-200/50 mb-2 gap-8 pb-1">
+                  <div className="flex justify-center border-b border-stone-200/50 mb-2 gap-4 sm:gap-8 pb-1">
                     <button
                       type="button"
                       onClick={() => setActiveModalTab('rsvp')}
-                      className={`text-[8.5px] sm:text-[10px] tracking-[0.25em] uppercase pb-2 transition-all relative cursor-pointer ${
+                      className={`text-[8.5px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.25em] uppercase pb-2 transition-all relative cursor-pointer ${
                         activeModalTab === 'rsvp' 
                           ? 'text-[#362223] font-semibold border-b border-[#362223]' 
                           : 'text-stone-400 hover:text-[#362223]/75'
@@ -1745,7 +1827,7 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => setActiveModalTab('note')}
-                      className={`text-[8.5px] sm:text-[10px] tracking-[0.25em] uppercase pb-2 transition-all relative cursor-pointer ${
+                      className={`text-[8.5px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.25em] uppercase pb-2 transition-all relative cursor-pointer ${
                         activeModalTab === 'note' 
                           ? 'text-[#362223] font-semibold border-b border-[#362223]' 
                           : 'text-stone-400 hover:text-[#362223]/75'
@@ -1757,13 +1839,32 @@ export default function App() {
                     >
                       {lang === 'VIE' ? "Gửi lời chúc" : "GUESTNOTE"}
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveModalTab('gift')}
+                      className={`text-[8.5px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.25em] uppercase pb-2 transition-all relative cursor-pointer ${
+                        activeModalTab === 'gift' 
+                          ? 'text-[#362223] font-semibold border-b border-[#362223]' 
+                          : 'text-stone-400 hover:text-[#362223]/75'
+                      }`}
+                      style={{
+                        fontFamily: '"Crimson Pro", serif',
+                        fontStyle: 'normal'
+                      }}
+                    >
+                      {lang === 'VIE' ? "Hộp mừng cưới" : "GIFT BOX"}
+                    </button>
                   </div>
                 </div>
 
-                <div className="overflow-y-auto max-h-[50vh] pr-1 flex-1">
+                <div className="overflow-y-auto max-h-[55vh] pr-1 flex-1">
                   {activeModalTab === 'rsvp' ? (
                     <div className="py-2">
                       <RSVPForm lang={lang} />
+                    </div>
+                  ) : activeModalTab === 'gift' ? (
+                    <div className="py-1">
+                      <GiftSection lang={lang} siteContent={siteContent} isModal={true} />
                     </div>
                   ) : (
                     <form 
@@ -1897,14 +1998,6 @@ export default function App() {
       <footer className="w-full bg-[#171111] border-t border-white/5 py-4">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-[8px] tracking-[0.25em] uppercase px-6">
           <p className="text-left text-[#a67676]">&copy; 2026 {siteContent.brideName || "Bảo Eve"} & {siteContent.groomName || "Jonathan"}. All rights reserved.</p>
-          <a 
-            href="https://bao-jon-wedding-2027.vercel.app" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-[#a67676]/80 hover:text-[#FFE4E9] transition-colors normal-case tracking-widest text-[9px] font-mono select-all cursor-pointer underline underline-offset-4 decoration-white/20 hover:decoration-white/60"
-          >
-            bao-jon-wedding-2027.vercel.app
-          </a>
           <div className="flex justify-center">
             <button 
               onClick={() => navigateTo('/admin')}

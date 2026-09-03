@@ -166,6 +166,18 @@ const IMAGE_FIELDS = [
     label: 'Countdown Section Background Image',
     description: 'The background photo or pattern overlay displayed behind the live Countdown section.',
     defaultUrl: ''
+  },
+  {
+    key: 'brideGiftQrUrl',
+    label: 'Bride Gift QR Code (Cô Dâu - QR Mừng Cưới)',
+    description: 'The bank transfer QR code image displayed for the Bride in the Gift / Mừng Cưới section.',
+    defaultUrl: 'https://img.vietqr.io/image/TCB-19099887766554-compact.png?accountName=VU%20NGOC%20HAN'
+  },
+  {
+    key: 'groomGiftQrUrl',
+    label: 'Groom Gift QR Code (Chú Rể - QR Mừng Cưới)',
+    description: 'The bank transfer QR code image displayed for the Groom in the Gift / Mừng Cưới section.',
+    defaultUrl: 'https://img.vietqr.io/image/VCB-0071000445566-compact.png?accountName=LE%20DUC%20ANH'
   }
 ] as const;
 
@@ -303,7 +315,27 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
   const [writeNoteSubtitleVie, setWriteNoteSubtitleVie] = useState('');
   const [collageLaceBgRotate, setCollageLaceBgRotate] = useState('0');
 
-  const [textSubTab, setTextSubTab] = useState<'identity' | 'story' | 'timeline' | 'registry' | 'navigation' | 'venue'>('identity');
+  // Gift Section CMS States
+  const [giftSectionTitleVie, setGiftSectionTitleVie] = useState('');
+  const [giftSectionTitleEng, setGiftSectionTitleEng] = useState('');
+  const [giftSectionSubtitleVie, setGiftSectionSubtitleVie] = useState('');
+  const [giftSectionSubtitleEng, setGiftSectionSubtitleEng] = useState('');
+  const [giftBrideTitle, setGiftBrideTitle] = useState('');
+  const [giftBrideBank, setGiftBrideBank] = useState('');
+  const [giftBrideAccount, setGiftBrideAccount] = useState('');
+  const [giftBrideName, setGiftBrideName] = useState('');
+  const [giftBrideBtnTextVie, setGiftBrideBtnTextVie] = useState('');
+  const [giftBrideQrUrlInput, setGiftBrideQrUrlInput] = useState('');
+  const [giftGroomTitle, setGiftGroomTitle] = useState('');
+  const [giftGroomBank, setGiftGroomBank] = useState('');
+  const [giftGroomAccount, setGiftGroomAccount] = useState('');
+  const [giftGroomName, setGiftGroomName] = useState('');
+  const [giftGroomBtnTextVie, setGiftGroomBtnTextVie] = useState('');
+  const [giftGroomQrUrlInput, setGiftGroomQrUrlInput] = useState('');
+  const [sidebarGiftEng, setSidebarGiftEng] = useState('');
+  const [sidebarGiftVie, setSidebarGiftVie] = useState('');
+
+  const [textSubTab, setTextSubTab] = useState<'identity' | 'story' | 'timeline' | 'registry' | 'gift' | 'navigation' | 'venue'>('identity');
 
   const [hasInitializedTexts, setHasInitializedTexts] = useState(false);
   const [isSavingTexts, setIsSavingTexts] = useState(false);
@@ -540,6 +572,25 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
             setGatherPinSubtitleEng(data.gatherPinSubtitleEng || '');
             setGatherPinSubtitleVie(data.gatherPinSubtitleVie || '');
             setCollageLaceBgRotate(data.collageLaceBgRotate || '0');
+
+            setGiftSectionTitleVie(data.giftSectionTitleVie || '');
+            setGiftSectionTitleEng(data.giftSectionTitleEng || '');
+            setGiftSectionSubtitleVie(data.giftSectionSubtitleVie || '');
+            setGiftSectionSubtitleEng(data.giftSectionSubtitleEng || '');
+            setGiftBrideTitle(data.giftBrideTitle || '');
+            setGiftBrideBank(data.giftBrideBank || '');
+            setGiftBrideAccount(data.giftBrideAccount || '');
+            setGiftBrideName(data.giftBrideName || '');
+            setGiftBrideBtnTextVie(data.giftBrideBtnTextVie || '');
+            setGiftBrideQrUrlInput(data.brideGiftQrUrl || '');
+            setGiftGroomTitle(data.giftGroomTitle || '');
+            setGiftGroomBank(data.giftGroomBank || '');
+            setGiftGroomAccount(data.giftGroomAccount || '');
+            setGiftGroomName(data.giftGroomName || '');
+            setGiftGroomBtnTextVie(data.giftGroomBtnTextVie || '');
+            setGiftGroomQrUrlInput(data.groomGiftQrUrl || '');
+            setSidebarGiftEng(data.sidebarGiftEng || '');
+            setSidebarGiftVie(data.sidebarGiftVie || '');
             
             setHasInitializedTexts(true);
           }
@@ -601,6 +652,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
         [fieldKey]: secureUrl
       }, { merge: true });
 
+      // Synchronize QR specific state if relevant
+      if (fieldKey === 'brideGiftQrUrl') {
+        setGiftBrideQrUrlInput(secureUrl);
+      } else if (fieldKey === 'groomGiftQrUrl') {
+        setGiftGroomQrUrlInput(secureUrl);
+      }
+
       // 3. Clear file selection and trigger successful response animations
       setSelectedFiles(prev => ({ ...prev, [fieldKey]: null }));
       setRecentSuccess(prev => ({ ...prev, [fieldKey]: true }));
@@ -631,6 +689,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
         [fieldKey]: '' // Empty string triggers local beautiful dynamic fallbacks
       }, { merge: true });
       
+      if (fieldKey === 'brideGiftQrUrl') {
+        setGiftBrideQrUrlInput('');
+      } else if (fieldKey === 'groomGiftQrUrl') {
+        setGiftGroomQrUrlInput('');
+      }
+
       setRecentSuccess(prev => ({ ...prev, [fieldKey]: true }));
       setTimeout(() => {
         setRecentSuccess(prev => ({ ...prev, [fieldKey]: false }));
@@ -753,6 +817,24 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
         gatherPinSubtitleEng,
         gatherPinSubtitleVie,
         collageLaceBgRotate,
+        giftSectionTitleVie,
+        giftSectionTitleEng,
+        giftSectionSubtitleVie,
+        giftSectionSubtitleEng,
+        giftBrideTitle,
+        giftBrideBank,
+        giftBrideAccount,
+        giftBrideName,
+        giftBrideBtnTextVie,
+        brideGiftQrUrl: giftBrideQrUrlInput,
+        giftGroomTitle,
+        giftGroomBank,
+        giftGroomAccount,
+        giftGroomName,
+        giftGroomBtnTextVie,
+        groomGiftQrUrl: giftGroomQrUrlInput,
+        sidebarGiftEng,
+        sidebarGiftVie,
       }, { merge: true });
 
       setSaveTextsSuccess(true);
@@ -1341,12 +1423,18 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                         </div>
 
                         {/* Current Preview */}
-                        <div className="relative border border-black/5 bg-stone-50 overflow-hidden aspect-video flex items-center justify-center rounded-sm shadow-[inset_0_2px_4px_rgba(0,0,0,0.03)]">
+                        <div className={`relative border border-black/5 bg-stone-50 overflow-hidden flex items-center justify-center rounded-sm shadow-[inset_0_2px_4px_rgba(0,0,0,0.03)] ${
+                          field.key.toLowerCase().includes('qr') ? 'aspect-square max-w-[220px] mx-auto p-3 bg-white' : 'aspect-video'
+                        }`}>
                           {previewUrl ? (
                             <img 
                               src={previewUrl} 
                               alt={field.label} 
-                              className="w-full h-full object-cover grayscale transition-all duration-300 hover:grayscale-0"
+                              className={`w-full h-full ${
+                                field.key.toLowerCase().includes('qr')
+                                  ? 'object-contain'
+                                  : 'object-cover grayscale transition-all duration-300 hover:grayscale-0'
+                              }`}
                             />
                           ) : (
                             <div className="py-12 flex flex-col items-center text-center text-neutral-300">
@@ -1516,6 +1604,17 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                   </button>
                   <button
                     type="button"
+                    onClick={() => setTextSubTab('gift')}
+                    className={`px-4 py-2.5 font-mono text-[9px] tracking-widest uppercase rounded-full transition-all border font-bold ${
+                      textSubTab === 'gift'
+                        ? 'bg-[#362223] border-[#362223] text-stone-100 shadow-sm'
+                        : 'bg-white border-black/5 text-[#362223] hover:bg-[#362223]/5'
+                    }`}
+                  >
+                    5. Gift Box (Mừng Cưới)
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => setTextSubTab('navigation')}
                     className={`px-4 py-2.5 font-mono text-[9px] tracking-widest uppercase rounded-full transition-all border font-bold ${
                       textSubTab === 'navigation'
@@ -1523,7 +1622,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                         : 'bg-white border-black/5 text-[#362223] hover:bg-[#362223]/5'
                     }`}
                   >
-                    5. Sidebar & Action Buttons
+                    6. Sidebar & Action Buttons
                   </button>
                   <button
                     type="button"
@@ -1534,7 +1633,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                         : 'bg-white border-black/5 text-[#362223] hover:bg-[#362223]/5'
                     }`}
                   >
-                    6. Venue & Trails
+                    7. Venue & Trails
                   </button>
                 </div>
 
@@ -2553,6 +2652,429 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                       </div>
                     </div>
                   </div>
+                  )}
+
+                  {/* Phase: Wedding Gift Box & Bank Transfer QR CMS */}
+                  {textSubTab === 'gift' && (
+                  <>
+                    {/* General Section Heading */}
+                    <div className="bg-white border border-black/5 rounded-sm p-6 md:p-8 shadow-sm space-y-6 md:col-span-2">
+                      <h4 className="font-serif text-base tracking-normal uppercase border-b border-black/5 pb-3 font-semibold">Wedding Gift Box (Hộp Mừng Cưới) - Main Headings</h4>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-4">
+                          <div className="space-y-1.5">
+                            <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Gift Section Heading (VIE)</label>
+                            <input 
+                              type="text" 
+                              value={giftSectionTitleVie}
+                              onChange={(e) => setGiftSectionTitleVie(e.target.value)}
+                              placeholder="HỘP MỪNG CƯỚI"
+                              className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Gift Section Subtitle / Message (VIE)</label>
+                            <textarea 
+                              rows={2}
+                              value={giftSectionSubtitleVie}
+                              onChange={(e) => setGiftSectionSubtitleVie(e.target.value)}
+                              placeholder="Món quà ý nghĩa nhất đối với tụi mình là sự hiện diện của bạn. Nếu bạn muốn gửi lời chúc phúc bằng hiện kim:"
+                              className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-4">
+                          <div className="space-y-1.5">
+                            <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Gift Section Heading (ENG)</label>
+                            <input 
+                              type="text" 
+                              value={giftSectionTitleEng}
+                              onChange={(e) => setGiftSectionTitleEng(e.target.value)}
+                              placeholder="WEDDING GIFT BOX"
+                              className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Gift Section Subtitle / Message (ENG)</label>
+                            <textarea 
+                              rows={2}
+                              value={giftSectionSubtitleEng}
+                              onChange={(e) => setGiftSectionSubtitleEng(e.target.value)}
+                              placeholder="Your presence is the greatest gift. For those who wish to bless us with a monetary gift:"
+                              className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors resize-none leading-relaxed"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4 border-t border-black/5 pt-4">
+                        <div className="space-y-1.5">
+                          <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Sidebar Menu Item Label (VIE)</label>
+                          <input 
+                            type="text" 
+                            value={sidebarGiftVie}
+                            onChange={(e) => setSidebarGiftVie(e.target.value)}
+                            placeholder="MỪNG CƯỚI"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Sidebar Menu Item Label (ENG)</label>
+                          <input 
+                            type="text" 
+                            value={sidebarGiftEng}
+                            onChange={(e) => setSidebarGiftEng(e.target.value)}
+                            placeholder="GIFT"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Bride Bank & QR details */}
+                    <div className="bg-white border border-black/5 rounded-sm p-6 md:p-8 shadow-sm space-y-5">
+                      <div className="flex items-center justify-between border-b border-black/5 pb-3">
+                        <h4 className="font-serif text-base uppercase tracking-normal font-semibold text-rose-950">
+                          👰 Cô Dâu (Bride's Gift Box)
+                        </h4>
+                        <span className="font-mono text-[9px] px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-800 border border-rose-200">
+                          Bride QR
+                        </span>
+                      </div>
+
+                      <div className="space-y-3.5">
+                        <div className="space-y-1">
+                          <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Title / Display Tag</label>
+                          <input 
+                            type="text" 
+                            value={giftBrideTitle}
+                            onChange={(e) => setGiftBrideTitle(e.target.value)}
+                            placeholder="Cô Dâu - VU NGOC HAN"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Bank Name (Ngân hàng)</label>
+                            <input 
+                              type="text" 
+                              value={giftBrideBank}
+                              onChange={(e) => setGiftBrideBank(e.target.value)}
+                              placeholder="Techcombank"
+                              className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-xs outline-none transition-colors"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Account Number (Số TK)</label>
+                            <input 
+                              type="text" 
+                              value={giftBrideAccount}
+                              onChange={(e) => setGiftBrideAccount(e.target.value)}
+                              placeholder="19099887766554"
+                              className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-xs outline-none transition-colors font-semibold tracking-wider"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Account Holder (Chủ TK)</label>
+                            <input 
+                              type="text" 
+                              value={giftBrideName}
+                              onChange={(e) => setGiftBrideName(e.target.value)}
+                              placeholder="VU NGOC HAN"
+                              className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-xs outline-none transition-colors uppercase"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Button Text</label>
+                            <input 
+                              type="text" 
+                              value={giftBrideBtnTextVie}
+                              onChange={(e) => setGiftBrideBtnTextVie(e.target.value)}
+                              placeholder="Lưu QR"
+                              className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-xs outline-none transition-colors"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Bride QR Code Image Uploader Component */}
+                        <div className="space-y-3 pt-3 border-t border-black/5">
+                          <div className="flex items-center justify-between">
+                            <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">
+                              Bride QR Code Image (Ảnh QR Cô Dâu)
+                            </label>
+                            <span className="font-mono text-[8.5px] px-2.5 py-0.5 rounded-full bg-stone-100 text-stone-700 border border-stone-200 uppercase font-semibold">
+                              {giftBrideQrUrlInput || siteImages['brideGiftQrUrl'] ? 'Custom QR Active' : 'Default VietQR'}
+                            </span>
+                          </div>
+
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-stone-50 border border-black/10 p-3.5 rounded-sm">
+                            {/* Visual QR Image Preview */}
+                            <div className="w-24 h-24 bg-white border border-stone-200 rounded-sm flex items-center justify-center overflow-hidden p-1 shadow-sm flex-shrink-0">
+                              <img 
+                                src={giftBrideQrUrlInput || siteImages['brideGiftQrUrl'] || "https://img.vietqr.io/image/TCB-19099887766554-compact.png?accountName=VU%20NGOC%20HAN"} 
+                                alt="Cô Dâu QR Preview" 
+                                className="w-full h-full object-contain"
+                              />
+                            </div>
+
+                            <div className="flex-1 w-full space-y-2.5">
+                              {/* File Input */}
+                              <div className="flex items-center gap-2">
+                                <label className="flex-1 cursor-pointer">
+                                  <input 
+                                    type="file" 
+                                    accept="image/png, image/jpeg, image/jpg, image/webp"
+                                    onChange={(e) => handleFileChange('brideGiftQrUrl', e.target.files?.[0] || null)}
+                                    className="block w-full text-[9px] font-mono tracking-wider uppercase text-stone-500
+                                      file:mr-3 file:py-1.5 file:px-3
+                                      file:rounded-full file:border file:border-stone-200
+                                      file:text-[9px] file:font-mono file:font-semibold file:uppercase
+                                      file:bg-white file:text-stone-700
+                                      file:cursor-pointer hover:file:bg-stone-100 transition-all"
+                                  />
+                                </label>
+                                {selectedFiles['brideGiftQrUrl'] && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleFileChange('brideGiftQrUrl', null)}
+                                    className="font-mono text-[8.5px] text-zinc-500 hover:text-black uppercase cursor-pointer bg-stone-100 border border-black/5 px-2.5 py-1 rounded-full font-semibold"
+                                  >
+                                    Clear
+                                  </button>
+                                )}
+                              </div>
+
+                              {uploadErrors['brideGiftQrUrl'] && (
+                                <p className="text-red-600 font-mono text-[8.5px] leading-tight">
+                                  {uploadErrors['brideGiftQrUrl']}
+                                </p>
+                              )}
+
+                              {isUploading['brideGiftQrUrl'] && (
+                                <div className="space-y-1">
+                                  <div className="flex justify-between font-mono text-[8px] uppercase text-neutral-500">
+                                    <span>Uploading direct to Cloudinary...</span>
+                                    <span>{uploadProgress['brideGiftQrUrl'] || 0}%</span>
+                                  </div>
+                                  <div className="w-full bg-stone-200 h-1 rounded-full overflow-hidden">
+                                    <div 
+                                      className="bg-[#362223] h-full transition-all duration-300"
+                                      style={{ width: `${uploadProgress['brideGiftQrUrl'] || 0}%` }}
+                                    />
+                                  </div>
+                                </div>
+                              )}
+
+                              {recentSuccess['brideGiftQrUrl'] && (
+                                <p className="text-emerald-700 font-mono text-[8.5px] font-semibold">
+                                  ✓ QR Image uploaded & saved live!
+                                </p>
+                              )}
+
+                              <div className="flex items-center gap-2 pt-0.5">
+                                <button
+                                  type="button"
+                                  disabled={!selectedFiles['brideGiftQrUrl'] || isUploading['brideGiftQrUrl']}
+                                  onClick={() => handleImageUpload('brideGiftQrUrl')}
+                                  className="px-4 py-1.5 bg-[#362223] hover:bg-black text-white rounded-full font-mono text-[9px] tracking-wider uppercase flex items-center gap-1.5 transition-colors disabled:opacity-35 disabled:cursor-not-allowed font-semibold cursor-pointer shadow-sm"
+                                >
+                                  <Upload size={11} />
+                                  <span>{isUploading['brideGiftQrUrl'] ? 'Uploading...' : 'Upload & Save QR Image'}</span>
+                                </button>
+
+                                {(giftBrideQrUrlInput || siteImages['brideGiftQrUrl']) && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRestoreDefault('brideGiftQrUrl')}
+                                    className="px-3 py-1.5 bg-stone-100 hover:bg-red-50 text-stone-600 hover:text-red-700 border border-black/5 rounded-full font-mono text-[8.5px] tracking-wider uppercase transition-colors font-medium cursor-pointer"
+                                  >
+                                    Reset Default
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Groom Bank & QR details */}
+                    <div className="bg-white border border-black/5 rounded-sm p-6 md:p-8 shadow-sm space-y-5">
+                      <div className="flex items-center justify-between border-b border-black/5 pb-3">
+                        <h4 className="font-serif text-base uppercase tracking-normal font-semibold text-stone-900">
+                          🤵 Chú Rể (Groom's Gift Box)
+                        </h4>
+                        <span className="font-mono text-[9px] px-2.5 py-0.5 rounded-full bg-stone-100 text-stone-800 border border-stone-200">
+                          Groom QR
+                        </span>
+                      </div>
+
+                      <div className="space-y-3.5">
+                        <div className="space-y-1">
+                          <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Title / Display Tag</label>
+                          <input 
+                            type="text" 
+                            value={giftGroomTitle}
+                            onChange={(e) => setGiftGroomTitle(e.target.value)}
+                            placeholder="Chú Rể - LE DUC ANH"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Bank Name (Ngân hàng)</label>
+                            <input 
+                              type="text" 
+                              value={giftGroomBank}
+                              onChange={(e) => setGiftGroomBank(e.target.value)}
+                              placeholder="Vietcombank"
+                              className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-xs outline-none transition-colors"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Account Number (Số TK)</label>
+                            <input 
+                              type="text" 
+                              value={giftGroomAccount}
+                              onChange={(e) => setGiftGroomAccount(e.target.value)}
+                              placeholder="0071000445566"
+                              className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-xs outline-none transition-colors font-semibold tracking-wider"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Account Holder (Chủ TK)</label>
+                            <input 
+                              type="text" 
+                              value={giftGroomName}
+                              onChange={(e) => setGiftGroomName(e.target.value)}
+                              placeholder="LE DUC ANH"
+                              className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-xs outline-none transition-colors uppercase"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Button Text</label>
+                            <input 
+                              type="text" 
+                              value={giftGroomBtnTextVie}
+                              onChange={(e) => setGiftGroomBtnTextVie(e.target.value)}
+                              placeholder="Lưu QR"
+                              className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-xs outline-none transition-colors"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Groom QR Code Image Uploader Component */}
+                        <div className="space-y-3 pt-3 border-t border-black/5">
+                          <div className="flex items-center justify-between">
+                            <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">
+                              Groom QR Code Image (Ảnh QR Chú Rể)
+                            </label>
+                            <span className="font-mono text-[8.5px] px-2.5 py-0.5 rounded-full bg-stone-100 text-stone-700 border border-stone-200 uppercase font-semibold">
+                              {giftGroomQrUrlInput || siteImages['groomGiftQrUrl'] ? 'Custom QR Active' : 'Default VietQR'}
+                            </span>
+                          </div>
+
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-stone-50 border border-black/10 p-3.5 rounded-sm">
+                            {/* Visual QR Image Preview */}
+                            <div className="w-24 h-24 bg-white border border-stone-200 rounded-sm flex items-center justify-center overflow-hidden p-1 shadow-sm flex-shrink-0">
+                              <img 
+                                src={giftGroomQrUrlInput || siteImages['groomGiftQrUrl'] || "https://img.vietqr.io/image/VCB-0071000445566-compact.png?accountName=LE%20DUC%20ANH"} 
+                                alt="Chú Rể QR Preview" 
+                                className="w-full h-full object-contain"
+                              />
+                            </div>
+
+                            <div className="flex-1 w-full space-y-2.5">
+                              {/* File Input */}
+                              <div className="flex items-center gap-2">
+                                <label className="flex-1 cursor-pointer">
+                                  <input 
+                                    type="file" 
+                                    accept="image/png, image/jpeg, image/jpg, image/webp"
+                                    onChange={(e) => handleFileChange('groomGiftQrUrl', e.target.files?.[0] || null)}
+                                    className="block w-full text-[9px] font-mono tracking-wider uppercase text-stone-500
+                                      file:mr-3 file:py-1.5 file:px-3
+                                      file:rounded-full file:border file:border-stone-200
+                                      file:text-[9px] file:font-mono file:font-semibold file:uppercase
+                                      file:bg-white file:text-stone-700
+                                      file:cursor-pointer hover:file:bg-stone-100 transition-all"
+                                  />
+                                </label>
+                                {selectedFiles['groomGiftQrUrl'] && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleFileChange('groomGiftQrUrl', null)}
+                                    className="font-mono text-[8.5px] text-zinc-500 hover:text-black uppercase cursor-pointer bg-stone-100 border border-black/5 px-2.5 py-1 rounded-full font-semibold"
+                                  >
+                                    Clear
+                                  </button>
+                                )}
+                              </div>
+
+                              {uploadErrors['groomGiftQrUrl'] && (
+                                <p className="text-red-600 font-mono text-[8.5px] leading-tight">
+                                  {uploadErrors['groomGiftQrUrl']}
+                                </p>
+                              )}
+
+                              {isUploading['groomGiftQrUrl'] && (
+                                <div className="space-y-1">
+                                  <div className="flex justify-between font-mono text-[8px] uppercase text-neutral-500">
+                                    <span>Uploading direct to Cloudinary...</span>
+                                    <span>{uploadProgress['groomGiftQrUrl'] || 0}%</span>
+                                  </div>
+                                  <div className="w-full bg-stone-200 h-1 rounded-full overflow-hidden">
+                                    <div 
+                                      className="bg-[#362223] h-full transition-all duration-300"
+                                      style={{ width: `${uploadProgress['groomGiftQrUrl'] || 0}%` }}
+                                    />
+                                  </div>
+                                </div>
+                              )}
+
+                              {recentSuccess['groomGiftQrUrl'] && (
+                                <p className="text-emerald-700 font-mono text-[8.5px] font-semibold">
+                                  ✓ QR Image uploaded & saved live!
+                                </p>
+                              )}
+
+                              <div className="flex items-center gap-2 pt-0.5">
+                                <button
+                                  type="button"
+                                  disabled={!selectedFiles['groomGiftQrUrl'] || isUploading['groomGiftQrUrl']}
+                                  onClick={() => handleImageUpload('groomGiftQrUrl')}
+                                  className="px-4 py-1.5 bg-[#362223] hover:bg-black text-white rounded-full font-mono text-[9px] tracking-wider uppercase flex items-center gap-1.5 transition-colors disabled:opacity-35 disabled:cursor-not-allowed font-semibold cursor-pointer shadow-sm"
+                                >
+                                  <Upload size={11} />
+                                  <span>{isUploading['groomGiftQrUrl'] ? 'Uploading...' : 'Upload & Save QR Image'}</span>
+                                </button>
+
+                                {(giftGroomQrUrlInput || siteImages['groomGiftQrUrl']) && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRestoreDefault('groomGiftQrUrl')}
+                                    className="px-3 py-1.5 bg-stone-100 hover:bg-red-50 text-stone-600 hover:text-red-700 border border-black/5 rounded-full font-mono text-[8.5px] tracking-wider uppercase transition-colors font-medium cursor-pointer"
+                                  >
+                                    Reset Default
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </>
                   )}
 
                   {/* Phase 11: Gathering Grounds & Venue CMS */}
