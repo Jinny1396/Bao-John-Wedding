@@ -30,14 +30,41 @@ import {
   Trash2,
   Check,
   AlertCircle,
-  BookOpen
+  BookOpen,
+  Clock,
+  Plus,
+  ArrowUp,
+  ArrowDown,
+  RotateCcw,
+  X,
+  SlidersHorizontal
 } from 'lucide-react';
 import { uploadToCloudinary } from '../cloudinaryUpload';
+
+export interface ItineraryItemConfig {
+  id?: string;
+  timeEng: string;
+  timeVie: string;
+  eventEng: string;
+  eventVie: string;
+}
+
+const DEFAULT_ITINERARY_ITEMS: ItineraryItemConfig[] = [
+  { id: '1', timeEng: '3:00 PM', timeVie: '15:00', eventEng: 'Welcome Drinks', eventVie: 'Đón khách & Tiệc trà đầu giờ' },
+  { id: '2', timeEng: '4:00 PM', timeVie: '16:00', eventEng: 'Seated Ceremony', eventVie: 'Hành lễ chánh điện đầy trang nghiêm' },
+  { id: '3', timeEng: '5:00 PM', timeVie: '17:00', eventEng: 'Cocktail Hour', eventVie: 'Tiệc Cocktail thân mật' },
+  { id: '4', timeEng: '5:30 PM', timeVie: '17:30', eventEng: 'Reception Banquet', eventVie: 'Khai tiệc mừng đám cưới' },
+  { id: '5', timeEng: '6:00 PM', timeVie: '18:00', eventEng: 'Dinner Service & Toasts', eventVie: 'Dùng tiệc chính & Chúc rượu' },
+  { id: '6', timeEng: '7:00 PM', timeVie: '19:00', eventEng: 'Dancing and Celebration', eventVie: 'Giao lưu khiêu vũ đầy tiếng cười' },
+  { id: '7', timeEng: '8:30 PM', timeVie: '20:30', eventEng: 'Cake Cutting', eventVie: 'Cắt bánh kem hạnh phúc' },
+  { id: '8', timeEng: '10:00 PM', timeVie: '22:00', eventEng: 'Final Farewell', eventVie: 'Chào tiễn khách ra về' },
+];
 
 interface RSVPEntity {
   id: string;
   guestName: string;
   attendingStatus: 'yes' | 'no' | string;
+  attendingEvent?: string;
   guestSide?: 'bride' | 'groom' | 'both' | string;
   bringingGuest?: string;
   dietaryRestrictions: string;
@@ -196,6 +223,17 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [attendanceTypeFilter, setAttendanceTypeFilter] = useState<'all' | 'vow_and_reception' | 'reception_only' | 'declined'>('all');
+  const [showColumnFilters, setShowColumnFilters] = useState(true);
+  const [columnFilters, setColumnFilters] = useState({
+    guestName: '',
+    guestSide: 'all',
+    attendingStatus: 'all',
+    attendanceType: 'all',
+    bringingGuest: 'all',
+    dietaryRestrictions: 'all',
+    coupleNote: 'all',
+  });
 
   // States for Cloudinary direct image uploading
   const [siteImages, setSiteImages] = useState<Record<string, string>>({});
@@ -227,6 +265,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
   const [photoQuoteVie, setPhotoQuoteVie] = useState('');
   const [attireDescEng, setAttireDescEng] = useState('');
   const [attireDescVie, setAttireDescVie] = useState('');
+  const [itineraryTitleEng, setItineraryTitleEng] = useState('');
+  const [itineraryTitleVie, setItineraryTitleVie] = useState('');
+  const [itineraryList, setItineraryList] = useState<ItineraryItemConfig[]>(DEFAULT_ITINERARY_ITEMS);
   const [swatchColor1, setSwatchColor1] = useState('');
   const [swatchColor2, setSwatchColor2] = useState('');
   const [swatchColor3, setSwatchColor3] = useState('');
@@ -335,7 +376,33 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
   const [sidebarGiftEng, setSidebarGiftEng] = useState('');
   const [sidebarGiftVie, setSidebarGiftVie] = useState('');
 
-  const [textSubTab, setTextSubTab] = useState<'identity' | 'story' | 'timeline' | 'registry' | 'gift' | 'navigation' | 'venue'>('identity');
+  // RSVP Section CMS States
+  const [rsvpCardTitleEng, setRsvpCardTitleEng] = useState('');
+  const [rsvpCardTitleVie, setRsvpCardTitleVie] = useState('');
+  const [rsvpCardDescEng, setRsvpCardDescEng] = useState('');
+  const [rsvpCardDescVie, setRsvpCardDescVie] = useState('');
+  const [rsvpBtnTextEng, setRsvpBtnTextEng] = useState('');
+  const [rsvpBtnTextVie, setRsvpBtnTextVie] = useState('');
+  const [rsvpNoteBtnTextEng, setRsvpNoteBtnTextEng] = useState('');
+  const [rsvpNoteBtnTextVie, setRsvpNoteBtnTextVie] = useState('');
+  const [rsvpGiftBtnTextEng, setRsvpGiftBtnTextEng] = useState('');
+  const [rsvpGiftBtnTextVie, setRsvpGiftBtnTextVie] = useState('');
+  const [rsvpModalTitleEng, setRsvpModalTitleEng] = useState('');
+  const [rsvpModalTitleVie, setRsvpModalTitleVie] = useState('');
+  const [rsvpModalSubtitleEng, setRsvpModalSubtitleEng] = useState('');
+  const [rsvpModalSubtitleVie, setRsvpModalSubtitleVie] = useState('');
+  const [rsvpModalDeadlineEng, setRsvpModalDeadlineEng] = useState('');
+  const [rsvpModalDeadlineVie, setRsvpModalDeadlineVie] = useState('');
+  const [rsvpNoteModalTitleEng, setRsvpNoteModalTitleEng] = useState('');
+  const [rsvpNoteModalTitleVie, setRsvpNoteModalTitleVie] = useState('');
+  const [rsvpNoteModalSubtitleEng, setRsvpNoteModalSubtitleEng] = useState('');
+  const [rsvpNoteModalSubtitleVie, setRsvpNoteModalSubtitleVie] = useState('');
+  const [rsvpGiftModalTitleEng, setRsvpGiftModalTitleEng] = useState('');
+  const [rsvpGiftModalTitleVie, setRsvpGiftModalTitleVie] = useState('');
+  const [rsvpGiftModalSubtitleEng, setRsvpGiftModalSubtitleEng] = useState('');
+  const [rsvpGiftModalSubtitleVie, setRsvpGiftModalSubtitleVie] = useState('');
+
+  const [textSubTab, setTextSubTab] = useState<'identity' | 'story' | 'timeline' | 'rsvp' | 'registry' | 'gift' | 'navigation' | 'venue'>('identity');
 
   const [hasInitializedTexts, setHasInitializedTexts] = useState(false);
   const [isSavingTexts, setIsSavingTexts] = useState(false);
@@ -377,6 +444,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
           id: docSnap.id,
           guestName: docData.guestName || '',
           attendingStatus: docData.attendingStatus || 'no',
+          attendingEvent: docData.attendingEvent || '',
           guestSide: docData.guestSide || 'bride',
           bringingGuest: docData.bringingGuest || '0',
           dietaryRestrictions: docData.dietaryRestrictions || '',
@@ -489,6 +557,19 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
             setPhotoQuoteVie(data.photoQuoteVie || '');
             setAttireDescEng(data.attireDescEng || '');
             setAttireDescVie(data.attireDescVie || '');
+            setItineraryTitleEng(data.itineraryTitleEng || '');
+            setItineraryTitleVie(data.itineraryTitleVie || '');
+            if (Array.isArray(data.itineraryList) && data.itineraryList.length > 0) {
+              setItineraryList(data.itineraryList.map((item: any, idx: number) => ({
+                id: item.id || `itinerary-${idx}-${Date.now()}`,
+                timeEng: item.timeEng ?? '',
+                timeVie: item.timeVie ?? '',
+                eventEng: item.eventEng ?? '',
+                eventVie: item.eventVie ?? '',
+              })));
+            } else {
+              setItineraryList(DEFAULT_ITINERARY_ITEMS);
+            }
             setSwatchColor1(data.swatchColor1 || '');
             setSwatchColor2(data.swatchColor2 || '');
             setSwatchColor3(data.swatchColor3 || '');
@@ -591,6 +672,31 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
             setGiftGroomQrUrlInput(data.groomGiftQrUrl || '');
             setSidebarGiftEng(data.sidebarGiftEng || '');
             setSidebarGiftVie(data.sidebarGiftVie || '');
+
+            setRsvpCardTitleEng(data.rsvpCardTitleEng || '');
+            setRsvpCardTitleVie(data.rsvpCardTitleVie || '');
+            setRsvpCardDescEng(data.rsvpCardDescEng || '');
+            setRsvpCardDescVie(data.rsvpCardDescVie || '');
+            setRsvpBtnTextEng(data.rsvpBtnTextEng || '');
+            setRsvpBtnTextVie(data.rsvpBtnTextVie || '');
+            setRsvpNoteBtnTextEng(data.rsvpNoteBtnTextEng || '');
+            setRsvpNoteBtnTextVie(data.rsvpNoteBtnTextVie || '');
+            setRsvpGiftBtnTextEng(data.rsvpGiftBtnTextEng || '');
+            setRsvpGiftBtnTextVie(data.rsvpGiftBtnTextVie || '');
+            setRsvpModalTitleEng(data.rsvpModalTitleEng || '');
+            setRsvpModalTitleVie(data.rsvpModalTitleVie || '');
+            setRsvpModalSubtitleEng(data.rsvpModalSubtitleEng || '');
+            setRsvpModalSubtitleVie(data.rsvpModalSubtitleVie || '');
+            setRsvpModalDeadlineEng(data.rsvpModalDeadlineEng || '');
+            setRsvpModalDeadlineVie(data.rsvpModalDeadlineVie || '');
+            setRsvpNoteModalTitleEng(data.rsvpNoteModalTitleEng || '');
+            setRsvpNoteModalTitleVie(data.rsvpNoteModalTitleVie || '');
+            setRsvpNoteModalSubtitleEng(data.rsvpNoteModalSubtitleEng || '');
+            setRsvpNoteModalSubtitleVie(data.rsvpNoteModalSubtitleVie || '');
+            setRsvpGiftModalTitleEng(data.rsvpGiftModalTitleEng || '');
+            setRsvpGiftModalTitleVie(data.rsvpGiftModalTitleVie || '');
+            setRsvpGiftModalSubtitleEng(data.rsvpGiftModalSubtitleEng || '');
+            setRsvpGiftModalSubtitleVie(data.rsvpGiftModalSubtitleVie || '');
             
             setHasInitializedTexts(true);
           }
@@ -738,6 +844,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
         photoQuoteVie,
         attireDescEng,
         attireDescVie,
+        itineraryTitleEng,
+        itineraryTitleVie,
+        itineraryList,
         swatchColor1,
         swatchColor2,
         swatchColor3,
@@ -835,6 +944,30 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
         groomGiftQrUrl: giftGroomQrUrlInput,
         sidebarGiftEng,
         sidebarGiftVie,
+        rsvpCardTitleEng,
+        rsvpCardTitleVie,
+        rsvpCardDescEng,
+        rsvpCardDescVie,
+        rsvpBtnTextEng,
+        rsvpBtnTextVie,
+        rsvpNoteBtnTextEng,
+        rsvpNoteBtnTextVie,
+        rsvpGiftBtnTextEng,
+        rsvpGiftBtnTextVie,
+        rsvpModalTitleEng,
+        rsvpModalTitleVie,
+        rsvpModalSubtitleEng,
+        rsvpModalSubtitleVie,
+        rsvpModalDeadlineEng,
+        rsvpModalDeadlineVie,
+        rsvpNoteModalTitleEng,
+        rsvpNoteModalTitleVie,
+        rsvpNoteModalSubtitleEng,
+        rsvpNoteModalSubtitleVie,
+        rsvpGiftModalTitleEng,
+        rsvpGiftModalTitleVie,
+        rsvpGiftModalSubtitleEng,
+        rsvpGiftModalSubtitleVie,
       }, { merge: true });
 
       setSaveTextsSuccess(true);
@@ -846,6 +979,52 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
       setSaveTextsError(err.message || 'An error occurred while saving the text settings.');
     } finally {
       setIsSavingTexts(false);
+    }
+  };
+
+  // Itinerary list operations
+  const handleUpdateItineraryItem = (index: number, field: keyof ItineraryItemConfig, value: string) => {
+    setItineraryList(prev => {
+      const next = [...prev];
+      if (next[index]) {
+        next[index] = { ...next[index], [field]: value };
+      }
+      return next;
+    });
+  };
+
+  const handleAddItineraryItem = () => {
+    setItineraryList(prev => [
+      ...prev,
+      {
+        id: `itinerary-${Date.now()}-${prev.length + 1}`,
+        timeEng: '',
+        timeVie: '',
+        eventEng: '',
+        eventVie: '',
+      }
+    ]);
+  };
+
+  const handleRemoveItineraryItem = (index: number) => {
+    setItineraryList(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleMoveItineraryItem = (index: number, direction: 'up' | 'down') => {
+    setItineraryList(prev => {
+      const targetIndex = direction === 'up' ? index - 1 : index + 1;
+      if (targetIndex < 0 || targetIndex >= prev.length) return prev;
+      const copy = [...prev];
+      const temp = copy[index];
+      copy[index] = copy[targetIndex];
+      copy[targetIndex] = temp;
+      return copy;
+    });
+  };
+
+  const handleResetItineraryToDefault = () => {
+    if (window.confirm('Reset itinerary to default 8 events?')) {
+      setItineraryList(DEFAULT_ITINERARY_ITEMS);
     }
   };
 
@@ -872,13 +1051,111 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
     }
   };
 
-  // Filtered RSVPs by search text
-  const filteredRSVPs = rsvps.filter(rsvp => 
-    rsvp.guestName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (rsvp.guestSide && rsvp.guestSide.toLowerCase().includes(searchQuery.toLowerCase())) ||
-    rsvp.dietaryRestrictions.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    rsvp.coupleNote.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Reset all filters (search bar, column filters, and attendance type)
+  const resetAllFilters = () => {
+    setSearchQuery('');
+    setAttendanceTypeFilter('all');
+    setColumnFilters({
+      guestName: '',
+      guestSide: 'all',
+      attendingStatus: 'all',
+      attendanceType: 'all',
+      bringingGuest: 'all',
+      dietaryRestrictions: 'all',
+      coupleNote: 'all',
+    });
+  };
+
+  const activeColumnFilterCount = (columnFilters.guestName.trim() ? 1 : 0) +
+    (columnFilters.guestSide !== 'all' ? 1 : 0) +
+    (columnFilters.attendingStatus !== 'all' ? 1 : 0) +
+    (columnFilters.attendanceType !== 'all' ? 1 : 0) +
+    (columnFilters.bringingGuest !== 'all' ? 1 : 0) +
+    (columnFilters.dietaryRestrictions !== 'all' ? 1 : 0) +
+    (columnFilters.coupleNote !== 'all' ? 1 : 0);
+
+  // Filtered RSVPs by search text & column filters
+  const filteredRSVPs = rsvps.filter(rsvp => {
+    // 1. Column Filter: Guest Name
+    if (columnFilters.guestName.trim()) {
+      if (!rsvp.guestName.toLowerCase().includes(columnFilters.guestName.toLowerCase().trim())) {
+        return false;
+      }
+    }
+
+    // 2. Column Filter: Party / Side
+    if (columnFilters.guestSide !== 'all') {
+      if (rsvp.guestSide !== columnFilters.guestSide) {
+        return false;
+      }
+    }
+
+    // 3. Column Filter: Attendance Status
+    if (columnFilters.attendingStatus !== 'all') {
+      if (rsvp.attendingStatus !== columnFilters.attendingStatus) {
+        return false;
+      }
+    }
+
+    // 4. Column Filter / Attendance Type
+    const effectiveAttendanceType = columnFilters.attendanceType !== 'all' 
+      ? columnFilters.attendanceType 
+      : attendanceTypeFilter;
+
+    if (effectiveAttendanceType === 'declined' && rsvp.attendingStatus !== 'no') {
+      return false;
+    }
+    if (effectiveAttendanceType === 'vow_and_reception') {
+      const isVow = rsvp.attendingStatus === 'yes' && (!rsvp.attendingEvent || rsvp.attendingEvent.includes('Ceremony') || rsvp.attendingEvent === 'both');
+      if (!isVow) return false;
+    }
+    if (effectiveAttendanceType === 'reception_only') {
+      const isReception = rsvp.attendingStatus === 'yes' && (rsvp.attendingEvent === 'Reception Only' || rsvp.attendingEvent === 'reception');
+      if (!isReception) return false;
+    }
+
+    // 5. Column Filter: Accompanying Guests
+    if (columnFilters.bringingGuest !== 'all') {
+      const guestNum = parseInt(rsvp.bringingGuest || '0', 10) || 0;
+      if (columnFilters.bringingGuest === 'has_guests') {
+        if (guestNum <= 0) return false;
+      } else if (columnFilters.bringingGuest === '0') {
+        if (guestNum > 0) return false;
+      } else {
+        if (rsvp.bringingGuest !== columnFilters.bringingGuest) {
+          return false;
+        }
+      }
+    }
+
+    // 6. Column Filter: Dietary Restrictions
+    if (columnFilters.dietaryRestrictions !== 'all') {
+      const hasDiet = Boolean(rsvp.dietaryRestrictions && rsvp.dietaryRestrictions.trim() && rsvp.dietaryRestrictions.toLowerCase() !== 'none');
+      if (columnFilters.dietaryRestrictions === 'has' && !hasDiet) return false;
+      if (columnFilters.dietaryRestrictions === 'none' && hasDiet) return false;
+    }
+
+    // 7. Column Filter: Song Requests / Note
+    if (columnFilters.coupleNote !== 'all') {
+      const hasNote = Boolean(rsvp.coupleNote && rsvp.coupleNote.trim());
+      if (columnFilters.coupleNote === 'has' && !hasNote) return false;
+      if (columnFilters.coupleNote === 'none' && hasNote) return false;
+    }
+
+    // 8. General Search Query
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      const matches =
+        rsvp.guestName.toLowerCase().includes(q) ||
+        (rsvp.attendingEvent && rsvp.attendingEvent.toLowerCase().includes(q)) ||
+        (rsvp.guestSide && rsvp.guestSide.toLowerCase().includes(q)) ||
+        rsvp.dietaryRestrictions.toLowerCase().includes(q) ||
+        rsvp.coupleNote.toLowerCase().includes(q);
+      if (!matches) return false;
+    }
+
+    return true;
+  });
 
   // Filtered guest notes by search text
   const filteredNotes = guestNotes.filter(note =>
@@ -890,6 +1167,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
   const totalSubmissions = rsvps.length;
   const attendingCount = rsvps.filter(r => r.attendingStatus === 'yes').length;
   const decliningCount = rsvps.filter(r => r.attendingStatus === 'no').length;
+  const vowAndReceptionCount = rsvps.filter(r => r.attendingStatus === 'yes' && (!r.attendingEvent || r.attendingEvent.includes('Ceremony') || r.attendingEvent === 'both')).length;
+  const receptionOnlyCount = rsvps.filter(r => r.attendingStatus === 'yes' && (r.attendingEvent === 'Reception Only' || r.attendingEvent === 'reception')).length;
   const totalAttendingGuests = rsvps
     .filter(r => r.attendingStatus === 'yes')
     .reduce((sum, r) => sum + 1 + (parseInt(r.bringingGuest || '0', 10) || 0), 0);
@@ -1060,6 +1339,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                 <div className="space-y-1 min-w-0">
                   <p className="font-mono text-[8px] tracking-widest uppercase text-neutral-400 font-semibold truncate">Attending RSVPs</p>
                   <p className="font-serif text-2xl font-light leading-none text-emerald-800">{attendingCount}</p>
+                  <p className="font-mono text-[7.5px] text-neutral-400 tracking-wider uppercase">
+                    {vowAndReceptionCount} Vow+Rec · {receptionOnlyCount} Rec Only
+                  </p>
                 </div>
               </div>
 
@@ -1133,32 +1415,137 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
             {activeTab === 'rsvps' && (
               <div className="bg-white border border-black/5 shadow-sm rounded-sm overflow-hidden animate-fade-in">
                 
-                {/* Search Header */}
-                <div className="p-4 md:p-6 border-b border-b-black/5 bg-neutral-50/50 flex flex-col sm:flex-row gap-4 items-center justify-between">
-                  <div className="relative w-full sm:max-w-md">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400">
-                      <Search size={14} />
-                    </span>
-                    <input
-                      type="text"
-                      placeholder="Filter guests by name, note, or diet..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full bg-white border border-black/10 hover:border-black/20 focus:border-[#362223] py-2 pl-10 pr-4 font-mono text-[9px] tracking-widest uppercase outline-none transition-colors"
-                    />
-                    {searchQuery && (
-                      <button 
-                        onClick={() => setSearchQuery('')}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 font-mono text-[8px] text-muted hover:text-black uppercase cursor-pointer bg-white/45 backdrop-blur-sm border border-black/5 px-2 py-0.5 rounded-full transition-colors"
+                {/* Search & Attendance Type Filter Header */}
+                <div className="p-4 md:p-6 border-b border-b-black/5 bg-neutral-50/50 flex flex-col gap-4">
+                  <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+                    <div className="relative w-full sm:max-w-md">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400">
+                        <Search size={14} />
+                      </span>
+                      <input
+                        type="text"
+                        placeholder="Filter guests by name, note, or diet..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full bg-white border border-black/10 hover:border-black/20 focus:border-[#362223] py-2 pl-10 pr-4 font-mono text-[9px] tracking-widest uppercase outline-none transition-colors"
+                      />
+                      {searchQuery && (
+                        <button 
+                          onClick={() => setSearchQuery('')}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 font-mono text-[8px] text-muted hover:text-black uppercase cursor-pointer bg-white/45 backdrop-blur-sm border border-black/5 px-2 py-0.5 rounded-full transition-colors"
+                        >
+                          Clear
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-3 self-end sm:self-center">
+                      <p className="font-mono text-[9px] tracking-widest uppercase text-neutral-400 whitespace-nowrap font-semibold">
+                        Showing {filteredRSVPs.length} of {totalSubmissions} records
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setShowColumnFilters(!showColumnFilters)}
+                        className={`font-mono text-[8.5px] uppercase tracking-wider px-3 py-1 rounded-full transition-all cursor-pointer font-semibold flex items-center gap-1.5 border shadow-2xs ${
+                          showColumnFilters
+                            ? 'bg-[#362223] text-white border-[#362223]'
+                            : 'bg-white text-neutral-600 border-black/10 hover:border-black/25 hover:text-[#362223]'
+                        }`}
                       >
-                        Clear
+                        <SlidersHorizontal size={11} />
+                        <span>Column Filters</span>
+                        {activeColumnFilterCount > 0 && (
+                          <span className={`text-[7.5px] px-1.5 py-0.2 rounded-full font-bold ${
+                            showColumnFilters ? 'bg-white/25 text-white' : 'bg-[#362223] text-white'
+                          }`}>
+                            {activeColumnFilterCount}
+                          </span>
+                        )}
                       </button>
-                    )}
+                      {(attendanceTypeFilter !== 'all' || searchQuery || activeColumnFilterCount > 0) && (
+                        <button
+                          type="button"
+                          onClick={resetAllFilters}
+                          className="font-mono text-[8px] text-stone-600 hover:text-stone-900 uppercase cursor-pointer bg-white border border-black/10 hover:border-black/30 px-2.5 py-1 rounded-full transition-colors shadow-2xs flex items-center gap-1 font-semibold"
+                        >
+                          <RotateCcw size={10} />
+                          Reset Filters
+                        </button>
+                      )}
+                    </div>
                   </div>
 
-                  <p className="font-mono text-[9px] tracking-widest uppercase text-neutral-400 whitespace-nowrap font-semibold">
-                    Showing {filteredRSVPs.length} of {totalSubmissions} records
-                  </p>
+                  {/* Active Column Filter Badges Summary */}
+                  {activeColumnFilterCount > 0 && (
+                    <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-black/5">
+                      <span className="font-mono text-[8px] uppercase tracking-wider text-neutral-400 mr-1">Active filters:</span>
+                      {columnFilters.guestName.trim() && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-stone-100 border border-stone-200 text-stone-800 font-mono text-[7.5px] tracking-wider uppercase">
+                          Name: "{columnFilters.guestName}"
+                          <button onClick={() => setColumnFilters(p => ({ ...p, guestName: '' }))} className="hover:text-red-600 cursor-pointer">
+                            <X size={9} />
+                          </button>
+                        </span>
+                      )}
+                      {columnFilters.guestSide !== 'all' && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-stone-100 border border-stone-200 text-stone-800 font-mono text-[7.5px] tracking-wider uppercase">
+                          Side: {columnFilters.guestSide}
+                          <button onClick={() => setColumnFilters(p => ({ ...p, guestSide: 'all' }))} className="hover:text-red-600 cursor-pointer">
+                            <X size={9} />
+                          </button>
+                        </span>
+                      )}
+                      {columnFilters.attendingStatus !== 'all' && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-stone-100 border border-stone-200 text-stone-800 font-mono text-[7.5px] tracking-wider uppercase">
+                          Status: {columnFilters.attendingStatus === 'yes' ? 'Accept' : 'Decline'}
+                          <button onClick={() => setColumnFilters(p => ({ ...p, attendingStatus: 'all' }))} className="hover:text-red-600 cursor-pointer">
+                            <X size={9} />
+                          </button>
+                        </span>
+                      )}
+                      {columnFilters.attendanceType !== 'all' && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-stone-100 border border-stone-200 text-stone-800 font-mono text-[7.5px] tracking-wider uppercase">
+                          Type: {columnFilters.attendanceType === 'vow_and_reception' ? 'Vow + Reception' : columnFilters.attendanceType === 'reception_only' ? 'Reception Only' : 'Declined'}
+                          <button onClick={() => {
+                            setColumnFilters(p => ({ ...p, attendanceType: 'all' }));
+                            setAttendanceTypeFilter('all');
+                          }} className="hover:text-red-600 cursor-pointer">
+                            <X size={9} />
+                          </button>
+                        </span>
+                      )}
+                      {columnFilters.bringingGuest !== 'all' && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-stone-100 border border-stone-200 text-stone-800 font-mono text-[7.5px] tracking-wider uppercase">
+                          Guests: {columnFilters.bringingGuest === 'has_guests' ? 'Any +Guests' : columnFilters.bringingGuest === '0' ? 'Solo (0)' : `+${columnFilters.bringingGuest}`}
+                          <button onClick={() => setColumnFilters(p => ({ ...p, bringingGuest: 'all' }))} className="hover:text-red-600 cursor-pointer">
+                            <X size={9} />
+                          </button>
+                        </span>
+                      )}
+                      {columnFilters.dietaryRestrictions !== 'all' && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-stone-100 border border-stone-200 text-stone-800 font-mono text-[7.5px] tracking-wider uppercase">
+                          Diet: {columnFilters.dietaryRestrictions === 'has' ? 'Has restrictions' : 'None / standard'}
+                          <button onClick={() => setColumnFilters(p => ({ ...p, dietaryRestrictions: 'all' }))} className="hover:text-red-600 cursor-pointer">
+                            <X size={9} />
+                          </button>
+                        </span>
+                      )}
+                      {columnFilters.coupleNote !== 'all' && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-stone-100 border border-stone-200 text-stone-800 font-mono text-[7.5px] tracking-wider uppercase">
+                          Note: {columnFilters.coupleNote === 'has' ? 'Has note' : 'No note'}
+                          <button onClick={() => setColumnFilters(p => ({ ...p, coupleNote: 'all' }))} className="hover:text-red-600 cursor-pointer">
+                            <X size={9} />
+                          </button>
+                        </span>
+                      )}
+                      <button
+                        onClick={resetAllFilters}
+                        className="text-[7.5px] text-stone-500 hover:text-stone-900 font-mono underline ml-1 cursor-pointer"
+                      >
+                        Clear all
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Error overlay or Table core */}
@@ -1202,14 +1589,232 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                     <table className="w-full text-left border-collapse">
                       <thead>
                         <tr className="bg-neutral-50 border-b border-black/5 font-mono text-[8.5px] tracking-widest text-neutral-500 uppercase">
-                          <th className="py-4 px-6 font-semibold">Guest Name</th>
-                          <th className="py-4 px-6 font-semibold">Party / Side</th>
-                          <th className="py-4 px-6 font-semibold">Attendance Status</th>
-                          <th className="py-4 px-6 font-semibold">Accompanying Guests</th>
-                          <th className="py-4 px-6 font-semibold">Dietary Restrictions</th>
-                          <th className="py-4 px-6 font-semibold">Song Requests / Note</th>
-                          <th className="py-4 px-6 font-semibold">Submitted At</th>
+                          <th className="py-3.5 px-6 font-semibold min-w-[170px]">
+                            <div className="flex items-center justify-between gap-1.5">
+                              <span>Guest Name</span>
+                              {columnFilters.guestName.trim() && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#362223] shrink-0" title="Filtered by name"></span>
+                              )}
+                            </div>
+                          </th>
+                          <th className="py-3.5 px-6 font-semibold min-w-[140px]">
+                            <div className="flex items-center justify-between gap-1.5">
+                              <span>Party / Side</span>
+                              {columnFilters.guestSide !== 'all' && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#362223] shrink-0" title="Filtered by side"></span>
+                              )}
+                            </div>
+                          </th>
+                          <th className="py-3.5 px-6 font-semibold min-w-[130px]">
+                            <div className="flex items-center justify-between gap-1.5">
+                              <span>Attendance Status</span>
+                              {columnFilters.attendingStatus !== 'all' && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#362223] shrink-0" title="Filtered by status"></span>
+                              )}
+                            </div>
+                          </th>
+                          <th className="py-3.5 px-6 font-semibold min-w-[170px]">
+                            <div className="flex items-center justify-between gap-1.5">
+                              <span>Attendance Type</span>
+                              {(columnFilters.attendanceType !== 'all' || attendanceTypeFilter !== 'all') && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#362223] shrink-0" title="Filtered by attendance type"></span>
+                              )}
+                            </div>
+                          </th>
+                          <th className="py-3.5 px-6 font-semibold min-w-[140px]">
+                            <div className="flex items-center justify-between gap-1.5">
+                              <span>Accompanying Guests</span>
+                              {columnFilters.bringingGuest !== 'all' && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#362223] shrink-0" title="Filtered by guests"></span>
+                              )}
+                            </div>
+                          </th>
+                          <th className="py-3.5 px-6 font-semibold min-w-[150px]">
+                            <div className="flex items-center justify-between gap-1.5">
+                              <span>Dietary Restrictions</span>
+                              {columnFilters.dietaryRestrictions !== 'all' && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#362223] shrink-0" title="Filtered by diet"></span>
+                              )}
+                            </div>
+                          </th>
+                          <th className="py-3.5 px-6 font-semibold min-w-[150px]">
+                            <div className="flex items-center justify-between gap-1.5">
+                              <span>Song Requests / Note</span>
+                              {columnFilters.coupleNote !== 'all' && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#362223] shrink-0" title="Filtered by note"></span>
+                              )}
+                            </div>
+                          </th>
+                          <th className="py-3.5 px-6 font-semibold min-w-[110px]">
+                            <span>Submitted At</span>
+                          </th>
                         </tr>
+
+                        {/* Column-level filter row */}
+                        {showColumnFilters && (
+                          <tr className="bg-stone-50/90 border-b border-black/10">
+                            {/* 1. Guest Name Input */}
+                            <th className="py-2.5 px-6 font-normal">
+                              <div className="relative">
+                                <input
+                                  type="text"
+                                  placeholder="Filter name..."
+                                  value={columnFilters.guestName}
+                                  onChange={(e) => setColumnFilters(prev => ({ ...prev, guestName: e.target.value }))}
+                                  className={`w-full bg-white border rounded px-2.5 py-1 font-mono text-[8.5px] uppercase tracking-wider outline-none transition-colors ${
+                                    columnFilters.guestName.trim()
+                                      ? 'border-[#362223] bg-amber-50/30 text-[#362223] font-semibold'
+                                      : 'border-black/15 focus:border-[#362223] text-neutral-700'
+                                  }`}
+                                />
+                                {columnFilters.guestName && (
+                                  <button
+                                    onClick={() => setColumnFilters(prev => ({ ...prev, guestName: '' }))}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-black p-0.5 cursor-pointer"
+                                  >
+                                    <X size={10} />
+                                  </button>
+                                )}
+                              </div>
+                            </th>
+
+                            {/* 2. Party / Side Select */}
+                            <th className="py-2.5 px-6 font-normal">
+                              <select
+                                value={columnFilters.guestSide}
+                                onChange={(e) => setColumnFilters(prev => ({ ...prev, guestSide: e.target.value }))}
+                                className={`w-full bg-white border rounded px-2.5 py-1 font-mono text-[8.5px] uppercase tracking-wider outline-none cursor-pointer transition-colors ${
+                                  columnFilters.guestSide !== 'all'
+                                    ? 'border-[#362223] bg-amber-50/30 text-[#362223] font-bold'
+                                    : 'border-black/15 text-neutral-600 focus:border-[#362223]'
+                                }`}
+                              >
+                                <option value="all">All Sides</option>
+                                <option value="bride">Bride's Side</option>
+                                <option value="groom">Groom's Side</option>
+                                <option value="both">Both Sides</option>
+                              </select>
+                            </th>
+
+                            {/* 3. Attendance Status Select */}
+                            <th className="py-2.5 px-6 font-normal">
+                              <select
+                                value={columnFilters.attendingStatus}
+                                onChange={(e) => setColumnFilters(prev => ({ ...prev, attendingStatus: e.target.value }))}
+                                className={`w-full bg-white border rounded px-2.5 py-1 font-mono text-[8.5px] uppercase tracking-wider outline-none cursor-pointer transition-colors ${
+                                  columnFilters.attendingStatus !== 'all'
+                                    ? 'border-[#362223] bg-amber-50/30 text-[#362223] font-bold'
+                                    : 'border-black/15 text-neutral-600 focus:border-[#362223]'
+                                }`}
+                              >
+                                <option value="all">All Status</option>
+                                <option value="yes">Accept</option>
+                                <option value="no">Decline</option>
+                              </select>
+                            </th>
+
+                            {/* 4. Attendance Type Select */}
+                            <th className="py-2.5 px-6 font-normal">
+                              <select
+                                value={columnFilters.attendanceType}
+                                onChange={(e) => {
+                                  const val = e.target.value as any;
+                                  setColumnFilters(prev => ({ ...prev, attendanceType: val }));
+                                  setAttendanceTypeFilter(val);
+                                }}
+                                className={`w-full bg-white border rounded px-2.5 py-1 font-mono text-[8.5px] uppercase tracking-wider outline-none cursor-pointer transition-colors ${
+                                  columnFilters.attendanceType !== 'all'
+                                    ? 'border-[#362223] bg-amber-50/30 text-[#362223] font-bold'
+                                    : 'border-black/15 text-neutral-600 focus:border-[#362223]'
+                                }`}
+                              >
+                                <option value="all">All Types</option>
+                                <option value="vow_and_reception">Vow + Reception</option>
+                                <option value="reception_only">Reception Only</option>
+                                <option value="declined">Declined</option>
+                              </select>
+                            </th>
+
+                            {/* 5. Accompanying Guests Select */}
+                            <th className="py-2.5 px-6 font-normal">
+                              <select
+                                value={columnFilters.bringingGuest}
+                                onChange={(e) => setColumnFilters(prev => ({ ...prev, bringingGuest: e.target.value }))}
+                                className={`w-full bg-white border rounded px-2.5 py-1 font-mono text-[8.5px] uppercase tracking-wider outline-none cursor-pointer transition-colors ${
+                                  columnFilters.bringingGuest !== 'all'
+                                    ? 'border-[#362223] bg-amber-50/30 text-[#362223] font-bold'
+                                    : 'border-black/15 text-neutral-600 focus:border-[#362223]'
+                                }`}
+                              >
+                                <option value="all">All Guests</option>
+                                <option value="0">Solo (0 guests)</option>
+                                <option value="1">+1 Guest</option>
+                                <option value="2">+2 Guests</option>
+                                <option value="3">+3 Guests</option>
+                                <option value="has_guests">Any with +Guests</option>
+                              </select>
+                            </th>
+
+                            {/* 6. Dietary Restrictions Select */}
+                            <th className="py-2.5 px-6 font-normal">
+                              <select
+                                value={columnFilters.dietaryRestrictions}
+                                onChange={(e) => setColumnFilters(prev => ({ ...prev, dietaryRestrictions: e.target.value }))}
+                                className={`w-full bg-white border rounded px-2.5 py-1 font-mono text-[8.5px] uppercase tracking-wider outline-none cursor-pointer transition-colors ${
+                                  columnFilters.dietaryRestrictions !== 'all'
+                                    ? 'border-[#362223] bg-amber-50/30 text-[#362223] font-bold'
+                                    : 'border-black/15 text-neutral-600 focus:border-[#362223]'
+                                }`}
+                              >
+                                <option value="all">All Diets</option>
+                                <option value="has">Has Restrictions</option>
+                                <option value="none">None / Standard</option>
+                              </select>
+                            </th>
+
+                            {/* 7. Song Requests / Note Select */}
+                            <th className="py-2.5 px-6 font-normal">
+                              <select
+                                value={columnFilters.coupleNote}
+                                onChange={(e) => setColumnFilters(prev => ({ ...prev, coupleNote: e.target.value }))}
+                                className={`w-full bg-white border rounded px-2.5 py-1 font-mono text-[8.5px] uppercase tracking-wider outline-none cursor-pointer transition-colors ${
+                                  columnFilters.coupleNote !== 'all'
+                                    ? 'border-[#362223] bg-amber-50/30 text-[#362223] font-bold'
+                                    : 'border-black/15 text-neutral-600 focus:border-[#362223]'
+                                }`}
+                              >
+                                <option value="all">All Notes</option>
+                                <option value="has">Has Note / Wish</option>
+                                <option value="none">No Note</option>
+                              </select>
+                            </th>
+
+                            {/* 8. Submitted At Column / Reset Action */}
+                            <th className="py-2.5 px-6 text-center font-normal">
+                              {activeColumnFilterCount > 0 ? (
+                                <button
+                                  type="button"
+                                  onClick={() => setColumnFilters({
+                                    guestName: '',
+                                    guestSide: 'all',
+                                    attendingStatus: 'all',
+                                    attendanceType: 'all',
+                                    bringingGuest: 'all',
+                                    dietaryRestrictions: 'all',
+                                    coupleNote: 'all',
+                                  })}
+                                  title="Reset column filters"
+                                  className="text-[8px] text-stone-600 hover:text-black uppercase inline-flex items-center gap-1 font-mono px-2 py-1 bg-white hover:bg-stone-100 border border-black/15 rounded cursor-pointer transition-colors shadow-2xs font-semibold"
+                                >
+                                  <RotateCcw size={9} />
+                                  Reset
+                                </button>
+                              ) : (
+                                <span className="text-[7.5px] text-neutral-400 font-mono tracking-widest uppercase">Filter</span>
+                              )}
+                            </th>
+                          </tr>
+                        )}
                       </thead>
                       <tbody className="divide-y divide-black/5 md:text-xs">
                         {filteredRSVPs.map((rsvp) => (
@@ -1221,7 +1826,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                               {rsvp.guestName}
                             </td>
                             <td className="py-5 px-6 uppercase text-[9px] tracking-widest whitespace-nowrap">
-                              {rsvp.guestSide === 'groom' ? (
+                              {rsvp.attendingStatus === 'no' || rsvp.guestSide === 'Declined' ? (
+                                <span className="text-neutral-400 font-normal">—</span>
+                              ) : rsvp.guestSide === 'groom' ? (
                                 <span className="inline-flex items-center gap-1.5 px-3 py-1 font-semibold rounded-full bg-blue-50 text-blue-800 border border-blue-100/60">
                                   <span className="w-1.5 h-1.5 rounded-full bg-blue-600 block"></span>
                                   Groom's Side
@@ -1248,6 +1855,24 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                                 <span className="inline-flex items-center gap-1.5 px-3 py-1 font-semibold rounded-full bg-neutral-100 text-neutral-500 border border-neutral-200/40">
                                   <span className="w-1.5 h-1.5 rounded-full bg-neutral-400 block"></span>
                                   Decline
+                                </span>
+                              )}
+                            </td>
+                            <td className="py-5 px-6 uppercase text-[9px] tracking-widest whitespace-nowrap">
+                              {rsvp.attendingStatus === 'no' ? (
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 font-semibold rounded-full bg-neutral-100 text-neutral-500 border border-neutral-200/60">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-neutral-400 block"></span>
+                                  Declined
+                                </span>
+                              ) : rsvp.attendingEvent === 'Reception Only' || rsvp.attendingEvent === 'reception' ? (
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 font-semibold rounded-full bg-stone-100 text-stone-800 border border-stone-200">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-stone-500 block"></span>
+                                  Reception Only
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 font-semibold rounded-full bg-amber-50 text-amber-900 border border-amber-200/60">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-600 block"></span>
+                                  Vow Ceremony + Reception
                                 </span>
                               )}
                             </td>
@@ -1589,7 +2214,18 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                         : 'bg-white border-black/5 text-[#362223] hover:bg-[#362223]/5'
                     }`}
                   >
-                    3. Timeline & Dress Code
+                    3. Timeline, Itinerary & Attire
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTextSubTab('rsvp')}
+                    className={`px-4 py-2.5 font-mono text-[9px] tracking-widest uppercase rounded-full transition-all border font-bold ${
+                      textSubTab === 'rsvp'
+                        ? 'bg-[#362223] border-[#362223] text-stone-100 shadow-sm'
+                        : 'bg-white border-black/5 text-[#362223] hover:bg-[#362223]/5'
+                    }`}
+                  >
+                    4. RSVP Card & Buttons
                   </button>
                   <button
                     type="button"
@@ -1600,7 +2236,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                         : 'bg-white border-black/5 text-[#362223] hover:bg-[#362223]/5'
                     }`}
                   >
-                    4. Registry & Guestbook
+                    5. Registry & Guestbook
                   </button>
                   <button
                     type="button"
@@ -1611,7 +2247,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                         : 'bg-white border-black/5 text-[#362223] hover:bg-[#362223]/5'
                     }`}
                   >
-                    5. Gift Box (Mừng Cưới)
+                    6. Gift Box (Mừng Cưới)
                   </button>
                   <button
                     type="button"
@@ -1622,7 +2258,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                         : 'bg-white border-black/5 text-[#362223] hover:bg-[#362223]/5'
                     }`}
                   >
-                    6. Sidebar & Action Buttons
+                    7. Sidebar & Action Buttons
                   </button>
                   <button
                     type="button"
@@ -1633,7 +2269,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                         : 'bg-white border-black/5 text-[#362223] hover:bg-[#362223]/5'
                     }`}
                   >
-                    7. Venue & Trails
+                    8. Venue & Trails
                   </button>
                 </div>
 
@@ -2334,6 +2970,200 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                   </div>
                   )}
 
+                  {/* Wedding Day Itinerary Schedule (Editable) */}
+                  {textSubTab === 'timeline' && (
+                  <div className="md:col-span-2 bg-white border border-black/5 rounded-sm p-6 md:p-8 shadow-sm space-y-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/5 pb-4">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <Clock size={16} className="text-[#362223]" />
+                          <h4 className="font-serif text-base tracking-normal uppercase font-semibold text-[#362223]">
+                            Wedding Day Itinerary Timeline (Lịch Trình Chi Tiết)
+                          </h4>
+                        </div>
+                        <p className="font-mono text-[9px] text-neutral-400 uppercase tracking-widest mt-1">
+                          Customize the timeline items displayed in the Details / Events section. Both English and Vietnamese schedules update in real time.
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={handleResetItineraryToDefault}
+                          className="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-full font-mono text-[9px] uppercase tracking-wider flex items-center gap-1 transition-colors cursor-pointer font-semibold"
+                          title="Reset to default 8-item wedding schedule"
+                        >
+                          <RotateCcw size={11} />
+                          <span>Reset Default</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleAddItineraryItem}
+                          className="px-3.5 py-1.5 bg-[#362223] hover:bg-black text-white rounded-full font-mono text-[9px] uppercase tracking-wider flex items-center gap-1 transition-colors cursor-pointer font-semibold shadow-sm"
+                        >
+                          <Plus size={11} />
+                          <span>Add Event</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Section Titles */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-stone-50/60 p-4 border border-black/5 rounded-sm">
+                      <div className="space-y-1.5">
+                        <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">
+                          Itinerary Section Title (ENG)
+                        </label>
+                        <input 
+                          type="text" 
+                          value={itineraryTitleEng}
+                          onChange={(e) => setItineraryTitleEng(e.target.value)}
+                          placeholder="Itinerary"
+                          className="w-full bg-white border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">
+                          Itinerary Section Title (VIE)
+                        </label>
+                        <input 
+                          type="text" 
+                          value={itineraryTitleVie}
+                          onChange={(e) => setItineraryTitleVie(e.target.value)}
+                          placeholder="Lịch trình"
+                          className="w-full bg-white border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-[10px] outline-none transition-colors font-semibold"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Itinerary Rows List */}
+                    <div className="space-y-3">
+                      {itineraryList.map((item, index) => (
+                        <div 
+                          key={item.id || index}
+                          className="p-3.5 bg-stone-50/70 border border-black/10 rounded-sm hover:border-black/20 transition-all space-y-2.5"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-mono text-[9px] font-bold uppercase tracking-wider text-neutral-600 flex items-center gap-1.5">
+                              <span className="w-4 h-4 rounded-full bg-[#362223] text-white flex items-center justify-center text-[8px] font-mono">
+                                {index + 1}
+                              </span>
+                              <span>Timeline Event #{index + 1}</span>
+                            </span>
+
+                            <div className="flex items-center gap-1">
+                              <button
+                                type="button"
+                                disabled={index === 0}
+                                onClick={() => handleMoveItineraryItem(index, 'up')}
+                                className="p-1 text-stone-500 hover:text-black hover:bg-stone-200 rounded disabled:opacity-20 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                                title="Move earlier"
+                              >
+                                <ArrowUp size={13} />
+                              </button>
+                              <button
+                                type="button"
+                                disabled={index === itineraryList.length - 1}
+                                onClick={() => handleMoveItineraryItem(index, 'down')}
+                                className="p-1 text-stone-500 hover:text-black hover:bg-stone-200 rounded disabled:opacity-20 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                                title="Move later"
+                              >
+                                <ArrowDown size={13} />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveItineraryItem(index)}
+                                className="p-1 text-stone-400 hover:text-red-700 hover:bg-red-50 rounded transition-colors ml-1 cursor-pointer"
+                                title="Delete event"
+                              >
+                                <Trash2 size={13} />
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+                            {/* English Time & Event */}
+                            <div className="md:col-span-2 space-y-1">
+                              <label className="block font-mono text-[8px] uppercase tracking-wider text-neutral-400 font-semibold">Time (ENG)</label>
+                              <input 
+                                type="text"
+                                value={item.timeEng}
+                                onChange={(e) => handleUpdateItineraryItem(index, 'timeEng', e.target.value)}
+                                placeholder="3:00 PM"
+                                className="w-full bg-white border border-black/10 focus:border-[#362223] py-1.5 px-2 font-mono text-[10px] outline-none"
+                              />
+                            </div>
+                            <div className="md:col-span-4 space-y-1">
+                              <label className="block font-mono text-[8px] uppercase tracking-wider text-neutral-400 font-semibold">Event (ENG)</label>
+                              <input 
+                                type="text"
+                                value={item.eventEng}
+                                onChange={(e) => handleUpdateItineraryItem(index, 'eventEng', e.target.value)}
+                                placeholder="Welcome Drinks"
+                                className="w-full bg-white border border-black/10 focus:border-[#362223] py-1.5 px-2 font-serif text-[11px] outline-none"
+                              />
+                            </div>
+
+                            {/* Vietnamese Time & Event */}
+                            <div className="md:col-span-2 space-y-1">
+                              <label className="block font-mono text-[8px] uppercase tracking-wider text-neutral-400 font-semibold">Time (VIE)</label>
+                              <input 
+                                type="text"
+                                value={item.timeVie}
+                                onChange={(e) => handleUpdateItineraryItem(index, 'timeVie', e.target.value)}
+                                placeholder="15:00"
+                                className="w-full bg-white border border-black/10 focus:border-[#362223] py-1.5 px-2 font-mono text-[10px] outline-none"
+                              />
+                            </div>
+                            <div className="md:col-span-4 space-y-1">
+                              <label className="block font-mono text-[8px] uppercase tracking-wider text-neutral-400 font-semibold">Event (VIE)</label>
+                              <input 
+                                type="text"
+                                value={item.eventVie}
+                                onChange={(e) => handleUpdateItineraryItem(index, 'eventVie', e.target.value)}
+                                placeholder="Đón khách & Tiệc trà đầu giờ"
+                                className="w-full bg-white border border-black/10 focus:border-[#362223] py-1.5 px-2 font-serif text-[11px] outline-none"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Live Preview of the events table */}
+                    <div className="pt-4 border-t border-black/5 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-[9px] uppercase tracking-widest text-neutral-500 font-semibold">
+                          Live Itinerary Preview (Hiển Thị Thực Tế Trên Website)
+                        </span>
+                        <span className="font-mono text-[8px] text-neutral-400 uppercase">
+                          {itineraryList.length} events scheduled
+                        </span>
+                      </div>
+                      <div className="bg-[#F8F4F2] p-5 rounded border border-black/5 space-y-2.5 font-mono text-[9px] tracking-[0.2em] uppercase">
+                        <div className="flex items-center justify-between pb-2 border-b border-black/10">
+                          <span className="font-crimson text-[12px] text-neutral-600 font-semibold lowercase tracking-normal">
+                            {itineraryTitleEng || 'Itinerary'} / {itineraryTitleVie || 'Lịch trình'}
+                          </span>
+                          <span className="text-[8px] text-neutral-400">Section #events</span>
+                        </div>
+                        {itineraryList.map((item, idx) => (
+                          <div key={idx} className="flex items-baseline justify-between border-b border-black/5 pb-1 w-full text-stone-800">
+                            <span className="text-[10px] sm:text-[11px] font-semibold shrink-0">
+                              {item.timeEng || item.timeVie || '--:--'}
+                            </span>
+                            <span className="text-stone-400 opacity-40 flex-1 mx-2 overflow-hidden whitespace-nowrap text-center">
+                              ........................................................................................................................................................................................................
+                            </span>
+                            <span className="text-[10px] sm:text-[11px] shrink-0 font-medium">
+                              {item.eventEng || item.eventVie || 'Event Title'}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  )}
+
                   {/* Phase 6: Registry Message */}
                   {textSubTab === 'registry' && (
                   <div className="bg-white border border-black/5 rounded-sm p-6 md:p-8 shadow-sm space-y-6">
@@ -2396,30 +3226,390 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBackToHome }) => {
                   </div>
                   )}
 
-                  {/* Phase 7.5: Interactive RSVP Card Customization */}
-                  {textSubTab === 'story' && (
-                  <div className="bg-white border border-black/5 rounded-sm p-6 md:p-8 shadow-sm space-y-6">
-                    <h4 className="font-serif text-base tracking-normal uppercase border-b border-black/5 pb-3 font-semibold">8. Interactive RSVP Card Settings</h4>
-                    
-                    <div className="space-y-4">
-                      <div className="space-y-1.5">
-                        <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">Card Image Rotation (Degrees)</label>
-                        <select 
-                          value={collageLaceBgRotate}
-                          onChange={(e) => setCollageLaceBgRotate(e.target.value)}
-                          className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2.5 px-3 font-mono text-xs outline-none transition-colors"
-                        >
-                          <option value="0">0° (No rotation - default)</option>
-                          <option value="90">90° (Quarter turn right)</option>
-                          <option value="180">180° (Half turn)</option>
-                          <option value="270">270° (Quarter turn left)</option>
-                        </select>
-                        <p className="font-mono text-[8.5px] uppercase tracking-wide text-neutral-400 mt-1.5 leading-normal">
-                          Useful if your custom lace card background image uploads sideways or if you need to manually orient it.
-                        </p>
+                  {/* Phase 4: Interactive RSVP Card Customization */}
+                  {textSubTab === 'rsvp' && (
+                  <>
+                    <div className="bg-white border border-black/5 rounded-sm p-6 md:p-8 shadow-sm space-y-6">
+                      <div className="flex items-center justify-between border-b border-black/5 pb-3">
+                        <h4 className="font-serif text-base tracking-normal uppercase font-semibold text-[#362223]">
+                          4A. Lace Card Main Invitation Texts
+                        </h4>
+                        <span className="font-mono text-[9px] uppercase tracking-widest text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-semibold">
+                          Live Sync
+                        </span>
+                      </div>
+                      
+                      <div className="space-y-5">
+                        {/* Script Display Title */}
+                        <div className="space-y-1.5">
+                          <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">
+                            Card Script Title (English)
+                          </label>
+                          <input 
+                            type="text" 
+                            value={rsvpCardTitleEng}
+                            onChange={(e) => setRsvpCardTitleEng(e.target.value)}
+                            placeholder="Together with our families,"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                          />
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">
+                            Card Script Title (Vietnamese)
+                          </label>
+                          <input 
+                            type="text" 
+                            value={rsvpCardTitleVie}
+                            onChange={(e) => setRsvpCardTitleVie(e.target.value)}
+                            placeholder="Cùng gia đình thân yêu,"
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-sm outline-none transition-colors"
+                          />
+                        </div>
+
+                        {/* Narrative Paragraph */}
+                        <div className="space-y-1.5">
+                          <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">
+                            Card Narrative / Description (English)
+                          </label>
+                          <textarea 
+                            rows={3}
+                            value={rsvpCardDescEng}
+                            onChange={(e) => setRsvpCardDescEng(e.target.value)}
+                            placeholder="Thank you for being part of one of the most meaningful moments of our lives. We cannot wait to celebrate love, laughter, and unforgettable memories with you."
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-xs outline-none transition-colors resize-none leading-relaxed italic"
+                          />
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">
+                            Card Narrative / Description (Vietnamese)
+                          </label>
+                          <textarea 
+                            rows={3}
+                            value={rsvpCardDescVie}
+                            onChange={(e) => setRsvpCardDescVie(e.target.value)}
+                            placeholder="Cảm ơn bạn đã luôn là một phần ý nghĩa trong hành trình của chúng mình. Rất mong được cùng bạn sẻ chia niềm vui, tiếng cười và những kỷ niệm khó quên."
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-serif text-xs outline-none transition-colors resize-none leading-relaxed italic"
+                          />
+                        </div>
+
+                        {/* Card Image Rotation */}
+                        <div className="space-y-1.5 pt-2 border-t border-black/5">
+                          <label className="block font-mono text-[9px] uppercase tracking-wider text-neutral-500 font-semibold">
+                            Lace Card Background Image Rotation (Degrees)
+                          </label>
+                          <select 
+                            value={collageLaceBgRotate}
+                            onChange={(e) => setCollageLaceBgRotate(e.target.value)}
+                            className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-2 px-3 font-mono text-xs outline-none transition-colors"
+                          >
+                            <option value="0">0° (No rotation - default)</option>
+                            <option value="90">90° (Quarter turn right)</option>
+                            <option value="180">180° (Half turn)</option>
+                            <option value="270">270° (Quarter turn left)</option>
+                          </select>
+                          <p className="font-mono text-[8.5px] uppercase tracking-wide text-neutral-400 mt-1">
+                            Adjust if your lace card background image uploads in sideways orientation.
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Card Action Buttons Customization */}
+                      <div className="border-t border-black/5 pt-5 space-y-4">
+                        <h5 className="font-mono text-[10px] uppercase tracking-wider text-neutral-700 font-bold">
+                          Card Action Buttons (3 Buttons)
+                        </h5>
+
+                        {/* Button 1: RSVP */}
+                        <div className="grid grid-cols-2 gap-3 p-3 bg-stone-50 rounded border border-black/5">
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[8.5px] uppercase tracking-wider text-neutral-500 font-semibold">Button 1: RSVP (ENG)</label>
+                            <input 
+                              type="text" 
+                              value={rsvpBtnTextEng}
+                              onChange={(e) => setRsvpBtnTextEng(e.target.value)}
+                              placeholder="Please RSVP Here"
+                              className="w-full bg-white border border-black/10 focus:border-[#362223] py-1.5 px-2.5 font-serif italic text-xs outline-none"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[8.5px] uppercase tracking-wider text-neutral-500 font-semibold">Button 1: RSVP (VIE)</label>
+                            <input 
+                              type="text" 
+                              value={rsvpBtnTextVie}
+                              onChange={(e) => setRsvpBtnTextVie(e.target.value)}
+                              placeholder="Xác nhận tham dự (RSVP)"
+                              className="w-full bg-white border border-black/10 focus:border-[#362223] py-1.5 px-2.5 font-serif italic text-xs outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Button 2: Note */}
+                        <div className="grid grid-cols-2 gap-3 p-3 bg-stone-50 rounded border border-black/5">
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[8.5px] uppercase tracking-wider text-neutral-500 font-semibold">Button 2: Note / Guestbook (ENG)</label>
+                            <input 
+                              type="text" 
+                              value={rsvpNoteBtnTextEng}
+                              onChange={(e) => setRsvpNoteBtnTextEng(e.target.value)}
+                              placeholder="Write us a note"
+                              className="w-full bg-white border border-black/10 focus:border-[#362223] py-1.5 px-2.5 font-serif italic text-xs outline-none"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[8.5px] uppercase tracking-wider text-neutral-500 font-semibold">Button 2: Note / Guestbook (VIE)</label>
+                            <input 
+                              type="text" 
+                              value={rsvpNoteBtnTextVie}
+                              onChange={(e) => setRsvpNoteBtnTextVie(e.target.value)}
+                              placeholder="Gửi lời chúc lưu bút"
+                              className="w-full bg-white border border-black/10 focus:border-[#362223] py-1.5 px-2.5 font-serif italic text-xs outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Button 3: Gift */}
+                        <div className="grid grid-cols-2 gap-3 p-3 bg-stone-50 rounded border border-black/5">
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[8.5px] uppercase tracking-wider text-neutral-500 font-semibold">Button 3: Gift (ENG)</label>
+                            <input 
+                              type="text" 
+                              value={rsvpGiftBtnTextEng}
+                              onChange={(e) => setRsvpGiftBtnTextEng(e.target.value)}
+                              placeholder="Wedding Gift"
+                              className="w-full bg-white border border-black/10 focus:border-[#362223] py-1.5 px-2.5 font-serif italic text-xs outline-none"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block font-mono text-[8.5px] uppercase tracking-wider text-neutral-500 font-semibold">Button 3: Gift (VIE)</label>
+                            <input 
+                              type="text" 
+                              value={rsvpGiftBtnTextVie}
+                              onChange={(e) => setRsvpGiftBtnTextVie(e.target.value)}
+                              placeholder="Hộp mừng cưới"
+                              className="w-full bg-white border border-black/10 focus:border-[#362223] py-1.5 px-2.5 font-serif italic text-xs outline-none"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
+
+                    {/* Column 2: Modal Header Texts & Live Preview */}
+                    <div className="space-y-6">
+                      <div className="bg-white border border-black/5 rounded-sm p-6 md:p-8 shadow-sm space-y-6">
+                        <h4 className="font-serif text-base tracking-normal uppercase border-b border-black/5 pb-3 font-semibold text-[#362223]">
+                          4B. Stationery Popup Modal Headings
+                        </h4>
+
+                        {/* RSVP Tab Modal Heading */}
+                        <div className="space-y-3 pb-4 border-b border-black/5">
+                          <h5 className="font-mono text-[9.5px] uppercase tracking-wider text-neutral-600 font-bold">
+                            1. RSVP Modal Header
+                          </h5>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-1">
+                              <label className="block font-mono text-[8.5px] uppercase tracking-wider text-neutral-400 font-semibold">Script Title (ENG)</label>
+                              <input 
+                                type="text"
+                                value={rsvpModalTitleEng}
+                                onChange={(e) => setRsvpModalTitleEng(e.target.value)}
+                                placeholder="Celebrate with us,"
+                                className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-1.5 px-2.5 font-serif text-xs outline-none"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="block font-mono text-[8.5px] uppercase tracking-wider text-neutral-400 font-semibold">Script Title (VIE)</label>
+                              <input 
+                                type="text"
+                                value={rsvpModalTitleVie}
+                                onChange={(e) => setRsvpModalTitleVie(e.target.value)}
+                                placeholder="Chung vui cùng tụi mình,"
+                                className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-1.5 px-2.5 font-serif text-xs outline-none"
+                              />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-1">
+                              <label className="block font-mono text-[8.5px] uppercase tracking-wider text-neutral-400 font-semibold">Subtitle (ENG)</label>
+                              <input 
+                                type="text"
+                                value={rsvpModalSubtitleEng}
+                                onChange={(e) => setRsvpModalSubtitleEng(e.target.value)}
+                                placeholder="KINDLY RESPOND TO OUR INVITATION."
+                                className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-1.5 px-2.5 font-mono text-[10px] outline-none"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="block font-mono text-[8.5px] uppercase tracking-wider text-neutral-400 font-semibold">Subtitle (VIE)</label>
+                              <input 
+                                type="text"
+                                value={rsvpModalSubtitleVie}
+                                onChange={(e) => setRsvpModalSubtitleVie(e.target.value)}
+                                placeholder="XÁC NHẬN SỰ HIỆN DIỆN CỦA BẠN."
+                                className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-1.5 px-2.5 font-mono text-[10px] outline-none"
+                              />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-1">
+                              <label className="block font-mono text-[8.5px] uppercase tracking-wider text-neutral-400 font-semibold">Deadline Notice (ENG)</label>
+                              <input 
+                                type="text"
+                                value={rsvpModalDeadlineEng}
+                                onChange={(e) => setRsvpModalDeadlineEng(e.target.value)}
+                                placeholder="Please reply before 2026/01/12"
+                                className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-1.5 px-2.5 font-serif text-xs outline-none"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="block font-mono text-[8.5px] uppercase tracking-wider text-neutral-400 font-semibold">Deadline Notice (VIE)</label>
+                              <input 
+                                type="text"
+                                value={rsvpModalDeadlineVie}
+                                onChange={(e) => setRsvpModalDeadlineVie(e.target.value)}
+                                placeholder="Vui lòng phản hồi trước 2026/01/12"
+                                className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-1.5 px-2.5 font-serif text-xs outline-none"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Guest Note Modal Heading */}
+                        <div className="space-y-3 pb-4 border-b border-black/5">
+                          <h5 className="font-mono text-[9.5px] uppercase tracking-wider text-neutral-600 font-bold">
+                            2. Guestbook / Note Modal Header
+                          </h5>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-1">
+                              <label className="block font-mono text-[8.5px] uppercase tracking-wider text-neutral-400 font-semibold">Script Title (ENG)</label>
+                              <input 
+                                type="text"
+                                value={rsvpNoteModalTitleEng}
+                                onChange={(e) => setRsvpNoteModalTitleEng(e.target.value)}
+                                placeholder="Leaving us a message,"
+                                className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-1.5 px-2.5 font-serif text-xs outline-none"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="block font-mono text-[8.5px] uppercase tracking-wider text-neutral-400 font-semibold">Script Title (VIE)</label>
+                              <input 
+                                type="text"
+                                value={rsvpNoteModalTitleVie}
+                                onChange={(e) => setRsvpNoteModalTitleVie(e.target.value)}
+                                placeholder="Gửi trao nguyện ước,"
+                                className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-1.5 px-2.5 font-serif text-xs outline-none"
+                              />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-1">
+                              <label className="block font-mono text-[8.5px] uppercase tracking-wider text-neutral-400 font-semibold">Subtitle (ENG)</label>
+                              <input 
+                                type="text"
+                                value={rsvpNoteModalSubtitleEng}
+                                onChange={(e) => setRsvpNoteModalSubtitleEng(e.target.value)}
+                                placeholder="TO CHERISH YOUR LOVE FOREVER."
+                                className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-1.5 px-2.5 font-mono text-[10px] outline-none"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="block font-mono text-[8.5px] uppercase tracking-wider text-neutral-400 font-semibold">Subtitle (VIE)</label>
+                              <input 
+                                type="text"
+                                value={rsvpNoteModalSubtitleVie}
+                                onChange={(e) => setRsvpNoteModalSubtitleVie(e.target.value)}
+                                placeholder="ĐỂ KỶ NIỆM CÒN MÃI VỚI THỜI GIAN."
+                                className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-1.5 px-2.5 font-mono text-[10px] outline-none"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Gift Box Modal Heading */}
+                        <div className="space-y-3">
+                          <h5 className="font-mono text-[9.5px] uppercase tracking-wider text-neutral-600 font-bold">
+                            3. Wedding Gift Modal Header
+                          </h5>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-1">
+                              <label className="block font-mono text-[8.5px] uppercase tracking-wider text-neutral-400 font-semibold">Script Title (ENG)</label>
+                              <input 
+                                type="text"
+                                value={rsvpGiftModalTitleEng}
+                                onChange={(e) => setRsvpGiftModalTitleEng(e.target.value)}
+                                placeholder="Warmest wishes,"
+                                className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-1.5 px-2.5 font-serif text-xs outline-none"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="block font-mono text-[8.5px] uppercase tracking-wider text-neutral-400 font-semibold">Script Title (VIE)</label>
+                              <input 
+                                type="text"
+                                value={rsvpGiftModalTitleVie}
+                                onChange={(e) => setRsvpGiftModalTitleVie(e.target.value)}
+                                placeholder="Gửi trao yêu thương,"
+                                className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-1.5 px-2.5 font-serif text-xs outline-none"
+                              />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-1">
+                              <label className="block font-mono text-[8.5px] uppercase tracking-wider text-neutral-400 font-semibold">Subtitle (ENG)</label>
+                              <input 
+                                type="text"
+                                value={rsvpGiftModalSubtitleEng}
+                                onChange={(e) => setRsvpGiftModalSubtitleEng(e.target.value)}
+                                placeholder="WEDDING GIFT BOX FOR THE BRIDE & GROOM."
+                                className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-1.5 px-2.5 font-mono text-[10px] outline-none"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="block font-mono text-[8.5px] uppercase tracking-wider text-neutral-400 font-semibold">Subtitle (VIE)</label>
+                              <input 
+                                type="text"
+                                value={rsvpGiftModalSubtitleVie}
+                                onChange={(e) => setRsvpGiftModalSubtitleVie(e.target.value)}
+                                placeholder="HỘP MỪNG CƯỚI CHÚC PHÚC ĐÔI UYÊN ƯƠNG."
+                                className="w-full bg-stone-50 border border-black/10 focus:border-[#362223] py-1.5 px-2.5 font-mono text-[10px] outline-none"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Live Card Preview Box */}
+                      <div className="bg-stone-900 border border-stone-800 rounded-sm p-6 text-stone-100 space-y-4">
+                        <div className="flex items-center justify-between border-b border-stone-800 pb-2">
+                          <span className="font-mono text-[9px] uppercase tracking-widest text-stone-400 font-semibold">
+                            Lace Card Live Preview (English View)
+                          </span>
+                          <span className="font-mono text-[8px] uppercase tracking-wider text-amber-300 bg-amber-950/60 px-2 py-0.5 rounded">
+                            Section #rsvp
+                          </span>
+                        </div>
+                        <div className="bg-[#FAF9F5] text-[#362223] p-6 rounded-2xl text-center space-y-3 shadow-inner">
+                          <p className="font-luxurious text-3xl font-medium leading-none text-[#362223]">
+                            {rsvpCardTitleEng || "Together with our families,"}
+                          </p>
+                          <p className="italic text-xs font-serif leading-relaxed text-[#362223]/80 max-w-sm mx-auto">
+                            {rsvpCardDescEng || "Thank you for being part of one of the most meaningful moments of our lives. We cannot wait to celebrate love, laughter, and unforgettable memories with you."}
+                          </p>
+                          <div className="flex flex-wrap gap-2 justify-center pt-2">
+                            <span className="px-3 py-1 rounded-full bg-[#362223] text-[#FAF9F5] font-serif italic text-[10px] font-bold shadow-sm">
+                              {rsvpBtnTextEng || "Please RSVP Here"}
+                            </span>
+                            <span className="px-3 py-1 rounded-full border border-[#362223]/40 text-[#362223] font-serif italic text-[10px] font-bold">
+                              {rsvpNoteBtnTextEng || "Write us a note"}
+                            </span>
+                            <span className="px-3 py-1 rounded-full border border-[#362223]/40 text-[#362223] font-serif italic text-[10px] font-bold">
+                              {rsvpGiftBtnTextEng || "Wedding Gift"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </>
                   )}
 
                   {/* Phase 8: Sidebar Floating Labels */}

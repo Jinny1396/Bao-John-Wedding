@@ -14,8 +14,9 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
   const [formData, setFormData] = useState({
     guestName: '',
     attendingStatus: '',
-    guestSide: 'bride',
-    bringingGuest: '0',
+    attendingEvent: '',
+    guestSide: '',
+    bringingGuest: '',
     dietaryRestrictions: '',
     coupleNote: '',
   });
@@ -23,16 +24,23 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
   const translations = {
     ENG: {
       alertStatus: 'Please let us know if you are able to join us.',
+      alertEvent: 'Please select which event you will attend.',
+      alertSide: 'Please select whose guest you are.',
+      alertGuest: 'Please select whether you are bringing accompanying guests.',
       alertName: 'Please provide your name.',
       errorPrefix: 'Unable to send RSVP:',
       promptStatus: 'Are you able to join us?',
       yesLabel: 'Accept with pleasure',
       noLabel: 'Decline with regret',
+      eventLabel: 'Which event will you attend?',
+      eventOptionBoth: 'Vow Ceremony + Reception',
+      eventOptionReception: 'Reception Only',
       sideLabel: "Whose guest are you?",
       brideSideLabel: "Bride's Side",
       groomSideLabel: "Groom's Side",
       bothSideLabel: "Both / Mutual",
       bringingGuestLabel: 'Bringing a guest?',
+      guestSelectPlaceholder: '-- SELECT NUMBER OF GUESTS --',
       guestOption0: 'No (Just me — 1 person)',
       guestOption1: 'Yes, bringing 1 guest (+1)',
       guestOption2: 'Yes, bringing 2 guests (+2)',
@@ -51,16 +59,23 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
     },
     VIE: {
       alertStatus: 'Vui lòng cho chúng mình biết bạn có thể tham dự không nhé.',
+      alertEvent: 'Vui lòng chọn phần sự kiện bạn sẽ tham dự.',
+      alertSide: 'Vui lòng chọn bạn là khách của bên nào.',
+      alertGuest: 'Vui lòng chọn số lượng khách đi cùng.',
       alertName: 'Vui lòng điền họ tên của bạn.',
       errorPrefix: 'Không thể gửi phản hồi:',
       promptStatus: 'Bạn sẽ đến chung vui cùng chúng mình chứ?',
       yesLabel: 'Đồng ý tham dự',
       noLabel: 'Tiếc không thể đến',
+      eventLabel: 'Bạn sẽ tham dự sự kiện nào?',
+      eventOptionBoth: 'Lễ Trao Lời Thề + Tiệc Cưới',
+      eventOptionReception: 'Chỉ Tiệc Cưới',
       sideLabel: 'Bạn là khách của bên nào?',
       brideSideLabel: 'Nhà Gái',
       groomSideLabel: 'Nhà Trai',
       bothSideLabel: 'Cả Hai Nhà',
       bringingGuestLabel: 'Bạn có đi cùng người đi kèm (khách) không?',
+      guestSelectPlaceholder: '-- CHỌN SỐ LƯỢNG KHÁCH ĐI CÙNG --',
       guestOption0: 'Không (Chỉ mình tôi — 1 người)',
       guestOption1: 'Có, đi cùng 1 người (+1)',
       guestOption2: 'Có, đi cùng 2 người (+2)',
@@ -83,25 +98,47 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
+
     if (!formData.attendingStatus) {
       setSubmitError(t.alertStatus);
       return;
     }
+
+    const isDeclining = formData.attendingStatus === 'no';
+
+    if (!isDeclining) {
+      if (!formData.attendingEvent) {
+        setSubmitError(t.alertEvent);
+        return;
+      }
+      if (!formData.guestSide) {
+        setSubmitError(t.alertSide);
+        return;
+      }
+      if (formData.bringingGuest === '') {
+        setSubmitError(t.alertGuest);
+        return;
+      }
+    }
+
     if (!formData.guestName.trim()) {
       setSubmitError(t.alertName);
       return;
     }
 
     setIsLoading(true);
-    setSubmitError(null);
 
     const rsvpData = {
       guestName: formData.guestName.trim(),
       attendingStatus: formData.attendingStatus,
-      guestSide: formData.guestSide || 'bride',
-      bringingGuest: formData.bringingGuest || '0',
-      dietaryRestrictions: formData.dietaryRestrictions.trim(),
-      coupleNote: formData.coupleNote.trim(),
+      attendingEvent: isDeclining 
+        ? 'Declined' 
+        : (formData.attendingEvent === 'reception' ? 'Reception Only' : 'Vow Ceremony + Reception'),
+      guestSide: isDeclining ? 'Declined' : (formData.guestSide || 'both'),
+      bringingGuest: isDeclining ? '0' : (formData.bringingGuest || '0'),
+      dietaryRestrictions: isDeclining ? '' : formData.dietaryRestrictions.trim(),
+      coupleNote: isDeclining ? '' : formData.coupleNote.trim(),
       createdAt: serverTimestamp(),
     };
 
@@ -122,21 +159,27 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
     }
   };
 
+  const isDeclined = formData.attendingStatus === 'no';
+
   return (
     <div className="max-w-2xl mx-auto w-full text-left font-mono text-[10px] tracking-widest uppercase">
       <AnimatePresence mode="wait">
         {!isSubmitted ? (
           <motion.form
             key="form"
+            id="rsvp-modal-form"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onSubmit={handleSubmit}
             className="space-y-6"
           >
-            {/* Attendance Toggle */}
-            <div className="space-y-2">
-              <p className="text-muted">{t.promptStatus}</p>
+            {/* Question 1: Attendance Toggle */}
+            <div id="rsvp-attendance-question" className="space-y-2">
+              <p className="text-muted">
+                {t.promptStatus}
+                <span className="lowercase opacity-50 ml-1">({t.requiredLabel})</span>
+              </p>
               <div className="flex flex-wrap gap-4">
                 {[
                   { id: 'yes', label: t.yesLabel },
@@ -144,11 +187,30 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
                 ].map((option) => (
                   <button
                     key={option.id}
+                    id={`rsvp-status-${option.id}`}
                     type="button"
-                    onClick={() => setFormData({ ...formData, attendingStatus: option.id })}
+                    onClick={() => {
+                      setSubmitError(null);
+                      if (option.id === 'no') {
+                        setFormData((prev) => ({
+                          ...prev,
+                          attendingStatus: 'no',
+                          attendingEvent: '',
+                          guestSide: '',
+                          bringingGuest: '',
+                          dietaryRestrictions: '',
+                          coupleNote: '',
+                        }));
+                      } else {
+                        setFormData((prev) => ({
+                          ...prev,
+                          attendingStatus: 'yes',
+                        }));
+                      }
+                    }}
                     className={`px-6 py-2 border rounded-full transition-all backdrop-blur-md shadow-sm ${
                       formData.attendingStatus === option.id 
-                        ? 'bg-[#362223]/90 text-white border-ink/40 hover:bg-ink' 
+                        ? 'bg-[#362223]/90 text-white border-ink/40 hover:bg-ink font-semibold' 
                         : 'border-black/15 bg-white/30 text-ink/75 hover:bg-white/60 hover:border-black/30'
                     }`}
                   >
@@ -158,9 +220,58 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
               </div>
             </div>
 
-            {/* Side Selection (Bride's Side / Groom's Side) */}
-            <div className="space-y-2">
-              <p className="text-muted">{t.sideLabel}</p>
+            {/* Question 2: Event Attendance Selection */}
+            <div 
+              id="rsvp-event-question"
+              className={`space-y-2 transition-all duration-300 ${
+                isDeclined ? 'opacity-30 pointer-events-none select-none' : ''
+              }`}
+            >
+              <p className="text-muted">
+                {t.eventLabel}
+                {formData.attendingStatus === 'yes' && (
+                  <span className="lowercase opacity-50 ml-1">({t.requiredLabel})</span>
+                )}
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {[
+                  { id: 'both', label: t.eventOptionBoth },
+                  { id: 'reception', label: t.eventOptionReception }
+                ].map((option) => (
+                  <button
+                    key={option.id}
+                    id={`rsvp-event-${option.id}`}
+                    type="button"
+                    disabled={isDeclined}
+                    onClick={() => {
+                      setSubmitError(null);
+                      setFormData({ ...formData, attendingEvent: option.id });
+                    }}
+                    className={`px-5 py-2 border rounded-full transition-all backdrop-blur-md shadow-sm text-[9.5px] ${
+                      formData.attendingEvent === option.id 
+                        ? 'bg-[#362223]/90 text-white border-ink/40 hover:bg-ink font-semibold' 
+                        : 'border-black/15 bg-white/30 text-ink/75 hover:bg-white/60 hover:border-black/30'
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Question 3: Side Selection (Bride's Side / Groom's Side / Both) */}
+            <div 
+              id="rsvp-side-question"
+              className={`space-y-2 transition-all duration-300 ${
+                isDeclined ? 'opacity-30 pointer-events-none select-none' : ''
+              }`}
+            >
+              <p className="text-muted">
+                {t.sideLabel}
+                {formData.attendingStatus === 'yes' && (
+                  <span className="lowercase opacity-50 ml-1">({t.requiredLabel})</span>
+                )}
+              </p>
               <div className="flex flex-wrap gap-3">
                 {[
                   { id: 'bride', label: t.brideSideLabel },
@@ -169,8 +280,13 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
                 ].map((option) => (
                   <button
                     key={option.id}
+                    id={`rsvp-side-${option.id}`}
                     type="button"
-                    onClick={() => setFormData({ ...formData, guestSide: option.id })}
+                    disabled={isDeclined}
+                    onClick={() => {
+                      setSubmitError(null);
+                      setFormData({ ...formData, guestSide: option.id });
+                    }}
                     className={`px-5 py-2 border rounded-full transition-all backdrop-blur-md shadow-sm text-[9.5px] ${
                       formData.guestSide === option.id 
                         ? 'bg-[#362223]/90 text-white border-ink/40 hover:bg-ink font-semibold' 
@@ -183,28 +299,50 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
               </div>
             </div>
 
-            {/* Guest Name Field */}
-            <div className="space-y-2">
+            {/* Question 4: Guest Name Field - ALWAYS ACTIVE */}
+            <div id="rsvp-guest-name-question" className="space-y-2">
               <p className="text-muted">{t.nameLabel} <span className="lowercase opacity-50">({t.requiredLabel})</span></p>
               <input
                 required
+                id="rsvp-guest-name-input"
                 type="text"
                 placeholder={t.namePlaceholder}
                 className="w-full bg-transparent border-b border-black/10 py-2 focus:border-ink outline-none transition-colors"
                 value={formData.guestName}
-                onChange={(e) => setFormData({ ...formData, guestName: e.target.value })}
+                onChange={(e) => {
+                  setSubmitError(null);
+                  setFormData({ ...formData, guestName: e.target.value });
+                }}
               />
             </div>
 
-            {/* Bringing a guest? Dropdown */}
-            <div className="space-y-2">
-              <p className="text-muted">{t.bringingGuestLabel}</p>
+            {/* Question 5: Bringing a guest? Dropdown */}
+            <div 
+              id="rsvp-bringing-guest-question"
+              className={`space-y-2 transition-all duration-300 ${
+                isDeclined ? 'opacity-30 pointer-events-none select-none' : ''
+              }`}
+            >
+              <p className="text-muted">
+                {t.bringingGuestLabel}
+                {formData.attendingStatus === 'yes' && (
+                  <span className="lowercase opacity-50 ml-1">({t.requiredLabel})</span>
+                )}
+              </p>
               <div className="relative">
                 <select
+                  id="rsvp-bringing-guest-select"
+                  disabled={isDeclined}
                   value={formData.bringingGuest}
-                  onChange={(e) => setFormData({ ...formData, bringingGuest: e.target.value })}
+                  onChange={(e) => {
+                    setSubmitError(null);
+                    setFormData({ ...formData, bringingGuest: e.target.value });
+                  }}
                   className="w-full bg-transparent border-b border-black/10 py-2.5 focus:border-ink outline-none transition-colors appearance-none cursor-pointer pr-8 font-mono text-[10px] tracking-widest uppercase text-[#362223]"
                 >
+                  <option value="" disabled className="bg-[#fcfaf7] text-neutral-400">
+                    {t.guestSelectPlaceholder}
+                  </option>
                   <option value="0" className="bg-[#fcfaf7] text-[#362223]">{t.guestOption0}</option>
                   <option value="1" className="bg-[#fcfaf7] text-[#362223]">{t.guestOption1}</option>
                   <option value="2" className="bg-[#fcfaf7] text-[#362223]">{t.guestOption2}</option>
@@ -218,15 +356,45 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
               </div>
             </div>
 
-            {/* Dietary Restrictions */}
-            <div className="space-y-2">
-              <p className="text-muted">{t.dietLabel}</p>
+            {/* Question 6: Dietary Restrictions */}
+            <div 
+              id="rsvp-dietary-question"
+              className={`space-y-2 transition-all duration-300 ${
+                isDeclined ? 'opacity-30 pointer-events-none select-none' : ''
+              }`}
+            >
+              <p className="text-muted">
+                {t.dietLabel}
+              </p>
               <textarea
+                id="rsvp-dietary-input"
+                disabled={isDeclined}
                 rows={2}
                 placeholder={t.dietPlaceholder}
                 className="w-full bg-transparent border-b border-black/10 py-2 focus:border-ink outline-none transition-colors resize-none"
                 value={formData.dietaryRestrictions}
                 onChange={(e) => setFormData({ ...formData, dietaryRestrictions: e.target.value })}
+              />
+            </div>
+
+            {/* Question 7: Note for Couple */}
+            <div 
+              id="rsvp-note-question"
+              className={`space-y-2 transition-all duration-300 ${
+                isDeclined ? 'opacity-30 pointer-events-none select-none' : ''
+              }`}
+            >
+              <p className="text-muted">
+                {t.noteLabel}
+              </p>
+              <textarea
+                id="rsvp-note-input"
+                disabled={isDeclined}
+                rows={2}
+                placeholder={t.notePlaceholder}
+                className="w-full bg-transparent border-b border-black/10 py-2 focus:border-ink outline-none transition-colors resize-none"
+                value={formData.coupleNote}
+                onChange={(e) => setFormData({ ...formData, coupleNote: e.target.value })}
               />
             </div>
 
@@ -258,7 +426,13 @@ export const RSVPForm = ({ lang = 'VIE' }: RSVPFormProps) => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center space-y-8 py-12"
           >
-            <h2 className="font-script text-6xl normal-case tracking-normal">{t.thankYou}</h2>
+            <h2 
+              id="rsvp-success-title"
+              className="font-luxurious text-6xl sm:text-7xl normal-case tracking-normal"
+              style={{ fontFamily: '"Luxurious Script", cursive' }}
+            >
+              {t.thankYou}
+            </h2>
             <p className="max-w-xs mx-auto leading-relaxed text-muted">
               {t.successMsg}
             </p>

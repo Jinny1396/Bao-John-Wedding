@@ -471,6 +471,39 @@ export default function App() {
     giftGroomBtnTextVie?: string;
     sidebarGiftEng?: string;
     sidebarGiftVie?: string;
+    itineraryTitleEng?: string;
+    itineraryTitleVie?: string;
+    itineraryList?: Array<{
+      id?: string;
+      timeEng: string;
+      timeVie: string;
+      eventEng: string;
+      eventVie: string;
+    }>;
+    rsvpCardTitleEng?: string;
+    rsvpCardTitleVie?: string;
+    rsvpCardDescEng?: string;
+    rsvpCardDescVie?: string;
+    rsvpBtnTextEng?: string;
+    rsvpBtnTextVie?: string;
+    rsvpNoteBtnTextEng?: string;
+    rsvpNoteBtnTextVie?: string;
+    rsvpGiftBtnTextEng?: string;
+    rsvpGiftBtnTextVie?: string;
+    rsvpModalTitleEng?: string;
+    rsvpModalTitleVie?: string;
+    rsvpModalSubtitleEng?: string;
+    rsvpModalSubtitleVie?: string;
+    rsvpModalDeadlineEng?: string;
+    rsvpModalDeadlineVie?: string;
+    rsvpNoteModalTitleEng?: string;
+    rsvpNoteModalTitleVie?: string;
+    rsvpNoteModalSubtitleEng?: string;
+    rsvpNoteModalSubtitleVie?: string;
+    rsvpGiftModalTitleEng?: string;
+    rsvpGiftModalTitleVie?: string;
+    rsvpGiftModalSubtitleEng?: string;
+    rsvpGiftModalSubtitleVie?: string;
   }>({});
 
   // Real-time synchronization of custom website images and text content
@@ -616,6 +649,33 @@ export default function App() {
           giftGroomBtnTextVie: data.giftGroomBtnTextVie || '',
           sidebarGiftEng: data.sidebarGiftEng || '',
           sidebarGiftVie: data.sidebarGiftVie || '',
+          itineraryTitleEng: data.itineraryTitleEng || '',
+          itineraryTitleVie: data.itineraryTitleVie || '',
+          itineraryList: Array.isArray(data.itineraryList) ? data.itineraryList : undefined,
+          rsvpCardTitleEng: data.rsvpCardTitleEng || '',
+          rsvpCardTitleVie: data.rsvpCardTitleVie || '',
+          rsvpCardDescEng: data.rsvpCardDescEng || '',
+          rsvpCardDescVie: data.rsvpCardDescVie || '',
+          rsvpBtnTextEng: data.rsvpBtnTextEng || '',
+          rsvpBtnTextVie: data.rsvpBtnTextVie || '',
+          rsvpNoteBtnTextEng: data.rsvpNoteBtnTextEng || '',
+          rsvpNoteBtnTextVie: data.rsvpNoteBtnTextVie || '',
+          rsvpGiftBtnTextEng: data.rsvpGiftBtnTextEng || '',
+          rsvpGiftBtnTextVie: data.rsvpGiftBtnTextVie || '',
+          rsvpModalTitleEng: data.rsvpModalTitleEng || '',
+          rsvpModalTitleVie: data.rsvpModalTitleVie || '',
+          rsvpModalSubtitleEng: data.rsvpModalSubtitleEng || '',
+          rsvpModalSubtitleVie: data.rsvpModalSubtitleVie || '',
+          rsvpModalDeadlineEng: data.rsvpModalDeadlineEng || '',
+          rsvpModalDeadlineVie: data.rsvpModalDeadlineVie || '',
+          rsvpNoteModalTitleEng: data.rsvpNoteModalTitleEng || '',
+          rsvpNoteModalTitleVie: data.rsvpNoteModalTitleVie || '',
+          rsvpNoteModalSubtitleEng: data.rsvpNoteModalSubtitleEng || '',
+          rsvpNoteModalSubtitleVie: data.rsvpNoteModalSubtitleVie || '',
+          rsvpGiftModalTitleEng: data.rsvpGiftModalTitleEng || '',
+          rsvpGiftModalTitleVie: data.rsvpGiftModalTitleVie || '',
+          rsvpGiftModalSubtitleEng: data.rsvpGiftModalSubtitleEng || '',
+          rsvpGiftModalSubtitleVie: data.rsvpGiftModalSubtitleVie || '',
         });
       }
       if (isInitialSnapshot.current) {
@@ -679,7 +739,7 @@ export default function App() {
       photoQuote: siteContent.photoQuoteEng || "A quiet instant captured on analogue medium, celebrating the silent beauty of modern devotion.",
       prevBtn: "PREV",
       nextBtn: "NEXT",
-      itinerary: "Itinerary",
+      itinerary: siteContent.itineraryTitleEng || "Itinerary",
       attire: "Attire",
       attireDesc: siteContent.attireDescEng || "Cocktail Attire. Black tie optional.",
       sage: "Sage",
@@ -697,16 +757,18 @@ export default function App() {
       musicToggleTitleMute: "Mute Background Music",
       musicToggleTitlePlay: "Play Wedding Song",
       
-      itineraryItems: [
-        ['3:00 PM', 'Welcome Drinks'],
-        ['4:00 PM', 'Seated Ceremony'],
-        ['5:00 PM', 'Cocktail Hour'],
-        ['5:30 PM', 'Reception Banquet'],
-        ['6:00 PM', 'Dinner Service & Toasts'],
-        ['7:00 PM', 'Dancing and Celebration'],
-        ['8:30 PM', 'Cake Cutting'],
-        ['10:00 PM', 'Final Farewell'],
-      ]
+      itineraryItems: (siteContent.itineraryList && siteContent.itineraryList.length > 0)
+        ? siteContent.itineraryList.map(item => [item.timeEng || item.timeVie || '', item.eventEng || item.eventVie || ''] as [string, string])
+        : [
+            ['3:00 PM', 'Welcome Drinks'],
+            ['4:00 PM', 'Seated Ceremony'],
+            ['5:00 PM', 'Cocktail Hour'],
+            ['5:30 PM', 'Reception Banquet'],
+            ['6:00 PM', 'Dinner Service & Toasts'],
+            ['7:00 PM', 'Dancing and Celebration'],
+            ['8:30 PM', 'Cake Cutting'],
+            ['10:00 PM', 'Final Farewell'],
+          ]
     },
     VIE: {
       home: siteContent.sidebarHomeVie || "TRANG CHỦ",
@@ -729,7 +791,7 @@ export default function App() {
       photoQuote: siteContent.photoQuoteVie || "Khoảnh khắc an yên ghi dấu qua thước phim màu, mừng ngày hạnh phúc đơm hoa.",
       prevBtn: "TRƯỚC",
       nextBtn: "SAU",
-      itinerary: "Lịch trình",
+      itinerary: siteContent.itineraryTitleVie || "Lịch trình",
       attire: "Trang phục",
       attireDesc: siteContent.attireDescVie || "Trang phục bán trang trọng (Cocktail). Nam có thể thắt nơ.",
       sage: "Màu Xanh",
@@ -747,16 +809,18 @@ export default function App() {
       musicToggleTitleMute: "Tắt nhạc nền",
       musicToggleTitlePlay: "Bật nhạc đám cưới",
       
-      itineraryItems: [
-        ['15:00', 'Đón khách & Tiệc trà đầu giờ'],
-        ['16:00', 'Hành lễ chánh điện đầy trang nghiêm'],
-        ['17:00', 'Tiệc Cocktail thân mật'],
-        ['17:30', 'Khai tiệc mừng đám cưới'],
-        ['18:00', 'Dùng tiệc chính & Chúc rượu'],
-        ['19:00', 'Giao lưu khiêu vũ đầy tiếng cười'],
-        ['20:30', 'Cắt bánh kem hạnh phúc'],
-        ['22:00', 'Chào tiễn khách ra về'],
-      ]
+      itineraryItems: (siteContent.itineraryList && siteContent.itineraryList.length > 0)
+        ? siteContent.itineraryList.map(item => [item.timeVie || item.timeEng || '', item.eventVie || item.eventEng || ''] as [string, string])
+        : [
+            ['15:00', 'Đón khách & Tiệc trà đầu giờ'],
+            ['16:00', 'Hành lễ chánh điện đầy trang nghiêm'],
+            ['17:00', 'Tiệc Cocktail thân mật'],
+            ['17:30', 'Khai tiệc mừng đám cưới'],
+            ['18:00', 'Dùng tiệc chính & Chúc rượu'],
+            ['19:00', 'Giao lưu khiêu vũ đầy tiếng cười'],
+            ['20:30', 'Cắt bánh kem hạnh phúc'],
+            ['22:00', 'Chào tiễn khách ra về'],
+          ]
     }
   };
 
@@ -1389,8 +1453,8 @@ export default function App() {
             <div className="grid grid-cols-3 gap-4 font-mono text-[9px] tracking-[0.2em] uppercase">
               <p className="text-muted font-crimson text-[12px]">{t.itinerary}</p>
               <div className="col-span-2 space-y-3">
-                {t.itineraryItems.map(([time, event]) => (
-                  <div key={time} className="flex items-baseline justify-between border-b border-black/5 pb-1 w-full">
+                {t.itineraryItems.map(([time, event], idx) => (
+                  <div key={`${time}-${event}-${idx}`} className="flex items-baseline justify-between border-b border-black/5 pb-1 w-full">
                     <span className="md:w-[60px] md:inline-block shrink-0 text-[10px] sm:text-[12px]">{time}</span>
                     <span className="text-muted opacity-30 flex-1 mx-2 overflow-hidden whitespace-nowrap text-center">............................................................................................................................................................................................................................................................</span>
                     <span className="shrink-0 text-[10px] sm:text-[12px]">{event}</span>
@@ -1554,6 +1618,7 @@ export default function App() {
               >
                 {/* Elegant script display title matching the mockup */}
                 <span 
+                  id="rsvp-card-title"
                   className="font-luxurious text-[#362223] block leading-tight font-medium mb-3 sm:mb-5 mt-2 select-none"
                   style={{ 
                     fontFamily: '"Luxurious Script", cursive',
@@ -1566,12 +1631,15 @@ export default function App() {
                     top: isMobile ? '-20px' : '20px'
                   }}
                 >
-                  Together with our families,
+                  {lang === 'VIE' 
+                    ? (siteContent.rsvpCardTitleVie || "Cùng gia đình thân yêu,") 
+                    : (siteContent.rsvpCardTitleEng || "Together with our families,")}
                 </span>
                 
                 {/* Wedding details paragraph */}
                 <div className="space-y-3 sm:space-y-4 max-w-[92%] sm:max-w-[85%] mx-auto font-serif">
                   <p 
+                    id="rsvp-card-desc"
                     className="italic text-[#362223]/80 font-normal text-[12px] sm:text-[13px] md:text-[15px]"
                     style={{ 
                       lineHeight: isMobile ? '14px' : '16px', 
@@ -1580,13 +1648,16 @@ export default function App() {
                       margin: '0 auto' 
                     }}
                   >
-                    Thank you for being part of one of the most meaningful moments of our lives. We cannot wait to celebrate love, laughter, and unforgettable memories with you.
+                    {lang === 'VIE'
+                      ? (siteContent.rsvpCardDescVie || "Cảm ơn bạn đã luôn là một phần ý nghĩa trong hành trình của chúng mình. Rất mong được cùng bạn sẻ chia niềm vui, tiếng cười và những kỷ niệm khó quên.")
+                      : (siteContent.rsvpCardDescEng || "Thank you for being part of one of the most meaningful moments of our lives. We cannot wait to celebrate love, laughter, and unforgettable memories with you.")}
                   </p>
                 </div>
 
                 {/* Handcrafted buttons for RSVP, Guestbook, and Gift */}
                 <div className="mt-5 sm:mt-8 flex flex-wrap gap-2.5 sm:gap-3.5 justify-center items-center">
                   <button
+                    id="rsvp-card-btn-rsvp"
                     onClick={() => {
                       setActiveModalTab('rsvp');
                       setIsLocalModalOpen(true);
@@ -1594,9 +1665,12 @@ export default function App() {
                     className="px-5 sm:px-7 py-2 sm:py-2.5 rounded-full bg-[#362223] hover:bg-[#362223]/90 text-[#FAF9F5] font-serif italic active:scale-95 transition-all select-none cursor-pointer duration-300 shadow-md border border-[#362223]"
                     style={{ fontSize: '12px', fontWeight: 'bold' }}
                   >
-                    {lang === 'VIE' ? "Xác nhận tham dự (RSVP)" : "Please RSVP Here"}
+                    {lang === 'VIE' 
+                      ? (siteContent.rsvpBtnTextVie || "Xác nhận tham dự (RSVP)") 
+                      : (siteContent.rsvpBtnTextEng || "Please RSVP Here")}
                   </button>
                   <button
+                    id="rsvp-card-btn-note"
                     onClick={() => {
                       setActiveModalTab('note');
                       setIsLocalModalOpen(true);
@@ -1604,9 +1678,12 @@ export default function App() {
                     className="px-5 sm:px-6 py-2 sm:py-2.5 rounded-full border border-[#362223]/40 text-[#362223]/90 font-serif italic bg-transparent hover:bg-[#362223]/5 active:scale-95 transition-all select-none cursor-pointer duration-300 shadow-sm"
                     style={{ borderColor: '#ffe3e4', fontSize: '12px', fontWeight: 'bold' }}
                   >
-                    {lang === 'VIE' ? "Gửi lời chúc lưu bút" : "Write us a note"}
+                    {lang === 'VIE' 
+                      ? (siteContent.rsvpNoteBtnTextVie || "Gửi lời chúc lưu bút") 
+                      : (siteContent.rsvpNoteBtnTextEng || "Write us a note")}
                   </button>
                   <button
+                    id="rsvp-card-btn-gift"
                     onClick={() => {
                       setActiveModalTab('gift');
                       setIsLocalModalOpen(true);
@@ -1614,7 +1691,9 @@ export default function App() {
                     className="px-5 sm:px-6 py-2 sm:py-2.5 rounded-full border border-[#362223]/40 text-[#362223]/90 font-serif italic bg-transparent hover:bg-[#362223]/5 active:scale-95 transition-all select-none cursor-pointer duration-300 shadow-sm"
                     style={{ borderColor: '#ffe3e4', fontSize: '12px', fontWeight: 'bold' }}
                   >
-                    {lang === 'VIE' ? "Hộp mừng cưới" : "Wedding Gift"}
+                    {lang === 'VIE' 
+                      ? (siteContent.rsvpGiftBtnTextVie || "Hộp mừng cưới") 
+                      : (siteContent.rsvpGiftBtnTextEng || "Wedding Gift")}
                   </button>
                 </div>
               </div>
@@ -1715,7 +1794,9 @@ export default function App() {
                             borderColor: '#362223'
                           }}
                         >
-                          {lang === 'VIE' ? "Chung vui cùng tụi mình," : "Celebrate with us,"}
+                          {lang === 'VIE' 
+                            ? (siteContent.rsvpModalTitleVie || "Chung vui cùng tụi mình,") 
+                            : (siteContent.rsvpModalTitleEng || "Celebrate with us,")}
                         </span>
                         <span 
                           className="block uppercase leading-none mt-1 text-center"
@@ -1728,7 +1809,9 @@ export default function App() {
                             borderColor: '#717171'
                           }}
                         >
-                          {lang === 'VIE' ? "XÁC NHẬN SỰ HIỆN DIỆN CỦA BẠN." : "KINDLY RESPOND TO OUR INVITATION."}
+                          {lang === 'VIE' 
+                            ? (siteContent.rsvpModalSubtitleVie || "XÁC NHẬN SỰ HIỆN DIỆN CỦA BẠN.") 
+                            : (siteContent.rsvpModalSubtitleEng || "KINDLY RESPOND TO OUR INVITATION.")}
                         </span>
                         <span 
                           className="block text-[#362223]/70 text-center mt-1.5"
@@ -1740,7 +1823,9 @@ export default function App() {
                             letterSpacing: '0.04em'
                           }}
                         >
-                          {lang === 'VIE' ? "Vui lòng phản hồi trước 2026/01/12" : "Please reply before 2026/01/12"}
+                          {lang === 'VIE' 
+                            ? (siteContent.rsvpModalDeadlineVie || "Vui lòng phản hồi trước 2026/01/12") 
+                            : (siteContent.rsvpModalDeadlineEng || "Please reply before 2026/01/12")}
                         </span>
                       </>
                     ) : activeModalTab === 'gift' ? (
@@ -1757,7 +1842,9 @@ export default function App() {
                             borderColor: '#362223'
                           }}
                         >
-                          {lang === 'VIE' ? "Gửi trao yêu thương," : "Warmest wishes,"}
+                          {lang === 'VIE' 
+                            ? (siteContent.rsvpGiftModalTitleVie || "Gửi trao yêu thương,") 
+                            : (siteContent.rsvpGiftModalTitleEng || "Warmest wishes,")}
                         </span>
                         <span 
                           className="block uppercase leading-none mt-1 text-center"
@@ -1769,7 +1856,9 @@ export default function App() {
                             letterSpacing: '0.08em'
                           }}
                         >
-                          {lang === 'VIE' ? "HỘP MỪNG CƯỚI CHÚC PHÚC ĐÔI UYÊN ƯƠNG." : "WEDDING GIFT BOX FOR THE BRIDE & GROOM."}
+                          {lang === 'VIE' 
+                            ? (siteContent.rsvpGiftModalSubtitleVie || "HỘP MỪNG CƯỚI CHÚC PHÚC ĐÔI UYÊN ƯƠNG.") 
+                            : (siteContent.rsvpGiftModalSubtitleEng || "WEDDING GIFT BOX FOR THE BRIDE & GROOM.")}
                         </span>
                       </>
                     ) : (
@@ -1786,7 +1875,9 @@ export default function App() {
                             borderColor: '#362223'
                           }}
                         >
-                          {lang === 'VIE' ? "Gửi trao nguyện ước," : "Leaving us a message,"}
+                          {lang === 'VIE' 
+                            ? (siteContent.rsvpNoteModalTitleVie || "Gửi trao nguyện ước,") 
+                            : (siteContent.rsvpNoteModalTitleEng || "Leaving us a message,")}
                         </span>
                         <span 
                           className="block uppercase leading-none mt-1 text-center"
@@ -1798,7 +1889,9 @@ export default function App() {
                             letterSpacing: '0.08em'
                           }}
                         >
-                          {lang === 'VIE' ? "ĐỂ KỶ NIỆM CÒN MÃI VỚI THỜI GIAN." : "TO CHERISH YOUR LOVE FOREVER."}
+                          {lang === 'VIE' 
+                            ? (siteContent.rsvpNoteModalSubtitleVie || "ĐỂ KỶ NIỆM CÒN MÃI VỚI THỜI GIAN.") 
+                            : (siteContent.rsvpNoteModalSubtitleEng || "TO CHERISH YOUR LOVE FOREVER.")}
                         </span>
                       </>
                     )}

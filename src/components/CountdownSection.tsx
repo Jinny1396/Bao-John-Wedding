@@ -49,7 +49,9 @@ export default function CountdownSection({
     setIsMounted(true);
     
     // Target Date from CMS, with default fallback
-    const targetDateStr = targetDate || "2027-10-10T17:00:00";
+    const targetDateStr = targetDate 
+      ? (targetDate.includes('T') ? targetDate : targetDate.replace(' ', 'T')) 
+      : "2027-03-27T17:00:00";
     const targetTimeMs = new Date(targetDateStr).getTime();
 
     const calculateTimeLeft = () => {
@@ -83,13 +85,15 @@ export default function CountdownSection({
     return () => clearInterval(intervalId);
   }, [targetDate]);
 
-  const dateObj = targetDate ? new Date(targetDate) : new Date("2027-10-10T17:00:00");
-  const monthNamesEng = ["MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER", "JANUARY", "FEBRUARY"];
-  const monthNamesVie = ["THÁNG 3", "THÁNG 4", "THÁNG 5", "THÁNG 6", "THÁNG 7", "THÁNG 8", "THÁNG 9", "THÁNG 10", "THÁNG 11", "THÁNG 12", "THÁNG 1", "THÁNG 2"];
+  const cleanDateStr = targetDate 
+    ? (targetDate.includes('T') ? targetDate : targetDate.replace(' ', 'T')) 
+    : "2027-03-27T17:00:00";
+  const dateObj = new Date(cleanDateStr);
+  const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
   
   const displayMonth = isNaN(dateObj.getTime()) 
-    ? (lang === 'VIE' ? "THÁNG 3" : "MARCH") 
-    : (lang === 'VIE' ? monthNamesVie[dateObj.getMonth()] : monthNamesEng[dateObj.getMonth()]);
+    ? "MAR" 
+    : (monthNames[dateObj.getMonth()] || "MAR");
     
   const displayYear = isNaN(dateObj.getTime()) ? "2027" : String(dateObj.getFullYear());
 
@@ -141,10 +145,16 @@ export default function CountdownSection({
       <div className="absolute inset-0 bg-white/[0.015] opacity-35 pointer-events-none mix-blend-overlay" />
 
       {/* Corners - Top Left & Top Right */}
-      <div className="absolute top-8 left-8 sm:top-12 sm:left-12 font-mono text-[8px] sm:text-[9.5px] tracking-[0.25em] text-[#362223]/75 uppercase">
+      <div 
+        id="countdown-month"
+        className="absolute top-8 left-8 sm:top-12 sm:left-12 font-mono text-[8px] sm:text-[9.5px] tracking-[0.25em] text-[#362223]/75 uppercase"
+      >
         {displayMonth}
       </div>
-      <div className="absolute top-8 right-8 sm:top-12 sm:right-12 font-mono text-[8px] sm:text-[9.5px] tracking-[0.25em] text-[#362223]/75 uppercase">
+      <div 
+        id="countdown-year"
+        className="absolute top-8 right-8 sm:top-12 sm:right-12 font-mono text-[8px] sm:text-[9.5px] tracking-[0.25em] text-[#362223]/75 uppercase"
+      >
         {displayYear}
       </div>
 
